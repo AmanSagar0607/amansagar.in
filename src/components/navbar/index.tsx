@@ -3,7 +3,7 @@
 "use client";
 
 import { useState } from "react";
-import { Containers } from "@/components/Container";
+import { Container } from "@/components/container";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
@@ -50,20 +50,20 @@ export const Navbar = () => {
     });
 
   return (
-    <Containers>
+    <Container>
         <motion.nav 
        animate={{
         boxShadow: scrolled ? "var(--shadow-acceternity)" : "none",
-        width: scrolled ? "45%" : "100%",
+        width: scrolled ? "50%" : "100%",
         y: scrolled ? "10" : "0",
          }}
          transition={{
             duration: 0.3,
             ease: "easeInOut",
          }}
-        className={`fixed inset-x-0 top-4 z-50 mx-auto flex max-w-4xl items-center justify-between p-1 px-3 rounded-full  ${scrolled ? "shadow-acceternity" : ""}`}>
+        className={`fixed inset-x-0 top-4 z-50 mx-auto flex max-w-4xl items-center justify-between p-1 px-3 rounded-full transition-all duration-300 backdrop-blur-sm hover:backdrop-blur-md hover:shadow-lg hover:shadow-primary/20 ${scrolled ? "shadow-acceternity bg-background/80" : "bg-background/50"}`}>
             {/* Avatar */}
-            <Image className="h-12 w-12 rounded-full" src="/avatar.webp" alt="Avatar" width={100} height={100} />
+           <Link href="/"> <Image className="h-12 w-12 rounded-full" src="/avatar.webp" alt="Avatar" width={100} height={100} /></Link>
            
             {/* NavItems */}
             <div className="flex  items-center gap-4">
@@ -86,6 +86,6 @@ export const Navbar = () => {
                 ))}
             </div>
         </motion.nav>
-    </Containers>
+    </Container>
   )
 }

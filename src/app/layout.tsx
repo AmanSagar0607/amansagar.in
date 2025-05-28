@@ -1,31 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 import { Inter } from "next/font/google";
 import { Navbar } from "@/components/navbar";
+import "./globals.css"
 
+// Using Inter as the primary font
 const inter = Inter({ 
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"] 
-});
-
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-inter",
+  display: "swap"
 });
 
 export const metadata: Metadata = {
   title: "Portfolio website template",
-  description: "Aman Portfolio website template with minimlal and smooth microanimations",
+  description: "Aman Portfolio website template with minimal and smooth microanimations",
 };
 
-// This is a workaround for the hydration mismatch error
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -38,7 +28,7 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} antialiased ${inter.className} bg-neutral-100 dark:bg-neutral-700 `}
+        className={`${inter.variable} font-sans antialiased bg-neutral-100 dark:bg-neutral-700`}
       >
         <Navbar />
         {children}
