@@ -61,7 +61,7 @@ export const Navbar = () => {
             duration: 0.3,
             ease: "easeInOut",
          }}
-        className={`fixed inset-x-0 top-4 z-50 mx-auto flex max-w-4xl items-center justify-between p-1 px-3 rounded-full transition-all duration-300 backdrop-blur-sm hover:backdrop-blur-md hover:shadow-lg hover:shadow-primary/20 ${scrolled ? "shadow-acceternity bg-background/80" : "bg-background/50"}`}>
+        className={`bg-white fixed inset-x-0 top-4 z-50 mx-auto flex max-w-4xl items-center justify-between p-1 px-3 rounded-full transition-all duration-300 backdrop-blur-sm hover:backdrop-blur-md hover:shadow-lg hover:shadow-primary/20 ${scrolled ? "shadow-acceternity bg-background/40" : "bg-background/50"}`}>
             {/* Avatar */}
            <Link href="/"> <Image className="h-12 w-12 rounded-full" src="/avatar.webp" alt="Avatar" width={100} height={100} /></Link>
            
