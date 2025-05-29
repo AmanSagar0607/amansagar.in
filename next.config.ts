@@ -1,12 +1,12 @@
-import type { NextConfig } from 'next';
 import createMDX from '@next/mdx';
+import type { NextConfig } from 'next';
 
 /** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
   experimental: {
     mdxRs: true,
   },
-  pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
+  pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   images: {
     domains: ['via.placeholder.com', 'aceternity.com'],
   },
@@ -15,7 +15,14 @@ const nextConfig: NextConfig = {
 const withMDX = createMDX({
   extension: /\.mdx?$/,
   options: {
-    providerImportSource: '@mdx-js/react',
+    remarkPlugins: [
+      require('remark-gfm'),
+    ],
+    rehypePlugins: [
+      require('rehype-highlight'),
+      require('rehype-slug'),
+      [require('rehype-autolink-headings'), { behavior: 'wrap' }],
+    ],
   },
 });
 

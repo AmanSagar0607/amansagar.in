@@ -1,11 +1,11 @@
 "use client";
 
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../../globals.css";
 import { MDXProvider } from '@mdx-js/react';
-import { useMDXComponents } from '../../../../mdx-components';
+import { useMDXComponents } from '@/components/mdx-components';
 import { Container } from "@/components/container";
+import { ReactNode } from 'react';
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,25 +14,22 @@ const inter = Inter({
   display: "swap",
 });
 
-const metadata = {
-  title: "AWS S3 Buckets Guide",
-  description: "A comprehensive guide to AWS S3 Buckets",
-};
+interface BlogLayoutProps {
+  children: ReactNode;
+}
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function BlogLayout({ children }: BlogLayoutProps) {
+  const components = useMDXComponents({});
+  
   return (
     <div className={`${inter.variable} font-sans`}>
-      <MDXProvider components={useMDXComponents({})}>
-        <Container className="min-h-[200vh] p-4 md:pt-28 md:pb-10 px-12">
-          <article className="prose prose-invert max-w-none">
+      <Container className="min-h-[200vh] p-4 px-12 md:pt-28 md:pb-10">
+        <article className="prose prose-invert max-w-none">
+          <MDXProvider components={components}>
             {children}
-          </article>
-        </Container>
-      </MDXProvider>
+          </MDXProvider>
+        </article>
+      </Container>
     </div>
   );
 }

@@ -9,7 +9,7 @@ export default function Home() {
           Aman Sagar
         </h1>
         <p className="text-secondary md:text-base text-sm pt-4 max-w-lg">
-          Hello , I'm Aman, and i am working as a Full Stack Developer, with have more than 6 months of experience, and i am a quick learner also i am a team player
+          Hello, I&apos;m Aman, and I am working as a Full Stack Developer with more than 6 months of experience. I am a quick learner and a team player.
         </p>
         <Projects/>
       </Container>
