@@ -24,7 +24,7 @@ export default async function BlogPage() {
   return (
     <div className="container py-8">
       <div className="mb-12">
-        <h1 className="mb-3 text-4xl font-bold tracking-tight">Blog</h1>
+        <h1 className="mb-3 text-4xl font-bold tracking-tight">All Blog Posts</h1>
         <p className="text-lg text-muted-foreground">
           Thoughts, stories and ideas about software development and more.
         </p>
@@ -46,34 +46,37 @@ export default async function BlogPage() {
               group-hover:before:opacity-100
               dark:before:bg-muted-foreground/10">
               <div className="relative">
-                <h2 className="text-2xl font-bold tracking-tight">
-                  <Link
-                    href={`/blog/${post.slug}`}
-                    className="text-foreground underline hover:underline"
-                  >
-                    {post.frontmatter.title}
-                  </Link>
-                </h2>
-                <p className="mt-2 text-muted-foreground">
+                <div className="flex items-start justify-between gap-4">
+                  <h2 className="text-2xl font-bold tracking-tight text-[#242424]">
+                    <Link
+                      href={`/blog/${post.slug}`}
+                      className="text-foreground no-underline hover:underline"
+                    >
+                      {post.frontmatter.title}
+                    </Link>
+                  </h2>
+                  <div className="mt-1 flex-shrink-0 whitespace-nowrap text-sm text-secondary">
+                    <time dateTime={new Date(post.frontmatter.date).toISOString()}>
+                      {new Date(post.frontmatter.date).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </time>
+                    {/* <span className="mx-2">•</span>
+                    <span>{post.frontmatter.readTime || '5 min read'}</span> */}
+                  </div>
+                </div>
+                <p className="mt-1 text-secondary max-w-md md:max-w-lg">
                   {post.frontmatter.description}
                 </p>
-                <div className="mt-3 flex items-center text-sm text-muted-foreground">
-                  <time dateTime={new Date(post.frontmatter.date).toISOString()}>
-                    {new Date(post.frontmatter.date).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </time>
-                  <span className="mx-2">•</span>
-                  <span>{post.frontmatter.readTime || '5 min read'}</span>
-                </div>
                 {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {post.frontmatter.tags.slice(0, 3).map((tag: string) => (
                       <span
                         key={tag}
-                        className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground"
+                      className="inline-flex items-center rounded-full border border-neutral-200 px-2 py-0.5 text-[10px] font-medium text-secondary bg-neutral-50 hover:bg-neutral-100"
                       >
                         {tag}
                       </span>
