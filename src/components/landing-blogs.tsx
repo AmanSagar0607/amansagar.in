@@ -28,7 +28,7 @@ export async function LandingBlogs() {
           <article key={post.slug} className="group relative">
             <div className="relative">
               <div className="flex items-start justify-between gap-4">
-                <h3 className="text-xl font-bold text-foreground">
+                <h3 className="text-md font-bold text-foreground">
                   <Link 
                     href={`/blog/${post.slug}`}
                     className="hover:underline"
@@ -38,7 +38,7 @@ export async function LandingBlogs() {
                 </h3>
                 <time 
                   dateTime={new Date(post.frontmatter.date).toISOString()}
-                  className="text-sm text-secondary whitespace-nowrap mt-1"
+                  className="text-[13px] text-secondary whitespace-nowrap mt-1"
                 >
                   {new Date(post.frontmatter.date).toLocaleDateString('en-US', {
                     weekday: 'long',
@@ -49,7 +49,7 @@ export async function LandingBlogs() {
                 </time>
               </div>
               
-              <p className="mt-1 text-secondary max-w-md md:max-w-lg">
+              <p className="mt-1 text-secondary text-sm max-w-md md:max-w-lg">
                   {post.frontmatter.description}
                 </p>
               

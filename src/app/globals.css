@@ -29,3 +29,17 @@
   --color-primary: var(--color-neutral-100);
   --color-secondary: var(--color-neutral-400);
 }
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Add a subtle hover effect */
+.timeline-item:hover .timeline-dot {
+  transform: scale(1.1);
+}

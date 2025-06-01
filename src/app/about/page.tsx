@@ -1,17 +1,22 @@
 import { Container } from "@/components/container";
 import { Projects } from "@/components/projects";
 import { LandingBlogs } from "@/components/landing-blogs";
+import Timeline from "@/components/timeline";
 
 export default function Home() {
   return (
-    <div className={`min-h-screen flex items-start justify-center`}>
-      <Container className="min-h-[200vh] p-4 md:pt-28 md:pb-10 px-12">
-        <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-primary">
+    <div className={`flex min-h-screen items-start justify-center`}>
+      <Container className="min-h-[200vh] p-4 px-12 md:pt-28 md:pb-10">
+        <h1 className="text-primary text-2xl font-bold tracking-tight md:text-4xl">
           About Me
         </h1>
-        <p className="text-secondary md:text-base text-sm pt-4 max-w-lg">
-          Hello, I&apos;m Aman, and I am working as a Full Stack Developer with more than 6 months of experience. I am a quick learner and a team player.
+        <p className="text-secondary max-w-lg pt-4 text-sm md:text-base">
+          I craft visually stunning web interfaces and applications, blending
+          UI/UX excellence with REACT and NEXT.JS. A FULL STACK MERN DEVELOPER,
+          excelling in BUSINESS AI and WORKFLOW AUTOMATION with MAKE.COM.
         </p>
+       
+        <Timeline/>
       </Container>
     </div>
   );
