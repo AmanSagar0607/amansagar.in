@@ -5,7 +5,7 @@ import { LandingBlogs } from "@/components/landing-blogs";
 export default function Home() {
   return (
     <div className={`min-h-screen flex items-start justify-center`}>
-      <Container className="min-h-[200vh] p-4 md:pt-28 md:pb-10 px-12">
+       <Container className="min-h-[200vh] p-4 md:pt-28 pt-20 md:pb-10 pb-10 md:px-12 px-8">
         <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-primary">
           Aman Sagar
         </h1>

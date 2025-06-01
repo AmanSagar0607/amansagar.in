@@ -10,7 +10,10 @@ const inter = Inter({
 });
 
 export const viewport: Viewport = {
-  themeColor: '#000000',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#000000' }
+  ],
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -34,7 +37,7 @@ export default function BlogLayout({
 }) {
   return (
     <div className={`min-h-screen flex items-start justify-center ${inter.variable} font-sans`}>
-      <Container className="min-h-screen py-8 px-4 md:px-12 pt-24">
+      <Container className="min-h-[200vh] p-4 md:pt-28 pt-20 md:pb-10 pb-10 md:px-12 px-8">
         <main className="w-full">
           {children}
         </main>

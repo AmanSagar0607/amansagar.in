@@ -72,7 +72,8 @@ export const Projects = () => {
                     alt={project.title} 
                     width={500} 
                     height={500}
-                    className="w-full h-full object-cover  transition-all duration-300 group-hover:scale-105"
+                    priority={idx < 2} // Add priority to first two images for better LCP
+                    className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
                   />
                 </motion.div>
                 <div className="absolute inset-0 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/80 to-transparent">

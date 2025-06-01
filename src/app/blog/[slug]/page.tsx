@@ -50,6 +50,7 @@ function calculateReadTime(content: string): string {
   return `${minutes} min read`;
 }
 
+
 export async function generateMetadata({
   params,
 }: {
@@ -154,28 +155,28 @@ export default async function BlogPost({
       <article className="mx-auto max-w-3xl px-0 py-6 md:px-0">
         <header className="mb-8">
           {/* Category */}
-          {metadata.category && (
+          {/* {metadata.category && (
             <div className="mb-3">
               <span className="bg-primary/10 text-primary-foreground hover:bg-primary/20 inline-flex items-center rounded-full px-3 py-1 text-sm font-medium transition-colors">
                 {metadata.category}
               </span>
             </div>
-          )}
+          )} */}
 
           {/* Title - Made more prominent like Medium */}
-          <h1 className="mb-6 text-4xl leading-tight font-bold tracking-tight text-neutral-600 md:text-[44px] lg:text-[44px]">
+          <h1 className="mb-4 text-4xl leading-tight font-bold tracking-tight text-neutral-600 md:text-[40px] lg:text-[40px]">
             {metadata.title}
           </h1>
 
           {/* Description */}
           {metadata.description && (
-            <p className="text-muted-foreground mb-8 text-xl leading-relaxed">
+            <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
               {metadata.description}
             </p>
           )}
 
           {/* Author and Metadata */}
-          <div className="text-muted-foreground mb-6 flex flex-col items-start justify-between gap-3 border-b pb-6 sm:flex-row sm:items-center">
+          <div className="text-muted-foreground mb-6 flex flex-col items-start justify-between gap-3 border-b border-neutral-100 pb-4 sm:flex-row sm:items-center">
             <div className="flex items-center gap-3">
               <Image
                 src="/avatar.webp"

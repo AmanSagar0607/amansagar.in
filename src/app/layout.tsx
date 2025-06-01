@@ -24,11 +24,7 @@ export const metadata: Metadata = {
   title: "Aman Sagar - Full Stack Developer",
   description: "Personal portfolio of Aman Sagar, a Full Stack Developer with expertise in modern web technologies.",
   keywords: ["portfolio", "developer", "full stack", "web development", "react", "next.js"],
-  authors: [{ name: 'Aman Sagar' }],
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#f5f5f5' },
-    { media: '(prefers-color-scheme: dark)', color: '#1a1a1a' },
-  ],
+  authors: [{ name: 'Aman Sagar' }]
 };
 
 interface RootLayoutProps {

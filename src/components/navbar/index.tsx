@@ -44,7 +44,7 @@ export const Navbar = () => {
     const width = useTransform(scrollY, [0, 100], ["55%", "40%"]);
 
     useMotionValueEvent(scrollY, "change", (latest) => {
-        console.log("scrollY",latest);
+        // console.log("scrollY",latest);
         if (latest > 20) {
             setScrolled(true);
         } else {

@@ -7,7 +7,7 @@ const components: MDXComponents = {
   h1: ({ className, ...props }) => (
     <h1
       className={cn(
-        'text-4xl font-bold mt-10 mb-6',
+        'text-3xl font-bold mt-10 mb-6',
         className
       )}
       {...props}
@@ -16,7 +16,7 @@ const components: MDXComponents = {
   h2: ({ className, ...props }) => (
     <h2
       className={cn(
-        'text-3xl font-bold mt-8 mb-4',
+        'text-2xl font-bold mt-8 mb-4',
         className
       )}
       {...props}
@@ -25,7 +25,7 @@ const components: MDXComponents = {
   h3: ({ className, ...props }) => (
     <h3
       className={cn(
-        'text-2xl font-bold mt-6 mb-3',
+        'text-xl font-bold mt-6 mb-3',
         className
       )}
       {...props}
@@ -34,7 +34,7 @@ const components: MDXComponents = {
   p: ({ className, ...props }) => (
     <p
       className={cn(
-        'text-lg mb-4 leading-relaxed',
+        'text-base mb-4 leading-relaxed',
         className
       )}
       {...props}
@@ -87,15 +87,15 @@ const components: MDXComponents = {
       {...props}
     />
   ),
-  pre: ({ className, ...props }) => (
+  pre: ({ className, children, ...props }) => (
     <pre
       className={cn(
-        'bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-6 overflow-x-auto',
+        'rounded-lg mb-6 overflow-x-auto',
         className
       )}
       {...props}
     >
-      <CodeBlock {...props} />
+      <CodeBlock {...props}>{children}</CodeBlock>
     </pre>
   ),
   blockquote: ({ className, ...props }) => (

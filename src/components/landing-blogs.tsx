@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Calendar, Circle, Dot } from 'lucide-react';
 import { getMDXFiles } from '@/lib/mdx-utils';
 
 export async function LandingBlogs() {
@@ -17,7 +18,9 @@ export async function LandingBlogs() {
           href="/blog" 
           className="text-sm font-medium text-secondary hover:underline inline-flex items-center"
         >
-          View all articles <span className="ml-1">→</span>
+          <span className="hidden sm:inline">View all articles</span>
+          <span className="sm:hidden">View all</span>
+          <span className="ml-1">→</span>
         </Link>
       </div>
       <p className="text-secondary md:text-base text-sm pt-2 max-w-lg mb-8">I love writing blogs and sharing my knowledge with the world.</p>
@@ -27,18 +30,33 @@ export async function LandingBlogs() {
         {recentPosts.map((post) => (
           <article key={post.slug} className="group relative">
             <div className="relative">
-              <div className="flex items-start justify-between gap-4">
-                <h3 className="text-md font-bold text-foreground">
-                  <Link 
-                    href={`/blog/${post.slug}`}
-                    className="hover:underline"
-                  >
-                    {post.frontmatter.title}
-                  </Link>
-                </h3>
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-4">
+                <div>
+                  <h3 className="text-md font-bold text-foreground flex items-start gap-0">
+                    <Dot className="-ml-5.5 sm:hidden" />
+                    <Link 
+                      href={`/blog/${post.slug}`}
+                      className="hover:underline"
+                    >
+                      {post.frontmatter.title}
+                    </Link>
+                  </h3>
+                  <div className="flex items-center gap-1.5 sm:hidden text-[13px] text-secondary mt-1">
+                    <Calendar className="h-3.5 w-3.5" />
+                    <time 
+                      dateTime={new Date(post.frontmatter.date).toISOString()}
+                    >
+                      {new Date(post.frontmatter.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </time>
+                  </div>
+                </div>
                 <time 
                   dateTime={new Date(post.frontmatter.date).toISOString()}
-                  className="text-[13px] text-secondary whitespace-nowrap mt-1"
+                  className="hidden sm:block text-[13px] text-secondary whitespace-nowrap mt-1"
                 >
                   {new Date(post.frontmatter.date).toLocaleDateString('en-US', {
                     weekday: 'long',
@@ -49,7 +67,7 @@ export async function LandingBlogs() {
                 </time>
               </div>
               
-              <p className="mt-1 text-secondary text-sm max-w-md md:max-w-lg">
+              <p className="mt-2 text-secondary text-sm max-w-md md:max-w-lg">
                   {post.frontmatter.description}
                 </p>
               
