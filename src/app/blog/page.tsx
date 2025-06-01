@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { getMDXFiles } from '@/lib/mdx-utils';
+import { Heading } from '@/components/heading';
+import { SubHeading } from '@/components/subheading';
 
 export const metadata: Metadata = {
   title: 'Blog | Aman Sagar',
@@ -24,10 +26,8 @@ export default async function BlogPage() {
   return (
     <div className="container py-8">
       <div className="mb-12">
-        <h1 className="mb-3 text-4xl font-bold tracking-tight">All Blog Posts</h1>
-        <p className="text-lg text-muted-foreground">
-          Thoughts, stories and ideas about software development and more.
-        </p>
+        <Heading as="h1">All Blog Posts</Heading>
+        <SubHeading as="h2">Thoughts, stories and ideas about software development and more.</SubHeading>
       </div>
 
       <div className="mx-auto max-w-4xl space-y-12">

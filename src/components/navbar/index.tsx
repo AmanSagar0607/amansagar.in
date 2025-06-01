@@ -7,9 +7,7 @@ import { Container } from "@/components/container";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useMotionValueEvent, useScroll, useTransform } from "motion/react";
-
-
-import React from 'react'
+import React from 'react';
 
 export const Navbar = () => {
     const navItems = [
