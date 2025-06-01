@@ -10,13 +10,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* font Inter */
-.inter {
-  font-family: "Inter", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 100 , 200 , 300 , 400 , 500 , 600 , 700 , 800 , 900;
-  font-style: normal;
-}
 
 @theme inline {
   --shadow-acceternity: 0px 2px 3px -1px rgba(0, 0, 0, 0.1),  0px 1px 0px 0px rgba(25, 28, 33, 0.02),
@@ -28,6 +21,14 @@
 .dark {
   --color-primary: var(--color-neutral-100);
   --color-secondary: var(--color-neutral-400);
+}
+
+/* font Inter */
+.inter {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 100 , 200 , 300 , 400 , 500 , 600 , 700 , 800 , 900;
+  font-style: normal;
 }
 
 .timeline-item {

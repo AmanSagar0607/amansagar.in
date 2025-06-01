@@ -3,174 +3,118 @@
 import { Timeline } from "@/components/ui/timeline-component";
 import { Briefcase, GraduationCap, Award, MapPin, Calendar } from "lucide-react";
 
+type TimelineItem = {
+  id: number;
+  year: string;
+  title: string;
+  company: string;
+  description: string;
+  date: string;
+  location: string;
+  icon: React.ReactNode;
+  type: 'work' | 'education';
+  score?: string;
+};
+
 export default function TimelinePage() {
-  const timelineData = [
+  const timelineItems: TimelineItem[] = [
     {
-      title: "2025",
-      content: (
-        <div className="space-y-6">
+      id: 1,
+      year: "2025",
+      title: "MERN Full Stack Developer",
+      company: "TW Solutions",
+      description: "Developed and maintained full-stack applications, implemented new features, and optimized performance for better user experience.",
+      date: "April 2025 - Present",
+      location: "Indore, MP",
+      icon: <Briefcase className="h-5 w-5 text-secondary bg-neutral-100 rounded-lg p-1 flex-shrink-0" />,
+      type: 'work'
+    },
+    {
+      id: 2,
+      year: "2024",
+      title: "Full Stack Developer",
+      company: "Khuladibba Enterprises",
+      description: "Developed and maintained full-stack applications, implemented new features, and optimized performance for better user experience.",
+      date: "Oct 2024 - Mar 2025",
+      location: "Remote",
+      icon: <Briefcase className="h-5 w-5 text-secondary bg-neutral-100 rounded-lg p-1 flex-shrink-0" />,
+      type: 'work'
+    },
+    {
+      id: 3,
+      year: "2020 - 2024",
+      title: "B.Tech in Computer Science",
+      company: "University Institute of Technology, RGPV Bhopal",
+      description: "Specialized in Computer Science with coursework in Data Structures, Algorithms, Web Development, and Database Management Systems.",
+      date: "2020 - 2024",
+      location: "Bhopal, MP",
+      icon: <GraduationCap className="h-5 w-5 text-secondary bg-neutral-100 rounded-lg p-1 flex-shrink-0" />,
+      type: 'education',
+      score: "7.15 CGPA"
+    },
+    {
+      id: 4,
+      year: "2018 - 2020",
+      title: "Higher Secondary (12th)",
+      company: "Scholars Public Higher Secondary School - MP Board",
+      description: "Specialized in Science with coursework in Physics, Chemistry, and Mathematics.",
+      date: "2018 - 2020",
+      location: "Indore, MP",
+      icon: <GraduationCap className="h-5 w-5 text-secondary bg-neutral-100 rounded-lg p-1 flex-shrink-0" />,
+      type: 'education',
+      score: "80%"
+    },
+    {
+      id: 5,
+      year: "2017 - 2018",
+      title: "High School (10th)",
+      company: "Rani Laxmi Bai Public Academy High School - MP Board",
+      description: "Specialized in Science with coursework in Physics, Chemistry, and Mathematics.",
+      date: "2017 - 2018",
+      location: "Indore, MP",
+      icon: <GraduationCap className="h-5 w-5 text-secondary bg-neutral-100 rounded-lg p-1 flex-shrink-0" />,
+      type: 'education',
+      score: "91.4%"
+    }
+  ];
+
+  const timelineData = timelineItems.map(item => ({
+    title: item.year,
+    content: (
+      <div className="space-y-6">
         <div className="bg-card">
           <div className="flex items-start gap-4">
-            <div className="w-full">
-              <div className="flex justify-between items-start">
-                <h4 className="text-base font-semibold inline-flex items-center">
-                  <Briefcase className="h-6 w-6 text-secondary bg-neutral-100 rounded-lg p-1" />
-                  <span className="ml-2">MERN Full Stack Developer</span>
+            <div className="w-full md:-ml-0 -ml-8">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+                <h4 className="text-base font-semibold flex items-center">
+                  {item.icon}
+                  <span className="ml-2">{item.title}</span>
                 </h4>
-                <div className="flex items-center gap-4 text-sm text-secondary">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-secondary">
                   <span className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    April 2025 - Present
+                    <Calendar className="h-4 w-4 flex-shrink-0" />
+                    <span>{item.date}</span>
                   </span>
-                  <span className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                   Indore, MP
+                  <span className="flex items-center gap-1 sm:ml-0">
+                    {item.type === 'education' ? (
+                      <Award className="h-4 w-4 flex-shrink-0" />
+                    ) : (
+                      <MapPin className="h-4 w-4 flex-shrink-0" />
+                    )}
+                    <span>{item.type === 'education' ? item.score : item.location}</span>
                   </span>
                 </div>
               </div>
-              <p className="text-muted-foreground text-sm mt-1">TW Solutions</p>
+              <p className="text-muted-foreground text-sm mt-2">{item.company}</p>
               <p className="mt-1.5 text-sm text-secondary">
-                Developed and maintained full-stack applications, implemented new features, and optimized performance for better user experience.
+                {item.description}
               </p>
             </div>
           </div>
         </div>
       </div>
-      ),
-    },
-    {
-      title: "2024",
-      content: (
-        <div className="space-y-6">
-          <div className="bg-card">
-            <div className="flex items-start gap-4">
-              <div className="w-full">
-                <div className="flex justify-between items-start">
-                  <h4 className="text-base font-semibold inline-flex items-center">
-                    <Briefcase className="h-6 w-6 text-secondary bg-neutral-100 rounded-lg p-1" />
-                    <span className="ml-2">Full Stack Developer</span>
-                  </h4>
-                  <div className="flex items-center gap-4 text-sm text-secondary">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      Oct 2024 - Mar 2025
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      Remote
-                    </span>
-                  </div>
-                </div>
-                <p className="text-muted-foreground text-sm mt-1">Khuladibba Enterprises</p>
-                <p className="mt-1 text-sm text-secondary">
-                  Developed and maintained full-stack applications, implemented new features, and optimized performance for better user experience.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "2020 - 2024",
-      content: (
-        <div className="space-y-6">
-          <div className="bg-card">
-            <div className="flex items-start gap-4">
-              <div className="w-full">
-                <div className="flex justify-between items-start">
-                  <h4 className="text-base font-semibold inline-flex items-center">
-                    <GraduationCap className="h-6 w-6 text-secondary bg-neutral-100 rounded-lg p-1" />
-                    <span className="ml-2">B.Tech in Computer Science</span>
-                  </h4>
-                  <div className="flex items-center gap-4 text-sm text-secondary">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      2020 - 2024
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Award className="h-4 w-4" />
-                      7.15 CGPA
-                    </span>
-                  </div>
-                </div>
-                <p className="text-muted-foreground text-sm mt-1">University Institute of Technology, RGPV Bhopal</p>
-                <p className="mt-1.5 text-sm text-secondary">
-                  Specialized in Computer Science with coursework in Data Structures, Algorithms, Web Development, and Database Management Systems.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "2018 - 2020",
-      content: (
-        <div className="space-y-6">
-          <div className="bg-card">
-            <div className="flex items-start gap-4">
-              <div className="w-full">
-                <div className="flex justify-between items-start">
-                  <h4 className="text-base font-semibold inline-flex items-center">
-                    <GraduationCap className="h-6 w-6 text-secondary bg-neutral-100 rounded-lg p-1" />
-                    <span className="ml-2">Higher Secondary (12th)</span>
-                  </h4>
-                  <div className="flex items-center gap-4 text-sm text-secondary">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      2018 - 2020
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Award className="h-4 w-4" />
-                     80%
-                    </span>
-                  </div>
-                </div>
-                <p className="text-muted-foreground text-sm mt-1">Scholars Public Higher Secondary School - MP Board</p>
-                <p className="mt-1.5 text-sm text-secondary">
-                  Specialized in Science with coursework in Physics, Chemistry, and Mathematics.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      title: "2017 - 2018",
-      content: (
-        <div className="space-y-6">
-          <div className="bg-card">
-            <div className="flex items-start gap-4">
-              <div className="w-full">
-                <div className="flex justify-between items-start">
-                  <h4 className="text-base font-semibold inline-flex items-center">
-                    <GraduationCap className="h-6 w-6 text-secondary bg-neutral-100 rounded-lg p-1" />
-                    <span className="ml-2">High School (10th)</span>
-                  </h4>
-                  <div className="flex items-center gap-4 text-sm text-secondary">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      2017 - 2018
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Award className="h-4 w-4" />
-                     91.4%
-                    </span>
-                  </div>
-                </div>
-                <p className="text-muted-foreground text-sm mt-1">Rani Laxmi Bai Public Academy High School - MP Board</p>
-                <p className="mt-1.5 text-sm text-secondary">
-                  Specialized in Science with coursework in Physics, Chemistry, and Mathematics.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-    },
-  ];
+    )
+  }));
 
   return (
     <div className="min-h-screen">

@@ -34,9 +34,9 @@ export const Timeline = ({
   const [height, setHeight] = useState(0);
 
   useEffect(() => {
-    if (ref.current) {
-      const rect = ref.current.getBoundingClientRect();
-      setHeight(rect.height);
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      setHeight(rect.height); // Use containerRef to capture full timeline height
     }
 
     const handleScroll = () => {
@@ -64,7 +64,7 @@ export const Timeline = ({
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 10%", "end 50%"],
+    offset: ["start start", "end end"], // Adjusted offset to cover full container
   });
 
   const heightTransform = useTransform(scrollYProgress, [0, 1], [0, height]);
@@ -80,7 +80,7 @@ export const Timeline = ({
         <p className="text-secondary pt-2 text-sm">{description}</p>
       </div>
 
-      <div ref={ref} className="relative mx-auto max-w-7xl pb-20 pl-4">
+      <div ref={ref} className="relative mx-auto max-w-7xl pb-20 md:pl-4 pl-0">
         {/* Timeline line */}
         <div className="bg-nfrom-muted via-muted/50 to-muted/0 absolute top-0 bottom-0 left-5 w-0.5" />
 
@@ -115,13 +115,13 @@ export const Timeline = ({
         ))}
 
         {/* Animated progress line */}
-        <motion.div
+        {/* <motion.div
           style={{
             height: heightTransform,
             opacity: opacityTransform,
           }}
-          className="absolute top-0 left-4 w-0.5 bg-gradient-to-t from-neutral-300 via-neutral-300/50 to-transparent"
-        />
+          className="absolute top-0 left-0 md:left-4 w-0.5 bg-gradient-to-t from-neutral-300 via-neutral-300/50 to-transparent"
+        /> */}
       </div>
     </div>
   );

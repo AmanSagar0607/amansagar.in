@@ -1,5 +1,6 @@
 import { Container } from "@/components/container";
 import Timeline from "@/components/timeline";
+import { Projects } from "@/components/projects";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
           excelling in BUSINESS AI and WORKFLOW AUTOMATION with MAKE.COM.
         </p>
         <Timeline/>
+        <Projects/>
       </Container>
     </div>
   );
