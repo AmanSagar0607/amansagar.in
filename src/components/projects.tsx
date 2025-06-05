@@ -4,42 +4,19 @@ import React from 'react'
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
+import { Project, projects as defaultProjects } from '@/constants/projects';
+import { SectionHeading } from "./section-heading";
 
-
-export const Projects = () => {
-    const projects = [
-        {
-          title: "Project 1",
-          description: "Description of project 1",
-          src: "https://aceternity.com/cdn-cgi/image/width=2048/https://assets.aceternity.com/macbook-scroll.png",
-          link: "https://example.com/project1",
-        },
-        {
-          title: "Project 2",
-          description: "Description of project 2",
-          src: "https://aceternity.com/cdn-cgi/image/width=2048/https://assets.aceternity.com/text-hover-effect.webp",
-          link: "https://example.com/project2",
-        },
-        {
-          title: "Project 3",
-          description: "Description of project 3",
-          src: "https://aceternity.com/cdn-cgi/image/width=2048/https://assets.aceternity.com/floating-dock.png",
-          link: "https://example.com/project3",
-        },
-        {
-          title: "Background Gradient Animation",
-          description: "A smooth and elegant background gradient animation that changes the gradient position over time.",
-          src: "https://aceternity.com/cdn-cgi/image/width=2048/https://assets.aceternity.com/background-gradient-animation.png",
-          link: "https://example.com/project4",
-        },
-      ];
+export const Projects = ({projects = defaultProjects}: {projects?: Project[]}) => {
+  
       
   return (
     <div className='py-10'>
         <h4 className='text-primary font-bold text-2xl'>Projects</h4>
-        <p className='text-secondary  pt-2 text-sm md:text-sm'>
+        {/* <p className='text-secondary  pt-2 text-sm md:text-sm'>
         I love building web apps and prodcuts that can make a difference in the world.
-    </p>
+    </p> */}
+    <SectionHeading delay={0.2}> I love building web apps and prodcuts that can make a difference in the world.</SectionHeading>
     <div className='grid grid-cols-1 md:grid-cols-2 py-4 gap-4 mt-4'>
         {projects.map((project, idx) => (
           <motion.div

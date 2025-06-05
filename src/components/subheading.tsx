@@ -7,8 +7,9 @@ export const SubHeading = ({as: Tag = "h2", children, className }: {as: "h2" | "
   return (
     <motion.div
         initial={{ opacity: 0 , filter: "blur(10px)", y:10}}
-        animate={{ opacity: 1 , filter: "blur(0px)", y:0}}
+        whileInView={{ opacity: 1 , filter: "blur(0px)", y:0}}
         transition={{ duration: 0.3, ease: "easeInOut" }}
+        viewport={{once: true}}
         >
     <Tag className={cn(`text-secondary max-w-lg pt-4 text-sm md:text-base`, className)}>
       {children}

@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from "next/font/google";
 import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/navbar/footer";
 import "./globals.css"
-
+import { Toaster } from "sonner";
 // Using Inter as the primary font
 const inter = Inter({ 
   subsets: ["latin"],
@@ -43,11 +44,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
         className={`${inter.variable} font-sans antialiased bg-neutral-100 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 transition-colors duration-200`}
       >
         <div className="min-h-screen flex flex-col">
+          <Toaster position="top-center" richColors />
           <Navbar />
           <main className="flex-grow">
             {children}
           </main>
-          {/* Add your footer component here if you have one */}
+          <Footer />
         </div>
       </body>
     </html>
