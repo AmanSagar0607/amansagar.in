@@ -12,7 +12,7 @@ export const Heading = ({as: Tag = "h1", children, className }: {as: "h1" | "h2"
     transition={{ duration: 0.3, ease: "easeInOut" , delay: 0.2}}
     viewport={{once: true}}
     >
-    <Tag className={cn(`text-primary drop-shadow-sm text-2xl font-bold tracking-tight md:text-4xl`, className)}>
+    <Tag className={cn(`text-primary dark:text-white/90 drop-shadow-sm text-2xl font-bold tracking-tight md:text-4xl`, className)}>
       {children}
     </Tag>
     </motion.div>

@@ -12,7 +12,7 @@ export const Projects = ({projects = defaultProjects}: {projects?: Project[]}) =
       
   return (
     <div className='py-10'>
-        <h4 className='text-primary font-bold text-2xl'>Projects</h4>
+        <h4 className='text-primary dark:text-white/90 font-bold text-2xl'>Projects</h4>
         {/* <p className='text-secondary  pt-2 text-sm md:text-sm'>
         I love building web apps and prodcuts that can make a difference in the world.
     </p> */}

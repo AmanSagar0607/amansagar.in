@@ -50,7 +50,7 @@ export const ContactForm = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto flex max-w-lg flex-col gap-5 py-10"
+      className="mx-auto flex max-w-3xl flex-col gap-5 py-10"
     >
       <div className="flex flex-col gap-2">
         <label
@@ -64,7 +64,7 @@ export const ContactForm = () => {
           name="name"
           type="text"
           placeholder="Name"
-          className="shadow-acceternity focus:ring-primary rounded-md p-2 text-sm focus:ring-2 focus:outline-none"
+          className="shadow-acceternity dark:bg-neutral-800  focus:ring-primary rounded-md p-2 text-sm focus:ring-2 focus:outline-none"
           value={formdata.name}
           onChange={handleChange}
         />
@@ -79,7 +79,7 @@ export const ContactForm = () => {
           name="email"
           type="email"
           placeholder="amansagar0607@gmail.com"
-          className="shadow-acceternity rounded-md p-2 text-sm"
+          className="shadow-acceternity dark:bg-neutral-800  focus:ring-primary rounded-md p-2 text-sm focus:ring-2 focus:outline-none"
           value={formdata.email}
           onChange={handleChange}
         />
@@ -94,14 +94,14 @@ export const ContactForm = () => {
           id="message"
           name="message"
           placeholder="You'r Crazy nigbbourhood freelacer"
-          className="shadow-acceternity resize-none rounded-md p-2 text-sm"
+          className="shadow-acceternity dark:bg-neutral-800  focus:ring-primary resize-none rounded-md p-2 text-sm focus:ring-2 focus:outline-none"
           value={formdata.message}
           onChange={handleChange}
         />
       </div>
       <Button
         type="submit"
-        className="bg-black hover:bg-black/80 mt-4 rounded-md px-4 py-2 text-white"
+        className="bg-black dark:bg-primary hover:bg-black/80 mt-4 rounded-md px-4 py-2 text-white"
         >
         Send Message
       </Button>

@@ -164,19 +164,19 @@ export default async function BlogPost({
           )} */}
 
           {/* Title - Made more prominent like Medium */}
-          <h1 className="mb-4 text-4xl leading-tight font-bold tracking-tight text-neutral-600 md:text-[40px] lg:text-[40px]">
+          <h1 className="mb-4 text-4xl leading-tight font-bold tracking-tight text-neutral-600 dark:text-neutral-200 md:text-[40px] lg:text-[40px]">
             {metadata.title}
           </h1>
 
           {/* Description */}
           {metadata.description && (
-            <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
+            <p className="text-muted-foreground dark:text-neutral-400 mb-6 text-lg leading-relaxed">
               {metadata.description}
             </p>
           )}
 
           {/* Author and Metadata */}
-          <div className="text-muted-foreground mb-6 flex flex-col items-start justify-between gap-3 border-b border-neutral-100 pb-4 sm:flex-row sm:items-center">
+          <div className="text-muted-foreground dark:text-neutral-300 mb-6 flex flex-col items-start justify-between gap-3 border-b border-neutral-100 dark:border-neutral-800 pb-4 sm:flex-row sm:items-center">
             <div className="flex items-center gap-3">
               <Image
                 src="/avatar.webp"
@@ -189,7 +189,7 @@ export default async function BlogPost({
                 <div className="text-foreground text-lg font-medium">
                   {metadata.author}
                 </div>
-                <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                <div className="text-muted-foreground dark:text-neutral-300 flex items-center gap-2 text-sm">
                   <time dateTime={metadata.date}>
                     {new Date(metadata.date).toLocaleDateString("en-US", {
                       year: "numeric",
@@ -207,14 +207,14 @@ export default async function BlogPost({
             <div className="flex items-center gap-4 text-sm">
               {metadata.views !== undefined && (
                 <div className="flex items-center gap-1">
-                  <span>👁️</span>
-                  <span>
+                  <span className="dark:text-neutral-300">👁️</span>
+                  <span className="dark:text-neutral-300">
                     {metadata.views} {metadata.views === 1 ? "view" : "views"}
                   </span>
                 </div>
               )}
               <div className="ml-2 flex items-center gap-2">
-                <span className="text-muted-foreground text-sm">Share:</span>
+                <span className="text-muted-foreground dark:text-neutral-300 text-sm">Share:</span>
                 <div className="relative inline-flex">
                   <ShareButton title={metadata.title} slug={slug} />
                 </div>
@@ -241,7 +241,7 @@ export default async function BlogPost({
               {metadata.tags.map((tag) => (
                 <span
                   key={tag}
-                                       className="inline-flex items-center rounded-full border border-neutral-200 px-2 py-0.5 text-[10px] font-medium text-secondary bg-neutral-50 hover:bg-neutral-100"
+                  className="inline-flex items-center rounded-full border border-neutral-200 px-2 py-0.5 text-[10px] font-medium text-secondary bg-neutral-50 hover:bg-neutral-100 dark:bg-primary/40 dark:border-primary/20 dark:text-white/90 dark:hover:bg-primary/60 transition-colors duration-200"
                 >
                   {tag}
                 </span>

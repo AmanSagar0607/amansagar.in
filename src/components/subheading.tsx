@@ -11,7 +11,7 @@ export const SubHeading = ({as: Tag = "h2", children, className }: {as: "h2" | "
         transition={{ duration: 0.3, ease: "easeInOut" }}
         viewport={{once: true}}
         >
-    <Tag className={cn(`text-secondary max-w-lg pt-4 text-sm md:text-base`, className)}>
+    <Tag className={cn(`text-secondary dark:text-white/60 max-w-lg pt-4 text-sm md:text-base`, className)}>
       {children}
     </Tag>
     </motion.div>

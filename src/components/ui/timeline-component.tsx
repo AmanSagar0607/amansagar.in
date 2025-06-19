@@ -76,8 +76,8 @@ export const Timeline = ({
       ref={containerRef}
     >
       <div className="mx-auto max-w-7xl py-10">
-        <h4 className="text-primary text-2xl font-bold">{title}</h4>
-        <p className="text-secondary pt-2 text-sm">{description}</p>
+        <h4 className="text-primary text-2xl font-bold dark:text-white/80">{title}</h4>
+        <p className="text-secondary pt-2 text-sm dark:text-white/60">{description}</p>
       </div>
 
       <div ref={ref} className="relative mx-auto max-w-7xl pb-20 md:pl-4 pl-0">
@@ -101,7 +101,7 @@ export const Timeline = ({
                 )}
               >
                 {activeIndex === index && (
-                  <Check className="h-3 w-3 text-white " />
+                  <Check className="h-3 w-3 text-white  " />
                 )}
               </div>
               <h3 className="text-neutral-700 text-md font-bold rounded-md shadow-acceternity w-fit px-4 py-0">

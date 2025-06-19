@@ -10,8 +10,8 @@ import { Container } from "@/components/container";
 export const Footer = () => {
   return (
     <Container>
-    <div className="flex items-center justify-between border-t px-6 py-3 border-neutral-100">
-      <p className="text-xs text-neutral-500">Built with love by Aman Sagar</p>
+    <div className="flex items-center justify-between border-t px-6 py-3 border-neutral-100 dark:border-neutral-800">
+      <p className="text-xs text-neutral-500 dark:text-neutral-400">Built with love by Aman Sagar</p>
       <div className="flex items-center justify-center gap-4">
         <Link href="https://github.com/amansagar0307">
           <IconBrandGithub className="size-5 text-neutral-500 hover:text-neutral-700" />

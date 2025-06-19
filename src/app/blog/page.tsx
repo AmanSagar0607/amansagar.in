@@ -50,7 +50,7 @@ export default async function BlogPage() {
                   <h2 className="text-2xl font-bold tracking-tight text-[#242424]">
                     <Link
                       href={`/blog/${post.slug}`}
-                      className="text-foreground no-underline hover:underline"
+                      className="text-foreground no-underline hover:underline dark:text-neutral-400"
                     >
                       {post.frontmatter.title}
                     </Link>
@@ -68,7 +68,7 @@ export default async function BlogPage() {
                     <span>{post.frontmatter.readTime || '5 min read'}</span> */}
                   </div>
                 </div>
-                <p className="mt-1 text-secondary max-w-md md:max-w-lg">
+                <p className="mt-1 text-secondary  max-w-md md:max-w-lg">
                   {post.frontmatter.description}
                 </p>
                 {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
@@ -76,8 +76,8 @@ export default async function BlogPage() {
                     {post.frontmatter.tags.slice(0, 3).map((tag: string) => (
                       <span
                         key={tag}
-                      className="inline-flex items-center rounded-full border border-neutral-200 px-2 py-0.5 text-[10px] font-medium text-secondary bg-neutral-50 hover:bg-neutral-100"
-                      >
+                        className="inline-flex items-center rounded-full border border-neutral-200 px-2 py-0.5 text-[10px] font-medium text-secondary bg-neutral-50 hover:bg-neutral-100 dark:bg-primary/40 dark:border-primary/20 dark:text-white/90 dark:hover:bg-primary/60 transition-colors duration-200"
+                        >
                         {tag}
                       </span>
                     ))}

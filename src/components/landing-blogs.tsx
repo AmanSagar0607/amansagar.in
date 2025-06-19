@@ -97,7 +97,7 @@ export async function LandingBlogs() {
                     {post.frontmatter.tags.map((tag: string) => (
                       <span
                         key={tag}
-                        className="text-secondary inline-flex items-center rounded-full border border-neutral-200 bg-neutral-50 px-2 py-0.5 text-[10px] font-medium hover:bg-neutral-100"
+                        className="inline-flex items-center rounded-full border border-neutral-200 px-2 py-0.5 text-[10px] font-medium text-secondary bg-neutral-50 hover:bg-neutral-100 dark:bg-primary/40 dark:border-primary/20 dark:text-white/90 dark:hover:bg-primary/60 transition-colors duration-200"
                       >
                         {tag}
                       </span>
@@ -122,7 +122,7 @@ export async function LandingBlogs() {
       <div className="mt-8 text-center">
         <Link
           href="/blog"
-          className="text-primary inline-flex items-center text-sm font-medium hover:underline"
+          className="text-primary/50 dark:text-white/40 inline-flex items-center text-sm font-medium hover:underline"
         >
           View all articles <span className="ml-1">→</span>
         </Link>
