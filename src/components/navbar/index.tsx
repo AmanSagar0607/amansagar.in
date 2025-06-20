@@ -106,7 +106,7 @@ export const Navbar = () => {
             transition={{ duration: 0.3 }}
           >
             <Image
-              className="h-8 w-8 rounded-full md:h-10 md:w-10"
+              className="h-10 w-10 rounded-full md:h-10 md:w-10"
               src="/aman-avatar.webp"
               alt="Avatar"
               width={100}
@@ -121,7 +121,7 @@ export const Navbar = () => {
           <div className={`${isMobile ? "hidden" : "flex"} items-center gap-4`}>
             {navItems.map((item, idx) => (
               <Link
-                className="relative px-2 py-1 text-sm text-neutral-700 hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white transition-colors duration-200"
+                className="relative px-2 py-1 text-sm text-primary hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white transition-colors duration-200"
                 key={idx}
                 href={item.href}
                 onMouseEnter={() => setHovered(idx)}
