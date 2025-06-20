@@ -45,6 +45,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'assets.aceternity.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'raw.githubusercontent.com',
+      },
     ],
     minimumCacheTTL: 60 * 60 * 24 * 7, // 1 week
     formats: ['image/avif', 'image/webp'],

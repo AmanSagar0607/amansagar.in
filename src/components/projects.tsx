@@ -1,23 +1,35 @@
 "use client";
 
-import React from 'react'
+import React from 'react';
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { Project, projects as defaultProjects } from '@/constants/projects';
 import { SectionHeading } from "./section-heading";
 
-export const Projects = ({projects = defaultProjects}: {projects?: Project[]}) => {
-  
-      
+interface ProjectsProps {
+  projects?: Project[];
+  showHeader?: boolean;
+  showViewAll?: boolean;
+}
+
+export const Projects = ({ 
+  projects = defaultProjects, 
+  showHeader = false,
+  showViewAll = false
+}: ProjectsProps) => {
   return (
     <div className='py-10'>
-        <h4 className='text-primary dark:text-white/90 font-bold text-2xl'>Projects</h4>
-        {/* <p className='text-secondary  pt-2 text-sm md:text-sm'>
-        I love building web apps and prodcuts that can make a difference in the world.
-    </p> */}
-    <SectionHeading delay={0.2}> I love building web apps and prodcuts that can make a difference in the world.</SectionHeading>
-    <div className='grid grid-cols-1 md:grid-cols-2 py-4 gap-4 mt-4'>
+      {showHeader && (
+        <>
+          <h4 className='text-primary dark:text-white/90 font-bold text-2xl'>Projects</h4>
+          <SectionHeading delay={0.2}>
+            I love building web apps and products that can make a difference in the world.
+          </SectionHeading>
+        </>
+      )}
+      
+      <div className='grid grid-cols-1 md:grid-cols-2 py-4 gap-4 mt-4'>
         {projects.map((project, idx) => (
           <motion.div
             key={project.title}
@@ -49,11 +61,11 @@ export const Projects = ({projects = defaultProjects}: {projects?: Project[]}) =
                     alt={project.title} 
                     width={500} 
                     height={500}
-                    priority={idx < 2} // Add priority to first two images for better LCP
-                    className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+                    priority={idx < 2}
+                    className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 rounded-2xl border-1 border-neutral-200"
                   />
                 </motion.div>
-                <div className="absolute inset-0 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/80 to-transparent">
+                <div className="absolute inset-0 flex bg-primary flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/80 to-transparent">
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -68,7 +80,8 @@ export const Projects = ({projects = defaultProjects}: {projects?: Project[]}) =
                     >
                       {project.title}
                     </motion.h2>
-                    <motion.div className="w-12 h-0.5 bg-white/30 mb-2"
+                    <motion.div 
+                      className="w-12 h-0.5 bg-white/30 mb-2"
                       initial={{ scaleX: 0 }}
                       whileInView={{ scaleX: 1 }}
                       transition={{ delay: 0.2, duration: 0.4 }}
@@ -87,7 +100,20 @@ export const Projects = ({projects = defaultProjects}: {projects?: Project[]}) =
             </Link>
           </motion.div>
         ))}
+      </div>
+      
+      {showViewAll && (
+        <div className="mt-6 flex justify-center">
+          <Link
+            href="/projects"
+            className="text-secondary inline-flex items-center text-sm font-medium hover:underline"
+          >
+            <span className="hidden sm:inline">View all projects</span>
+            <span className="sm:hidden">View all</span>
+            <span className="ml-1">→</span>
+          </Link>
+        </div>
+      )}
     </div>
-    </div>
-  )
-}
+  );
+};
