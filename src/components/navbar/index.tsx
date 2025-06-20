@@ -96,7 +96,7 @@ export const Navbar = () => {
           ease: "easeInOut",
         }}
         className={`hover:shadow-primary/20  fixed inset-x-0 top-4 z-50 mx-auto flex max-w-[725px] items-center justify-between rounded-full p-1 backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:backdrop-blur-md ${
-          scrolled ? "shadow-acceternity bg-background/40" : "bg-background/50"
+          scrolled ? "shadow-acceternity  bg-background/40" : "bg-background/50"
         } ${isMobile ? "w-[90%]" : ""}`}
       >
         <Link href="/" className="z-50">

@@ -44,18 +44,18 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
         <button
           onClick={handleCopy}
           className={cn(
-            "absolute right-5 top-5 p-1.5 rounded-md",
-            "bg-gray-100 dark:bg-gray-700 backdrop-blur-sm",
-            "text-secondary hover:text-primary dark:text-gray-300 dark:hover:text-white",
+            "absolute right-6 top-6 p-1.5 rounded-md",
+            "bg-gray-900 dark:bg-gray-700 backdrop-blur-sm",
+            "text-white hover:text-white dark:text-gray-300 dark:hover:text-white",
             "transition-all duration-200",
             "flex items-center justify-center"
           )}
           aria-label="Copy code"
         >
           {copied ? (
-            <Check className="h-3.5 w-3.5 text-primary" />
+            <Check className="h-3.5 w-3.5 text-white" />
           ) : (
-            <Copy className="h-3.5 w-3.5" />
+            <Copy className="h-3.5 w-3.5 text-white" />
           )}
         </button>
         <code className="font-mono block">
