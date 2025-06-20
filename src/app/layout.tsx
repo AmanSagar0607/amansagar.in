@@ -98,11 +98,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/aman-favicon.ico" sizes="any" />
       </head>
       <body
         suppressHydrationWarning
-        className={`${inter.variable} font-sans antialiased bg-neutral-100 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 transition-colors duration-200`}
+        className={`${inter.variable} font-sans antialiased dark:bg-black/90 text-neutral-900 dark:text-neutral-100 transition-colors duration-200`}
       >
         <ThemeProvider
           attribute="class"

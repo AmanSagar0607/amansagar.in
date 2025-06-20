@@ -106,8 +106,8 @@ export const Navbar = () => {
             transition={{ duration: 0.3 }}
           >
             <Image
-              className="h-10 w-10 rounded-full md:h-12 md:w-12"
-              src="/avatar.webp"
+              className="h-8 w-8 rounded-full md:h-10 md:w-10"
+              src="/aman-avatar.webp"
               alt="Avatar"
               width={100}
               height={100}
