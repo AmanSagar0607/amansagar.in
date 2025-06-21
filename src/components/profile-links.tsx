@@ -11,7 +11,6 @@ import { MailOpen } from "lucide-react";
 
 export const ProfileLinks = () => {
   return (
-    <Container>
       <div className="flex items-center border-neutral-100 pt-6 dark:border-neutral-800">
         {/* <p className="text-xs text-neutral-500 dark:text-neutral-400">Built with love by Aman Sagar</p> */}
 
@@ -68,6 +67,6 @@ export const ProfileLinks = () => {
           </Link> */}
         </div>
       </div>
-    </Container>
+    
   );
 };

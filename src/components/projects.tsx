@@ -4,7 +4,8 @@ import React from 'react';
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { Project, projects as defaultProjects } from '@/constants/projects';
+import { projects as defaultProjects } from '@/constants/projects';
+import { Project } from '@/types/project';
 import { SectionHeading } from "./section-heading";
 
 interface ProjectsProps {
@@ -62,7 +63,7 @@ export const Projects = ({
                     width={500} 
                     height={500}
                     priority={idx < 2}
-                    className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 rounded-2xl border-1 border-neutral-200"
+                    className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105 rounded-2xl border-1 border-neutral-200 dark:border-neutral-800"
                   />
                 </motion.div>
                 <div className="absolute inset-0 flex bg-primary flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-black/80 to-transparent">

@@ -49,6 +49,18 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'raw.githubusercontent.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'github.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.githubusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+      },
     ],
     minimumCacheTTL: 60 * 60 * 24 * 7, // 1 week
     formats: ['image/avif', 'image/webp'],

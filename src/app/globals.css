@@ -45,3 +45,12 @@
   transform: scale(1.1);
 }
 
+/* Custom selection color */
+::selection {
+  @apply bg-primary text-white; /* Change to your primary color */
+}
+
+/* For Firefox */
+::-moz-selection {
+  @apply bg-primary text-white; /* Change to your primary color */
+}
