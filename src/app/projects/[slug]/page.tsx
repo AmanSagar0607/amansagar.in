@@ -65,7 +65,7 @@ export default function ProjectPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen flex items-start justify-center bg-neutral-50 dark:bg-neutral-950">
+    <div className="min-h-screen flex items-start justify-center ">
       <Container className="min-h-screen py-24 md:py-24 px-4 md:px-8">
         <Link
           href="/projects"
@@ -226,31 +226,17 @@ export default function ProjectPage({ params }: Props) {
                     </a>
                   </div>
                 )}
-
-                {(project.designTools?.length ?? 0) > 0 && (
-                  <div>
-                    <p className="text-xs text-neutral-500 mb-1">Design Tools</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      <TechStack technologies={project.designTools} />
-                    </div>
-                  </div>
-                )}
-
-                {(project.developmentTools?.length ?? 0) > 0 && (
-                  <div>
-                    <p className="text-xs text-neutral-500 mb-1">Development Tools</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      <TechStack technologies={project.developmentTools} />
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
 
             {/* Technology Stack */}
-            <div className="p-5 bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800">
-              <h3 className="font-medium mb-4">Technology Stack</h3>
-              <TechStack technologies={project.technologies} />
+            <div className="p-5 bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 space-y-4">
+              <h3 className="font-medium">Technology Stack</h3>
+              <TechStack 
+                technologies={project.technologies}
+                developmentTools={project.developmentTools}
+                designTools={project.designTools}
+              />
             </div>
           </div>
         </div>
