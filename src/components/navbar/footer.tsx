@@ -5,7 +5,7 @@ import {
   IconBrandLinkedin,
   IconBrandX,
 } from "@tabler/icons-react";
-import { Container } from "@/components/container";
+import { Container } from "@/components/Container";
 
 export const Footer = () => {
   return (

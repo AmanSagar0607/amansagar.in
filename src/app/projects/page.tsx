@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { getAllProjects } from "@/lib/projects";
-import { Container } from "@/components/container";
+import { Container } from "@/components/Container";
 import { Heading } from "@/components/heading";
 
 export const metadata: Metadata = {

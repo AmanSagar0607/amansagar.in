@@ -1,4 +1,4 @@
-import { Container } from "@/components/container";
+import { Container } from "@/components/Container";
 import { Projects } from "@/components/projects";
 import { LandingBlogs } from "@/components/landing-blogs";
 import { Heading } from "@/components/heading";

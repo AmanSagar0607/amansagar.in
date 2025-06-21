@@ -6,7 +6,7 @@ import {
   IconBrandX,
   IconBrandBehance,
 } from "@tabler/icons-react";
-import { Container } from "@/components/container";
+import { Container } from "@/components/Container";
 import { MailOpen } from "lucide-react";
 
 export const ProfileLinks = () => {

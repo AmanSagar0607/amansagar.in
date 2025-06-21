@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Container } from "@/components/container";
+import { Container } from "@/components/Container";
 import Image from "next/image";
 import Link from "next/link";
 import {

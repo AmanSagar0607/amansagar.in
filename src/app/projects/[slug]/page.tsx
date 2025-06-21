@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, Github, Code, LayoutGrid, Lightbulb, Zap, GitBranch, Clock, Users, GitCommit } from "lucide-react";
 import { getProjectBySlug, getAllProjects } from "@/lib/projects";
-import { Container } from "@/components/container";
+import { Container } from "@/components/Container";
 import { Heading } from "@/components/heading";
 import { TechStack } from "@/components/ui/tech-stack";
 
