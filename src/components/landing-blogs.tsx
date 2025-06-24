@@ -1,8 +1,19 @@
+import React, { ReactNode } from 'react';
 import Link from "next/link";
 import { Calendar, Dot } from "lucide-react";
 import { getMDXFiles, type MDXFile } from "@/lib/mdx-utils";
 import { SectionHeading } from "./section-heading";
 import { MotionDiv } from "./motion-div";
+
+// Type definitions for JSX elements
+type JSXElement = React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      [elemName: string]: JSXElement;
+    }
+  }
+}
 
 interface BlogPostFrontmatter {
   title: string;
@@ -15,11 +26,15 @@ interface BlogPost extends Omit<MDXFile, 'frontmatter'> {
   frontmatter: BlogPostFrontmatter;
 }
 
-export async function LandingBlogs() {
+interface LandingBlogsProps {
+  children?: ReactNode;
+}
+
+export const LandingBlogs: React.FC<LandingBlogsProps> = async () => {
   const posts = (await getMDXFiles("src/content/posts")) as unknown as BlogPost[];
   const recentPosts = posts.slice(0, 2); // Show 2 most recent posts
   
-  const formatDate = (dateString?: string) => {
+  const formatDate = (dateString?: string): string => {
     if (!dateString) return 'No date';
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -29,7 +44,7 @@ export async function LandingBlogs() {
     });
   };
   
-  const formatLongDate = (dateString?: string) => {
+  const formatLongDate = (dateString?: string): string => {
     if (!dateString) return 'No date';
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
