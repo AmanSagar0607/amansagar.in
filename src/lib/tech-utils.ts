@@ -3,20 +3,6 @@ import { Technology } from "@/types/project";
 type TechCategory = Technology['category'];
 
 /**
- * Normalizes technology names to ensure consistency
- */
-const normalizeTechName = (name: string): string => {
-  return name
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]/g, '') // Remove special characters
-    .replace('js', '') // Remove common suffixes
-    .replace('ts', '')
-    .replace('css', '')
-    .replace('html', '');
-};
-
-/**
  * Gets the category for a technology based on its name
  */
 const getTechCategory = (name: string): TechCategory => {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Copy, Link as LinkIcon, Twitter, Share2 } from 'lucide-react';
+import { Link as LinkIcon, Twitter, Share2 } from 'lucide-react';
 import { Button } from './button';
 import { cn } from '@/lib/utils';
 

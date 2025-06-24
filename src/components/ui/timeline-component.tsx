@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
@@ -67,8 +67,9 @@ export const Timeline = ({
     offset: ["start start", "end end"], // Adjusted offset to cover full container
   });
 
-  const heightTransform = useTransform(scrollYProgress, [0, 1], [0, height]);
-  const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+  // Transform values for scroll-based animations
+  const _heightTransform = useTransform(scrollYProgress, [0, 1], [0, height]);
+  const _opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
   return (
     <div

@@ -2,10 +2,16 @@ import fs from 'fs';
 import path from 'path';
 import { compileMDX } from 'next-mdx-remote/rsc';
 
+interface Frontmatter {
+  title?: string;
+  date?: string;
+  [key: string]: unknown; // For any additional frontmatter fields
+}
+
 interface MDXFile {
   slug: string;
   content: string;
-  frontmatter: Record<string, any>;
+  frontmatter: Frontmatter;
 }
 
 export async function getMDXFiles(directory: string): Promise<MDXFile[]> {
@@ -25,15 +31,21 @@ export async function getMDXFiles(directory: string): Promise<MDXFile[]> {
         return {
           slug: file.replace(/\.mdx$/, ''),
           content: fileContent,
-          frontmatter: frontmatter as Record<string, any>,
+          frontmatter: {
+            ...(frontmatter as Record<string, unknown>),
+            title: frontmatter?.title || '',
+            date: frontmatter?.date || new Date().toISOString(),
+          } as Frontmatter,
         };
       })
     );
     
     // Sort posts by date in descending order (newest first)
-    return posts.sort((a, b) => 
-      new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime()
-    );
+    return posts.sort((a, b) => {
+      const dateA = a.frontmatter.date ? new Date(a.frontmatter.date).getTime() : 0;
+      const dateB = b.frontmatter.date ? new Date(b.frontmatter.date).getTime() : 0;
+      return dateB - dateA;
+    });
   } catch (error) {
     console.error('Error reading MDX files:', error);
     return [];
