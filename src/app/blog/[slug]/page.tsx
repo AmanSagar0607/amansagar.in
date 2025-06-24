@@ -10,9 +10,9 @@ import { components } from "@/components/mdx-components";
 import ShareButton from "@/components/ui/share-button";
 
 interface PostProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 // Define the metadata interface
@@ -50,13 +50,13 @@ function calculateReadTime(content: string): string {
   return `${minutes} min read`;
 }
 
-
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = params;
+  const metadataBase = new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000');
+  const { slug } = await params; // Await params here
   const filePath = path.join(process.cwd(), `src/content/posts/${slug}.mdx`);
 
   try {
@@ -116,9 +116,9 @@ export async function generateMetadata({
 export default async function BlogPost({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>; // Change params type to Promise
 }) {
-  const { slug } = params;
+  const { slug } = await params; // Await params here
   const filePath = path.join(process.cwd(), `src/content/posts/${slug}.mdx`);
 
   try {
@@ -179,7 +179,7 @@ export default async function BlogPost({
           <div className="text-muted-foreground dark:text-neutral-300 mb-6 flex flex-col items-start justify-between gap-3 border-b border-neutral-100 dark:border-neutral-800 pb-4 sm:flex-row sm:items-center">
             <div className="flex items-center gap-3">
               <Image
-                src="/avatar.webp"
+                src="/aman-avatar.webp"
                 alt={metadata.author || "Author"}
                 width={40}
                 height={40}
