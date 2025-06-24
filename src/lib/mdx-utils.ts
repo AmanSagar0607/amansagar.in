@@ -65,7 +65,11 @@ export async function getMDXFileBySlug(directory: string, slug: string): Promise
     return {
       slug,
       content: fileContent,
-      frontmatter: frontmatter as Record<string, any>,
+      frontmatter: {
+            ...(frontmatter as Record<string, unknown>),
+            title: frontmatter?.title || '',
+            date: frontmatter?.date || new Date().toISOString(),
+          } as Frontmatter,
     };
   } catch (error) {
     console.error(`Error reading MDX file ${slug}:`, error);

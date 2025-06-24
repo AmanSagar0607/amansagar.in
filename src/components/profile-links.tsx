@@ -1,12 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import {
-  IconBrandGithub,
-  IconBrandLinkedin,
-  IconBrandX,
-  IconBrandBehance,
-} from "@tabler/icons-react";
-import { Container } from "@/components/Container";
+import { IconBrandGithub, IconBrandBehance, IconBrandLinkedin, IconBrandX } from "@tabler/icons-react";
 import { MailOpen } from "lucide-react";
 
 export const ProfileLinks = () => {

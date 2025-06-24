@@ -67,9 +67,10 @@ export const Timeline = ({
     offset: ["start start", "end end"], // Adjusted offset to cover full container
   });
 
-  // Transform values for scroll-based animations
-  const _heightTransform = useTransform(scrollYProgress, [0, 1], [0, height]);
-  const _opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
+  // Scroll progress is being used for animations
+  // The transform values are commented out as they're not currently in use
+  // const _heightTransform = useTransform(scrollYProgress, [0, 1], [0, height]);
+  // const _opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
   return (
     <div
