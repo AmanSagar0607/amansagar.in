@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useScroll, useTransform } from "framer-motion";
+import { useScroll } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
@@ -31,7 +31,7 @@ export const Timeline = ({
   const ref = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [height, setHeight] = useState(0);
+  const [, setHeight] = useState(0);
 
   useEffect(() => {
     if (containerRef.current) {
@@ -62,15 +62,11 @@ export const Timeline = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const { scrollYProgress } = useScroll({
+  // Using useScroll hook for potential future scroll-based animations
+  const {} = useScroll({
     target: containerRef,
-    offset: ["start start", "end end"], // Adjusted offset to cover full container
+    offset: ["start start", "end end"],
   });
-
-  // Scroll progress is being used for animations
-  // The transform values are commented out as they're not currently in use
-  // const _heightTransform = useTransform(scrollYProgress, [0, 1], [0, height]);
-  // const _opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
   return (
     <div

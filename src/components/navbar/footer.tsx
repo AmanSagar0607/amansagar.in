@@ -1,10 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import {
-  IconBrandGithub,
-  IconBrandLinkedin,
-  IconBrandX,
-} from "@tabler/icons-react";
+
 import { Container } from "@/components/Container";
 
 export const Footer = () => {

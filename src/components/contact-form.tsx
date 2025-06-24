@@ -18,7 +18,7 @@ export const ContactForm = () => {
 
     //calls api here to submit the form
     //heres mock api calls
-    const response = await new Promise((resolve, reject) => {
+    const response = await new Promise((resolve) => {
       setTimeout(() => {
         resolve("Api call successful");
       }, 1000);

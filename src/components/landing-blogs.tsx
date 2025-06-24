@@ -1,12 +1,44 @@
 import Link from "next/link";
-import { Calendar, Circle, Dot } from "lucide-react";
-import { getMDXFiles } from "@/lib/mdx-utils";
+import { Calendar, Dot } from "lucide-react";
+import { getMDXFiles, type MDXFile } from "@/lib/mdx-utils";
 import { SectionHeading } from "./section-heading";
 import { MotionDiv } from "./motion-div";
 
+interface BlogPostFrontmatter {
+  title: string;
+  date: string;
+  description?: string;
+  tags?: string[];
+}
+
+interface BlogPost extends Omit<MDXFile, 'frontmatter'> {
+  frontmatter: BlogPostFrontmatter;
+}
+
 export async function LandingBlogs() {
-  const posts = await getMDXFiles("src/content/posts");
+  const posts = (await getMDXFiles("src/content/posts")) as unknown as BlogPost[];
   const recentPosts = posts.slice(0, 2); // Show 2 most recent posts
+  
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'No date';
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+  
+  const formatLongDate = (dateString?: string) => {
+    if (!dateString) return 'No date';
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
   if (recentPosts.length === 0) {
     return null;
@@ -59,42 +91,29 @@ export async function LandingBlogs() {
                     <div className="text-secondary mt-1 flex items-center gap-1.5 text-[13px] sm:hidden">
                       <Calendar className="h-3.5 w-3.5" />
                       <time
-                        dateTime={new Date(post.frontmatter.date).toISOString()}
+                        dateTime={post.frontmatter.date}
                       >
-                        {new Date(post.frontmatter.date).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          },
-                        )}
+                        {formatDate(post.frontmatter.date)}
                       </time>
                     </div>
                   </div>
                   <time
-                    dateTime={new Date(post.frontmatter.date).toISOString()}
+                    dateTime={post.frontmatter.date}
                     className="text-secondary mt-1 hidden text-[13px] whitespace-nowrap sm:block"
                   >
-                    {new Date(post.frontmatter.date).toLocaleDateString(
-                      "en-US",
-                      {
-                        weekday: "long",
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      },
-                    )}
+                    {formatLongDate(post.frontmatter.date)}
                   </time>
                 </div>
 
-                <p className="text-secondary mt-2 max-w-md text-sm md:max-w-lg">
-                  {post.frontmatter.description}
-                </p>
+                {post.frontmatter.description && (
+                  <p className="text-secondary mt-2 max-w-md text-sm md:max-w-lg">
+                    {post.frontmatter.description}
+                  </p>
+                )}
 
-                {post.frontmatter.tags && post.frontmatter.tags.length > 0 && (
+                {Array.isArray(post.frontmatter.tags) && post.frontmatter.tags.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {post.frontmatter.tags.map((tag: string) => (
+                    {post.frontmatter.tags?.map((tag) => (
                       <span
                         key={tag}
                         className="inline-flex items-center rounded-full border border-neutral-200 px-2 py-0.5 text-[10px] font-medium text-secondary bg-neutral-50 hover:bg-neutral-100 dark:bg-primary/40 dark:border-primary/20 dark:text-white/90 dark:hover:bg-primary/60 transition-colors duration-200"

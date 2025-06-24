@@ -8,7 +8,7 @@ interface Frontmatter {
   [key: string]: unknown; // For any additional frontmatter fields
 }
 
-interface MDXFile {
+export interface MDXFile {
   slug: string;
   content: string;
   frontmatter: Frontmatter;
