@@ -1,16 +1,15 @@
-import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink, Github, Code, LayoutGrid, Lightbulb, Zap, GitBranch, Clock, Users, GitCommit } from "lucide-react";
+import { ArrowLeft, ExternalLink, Github, LayoutGrid, Zap, GitBranch, Lightbulb } from "lucide-react";
 import { getProjectBySlug, getAllProjects } from "@/lib/projects";
 import { Container } from "@/components/Container";
 import { Heading } from "@/components/heading";
 import { TechStack } from "@/components/ui/tech-stack";
 
 type Props = {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 };
 
 export async function generateStaticParams() {
@@ -21,7 +20,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props) {
-  const project = getProjectBySlug(params.slug);
+  const { slug } = await params; // Await params here
+  const project = getProjectBySlug(slug);
   if (!project) return {};
 
   return {
@@ -33,35 +33,12 @@ export async function generateMetadata({ params }: Props) {
   };
 }
 
-const Section = ({ title, icon: Icon, children, className = "" }: { title: string; icon: any; children: React.ReactNode; className?: string }) => (
-  <section className={className}>
-    <div className="flex items-center gap-2 mb-4">
-      <Icon className="w-5 h-5 text-primary" />
-      <h2 className="text-xl font-semibold">{title}</h2>
-    </div>
-    {children}
-  </section>
-);
-
-const FeatureCard = ({ title, description, icon: Icon }: { title: string; description: string; icon: any }) => (
-  <div className="p-4 bg-white dark:bg-neutral-900 rounded-lg border border-neutral-200 dark:border-neutral-800 hover:shadow-md transition-shadow">
-    <div className="flex items-start gap-3">
-      <div className="p-2 bg-primary/10 rounded-lg">
-        <Icon className="w-5 h-5 text-primary" />
-      </div>
-      <div>
-        <h3 className="font-medium text-neutral-900 dark:text-white">{title}</h3>
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">{description}</p>
-      </div>
-    </div>
-  </div>
-);
-
-export default function ProjectPage({ params }: Props) {
-  const project = getProjectBySlug(params.slug);
+export default async function ProjectPage({ params }: Props) {
+  const { slug } = await params; // Await params here
+  const project = getProjectBySlug(slug);
 
   if (!project) {
-    notFound();
+    return null;
   }
 
   return (
@@ -243,9 +220,4 @@ export default function ProjectPage({ params }: Props) {
       </Container>
     </div>
   );
-}
-
-// Helper function to combine class names
-function cn(...classes: (string | undefined)[]) {
-  return classes.filter(Boolean).join(' ');
 }

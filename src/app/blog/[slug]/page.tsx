@@ -1,4 +1,4 @@
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { Metadata } from "next";
 import fs from "fs";
 import path from "path";
@@ -9,11 +9,6 @@ import remarkGfm from "remark-gfm";
 import { components } from "@/components/mdx-components";
 import ShareButton from "@/components/ui/share-button";
 
-interface PostProps {
-  params: Promise<{
-    slug: string;
-  }>;
-}
 
 // Define the metadata interface
 export interface BlogPostMetadata {
@@ -55,12 +50,10 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const metadataBase = new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000');
-  const { slug } = await params; // Await params here
+  const { slug } = await params; 
   const filePath = path.join(process.cwd(), `src/content/posts/${slug}.mdx`);
 
   try {
-    await fs.promises.access(filePath);
     const fileContent = fs.readFileSync(filePath, "utf8");
     const { frontmatter } = await compileMDX({
       source: fileContent,
@@ -105,7 +98,8 @@ export async function generateMetadata({
         }),
       },
     };
-  } catch (error) {
+  } catch {
+
     return {
       title: "Post Not Found",
       description: "The requested blog post could not be found.",

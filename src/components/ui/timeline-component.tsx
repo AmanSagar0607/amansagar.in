@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useScroll } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
@@ -31,13 +30,8 @@ export const Timeline = ({
   const ref = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [, setHeight] = useState(0);
 
   useEffect(() => {
-    if (containerRef.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      setHeight(rect.height); // Use containerRef to capture full timeline height
-    }
 
     const handleScroll = () => {
       if (!ref.current) return;
@@ -62,11 +56,7 @@ export const Timeline = ({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Using useScroll hook for potential future scroll-based animations
-  const {} = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
+  // Removed unused useScroll hook - can be re-added when needed for animations
 
   return (
     <div

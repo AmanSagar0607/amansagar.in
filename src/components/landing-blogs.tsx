@@ -5,16 +5,6 @@ import { getMDXFiles, type MDXFile } from "@/lib/mdx-utils";
 import { SectionHeading } from "./section-heading";
 import { MotionDiv } from "./motion-div";
 
-// Type definitions for JSX elements
-type JSXElement = React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>;
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      [elemName: string]: JSXElement;
-    }
-  }
-}
-
 interface BlogPostFrontmatter {
   title: string;
   date: string;

@@ -2,7 +2,6 @@ import { Container } from "@/components/Container";
 import { Heading } from "@/components/heading";
 import { SubHeading } from "@/components/subheading";
 import { ResumeCards } from "@/components/resume/resume-cards";
-import { SkillsSection } from "@/components/resume/skills-section";
 
 export default function ResumePage() {
   const resumeUrl = "https://drive.google.com/file/d/16TXNhVBthaWBVM-13WHx1h8gDH8cggvC/view?usp=sharing";

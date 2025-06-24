@@ -18,7 +18,7 @@ export default function ProjectsPage() {
       <Container className="min-h-screen p-4 md:pt-28 pt-22 md:pb-10 pb-10 md:px-12 px-8">
         <Heading as="h1" className="mb-2">My Projects</Heading>
         <p className="text-lg text-neutral-600 dark:text-neutral-400 mb-8">
-          Here are some of the projects I've worked on. Click on any project to learn more.
+          Here are some of the projects I&apos;ve worked on. Click on any project to learn more.
         </p>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
