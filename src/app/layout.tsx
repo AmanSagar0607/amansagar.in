@@ -83,6 +83,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://aman-sagar.vercel.app'),
   title: "Aman Sagar - Full Stack Developer",
   description: "Personal portfolio of Aman Sagar, a Full Stack Developer with expertise in modern web technologies.",
   keywords: ["portfolio", "developer", "full stack", "web development", "react", "next.js"],

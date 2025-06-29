@@ -3,12 +3,9 @@ import { Metadata } from "next";
 import fs from "fs";
 import path from "path";
 import Image from "next/image";
-import { compileMDX } from "next-mdx-remote/rsc";
-import rehypeHighlight from "rehype-highlight";
-import remarkGfm from "remark-gfm";
+import matter from "gray-matter";
 import { components } from "@/components/mdx-components";
 import ShareButton from "@/components/ui/share-button";
-
 
 // Define the metadata interface
 export interface BlogPostMetadata {
@@ -55,10 +52,7 @@ export async function generateMetadata({
 
   try {
     const fileContent = fs.readFileSync(filePath, "utf8");
-    const { frontmatter } = await compileMDX({
-      source: fileContent,
-      options: { parseFrontmatter: true },
-    });
+    const { data: frontmatter } = matter(fileContent);
 
     // Type guard to validate the frontmatter structure
     const isBlogPostMetadata = (data: unknown): data is BlogPostMetadata => {
@@ -126,17 +120,7 @@ export default async function BlogPost({
     );
     const readTime = calculateReadTime(contentWithoutFrontmatter);
 
-    const { content, frontmatter } = await compileMDX({
-      source: fileContent,
-      options: {
-        parseFrontmatter: true,
-        mdxOptions: {
-          remarkPlugins: [remarkGfm],
-          rehypePlugins: [rehypeHighlight],
-        },
-      },
-      components,
-    });
+    const { data: frontmatter } = matter(fileContent);
 
     // Validate frontmatter structure before using it
     if (!isBlogPostMetadata(frontmatter)) {
@@ -144,6 +128,9 @@ export default async function BlogPost({
     }
 
     const metadata = frontmatter;
+
+    // Dynamically import and render MDX content
+    const MDXContent = await import(`@/content/posts/${slug}.mdx`);
 
     return (
       <article className="mx-auto max-w-3xl px-0 py-6 md:px-0">
@@ -244,8 +231,8 @@ export default async function BlogPost({
           )}
         </header>
         <div className="prose dark:prose-invert prose-lg max-w-none">
-          {/* Remove the first h1 from content since we're using it as the title */}
-          {content}
+          {/* Render MDX content with components */}
+          <MDXContent.default components={components} />
 
           {/* Add some spacing at the bottom */}
           <div className="h-16"></div>
