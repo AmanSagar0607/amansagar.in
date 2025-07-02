@@ -3,6 +3,7 @@ import { Metadata } from 'next';
 import { getMDXFiles } from '@/lib/mdx-utils';
 import { Heading } from '@/components/heading';
 import { SubHeading } from '@/components/subheading';
+import { Dot } from 'lucide-react';
 
 interface BlogPost {
   slug: string;
@@ -59,8 +60,9 @@ export default async function BlogPage() {
               group-hover:before:opacity-100
               dark:before:bg-muted-foreground/10">
               <div className="relative">
-                <div className="flex items-start justify-between gap-4">
-                  <h2 className="text-2xl font-bold tracking-tight text-[#242424]">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-1 md:gap-4">
+                  <h2 className="text-lg font-bold tracking-tight flex items-start gap-0 text-[#242424]">
+                    <Dot className="-ml-5.5 sm:hidden" />
                     <Link
                       href={`/blog/${post.slug}`}
                       className="text-foreground no-underline hover:underline dark:text-neutral-400"
@@ -68,8 +70,8 @@ export default async function BlogPage() {
                       {post.frontmatter.title}
                     </Link>
                   </h2>
-                  <div className="mt-1 flex-shrink-0 whitespace-nowrap text-sm text-secondary">
-                    <time dateTime={post.frontmatter.date}>
+                  <div className="mt-1 text-sm text-secondary flex items-center gap-1">
+                    <time dateTime={post.frontmatter.date} className="block md:inline">
                       {new Date(post.frontmatter.date).toLocaleDateString('en-US', {
                         weekday: 'long',
                         year: 'numeric',
@@ -77,8 +79,8 @@ export default async function BlogPage() {
                         day: 'numeric',
                       })}
                     </time>
-                    {/* <span className="mx-2">•</span>
-                    <span>{post.frontmatter.readTime || '5 min read'}</span> */}
+                    <span className="mx-1 block md:hidden">•</span>
+                    <span className="block md:hidden">{post.frontmatter.readTime || '5 min read'}</span>
                   </div>
                 </div>
                 {post.frontmatter.description && (
