@@ -114,17 +114,17 @@ export default function FloatingShareButton({ title, url }: FloatingShareButtonP
   };
 
   return (
-    <div className="fixed bottom-6 right-4 z-50 block md:hidden">
+    <div className="fixed bottom-16 right-4 z-50 block md:hidden">
       <div className="relative">
         <button
           ref={buttonRef}
           onClick={toggleDropdown}
-          className="flex items-center gap-2 rounded-full bg-neutral-800/90 px-4 py-3 text-sm font-medium text-white shadow-lg transition-all hover:bg-neutral-700/90 dark:bg-neutral-100/90 dark:text-neutral-900 dark:hover:bg-neutral-200/90 focus:outline-none focus:ring-2 focus:ring-neutral-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
+          className="flex items-center gap-2 rounded-full bg-neutral-800/90 px-3 py-3 text-sm font-medium text-white shadow-lg transition-all hover:bg-neutral-700/90 dark:bg-neutral-100/90 dark:text-neutral-900 dark:hover:bg-neutral-200/90 focus:outline-none focus:ring-2 focus:ring-neutral-700 focus:ring-offset-2 dark:focus:ring-offset-neutral-800"
           aria-label="Share options"
           aria-expanded={isOpen}
         >
           <Share2 className="h-4 w-4" />
-          <span>{isCopied ? 'Copied!' : 'Share'}</span>
+          {/* <span>{isCopied ? 'Copied!' : 'Share'}</span> */}
         </button>
         
         {isOpen && (
