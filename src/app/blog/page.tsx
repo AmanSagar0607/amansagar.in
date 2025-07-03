@@ -38,13 +38,13 @@ export default async function BlogPage() {
   }
 
   return (
-    <div className="container py-8">
+    <div className="container py-4">
       <div className="mb-12">
         <Heading as="h1">All Blog Posts</Heading>
         <SubHeading as="h2">Thoughts, stories and ideas about software development and more.</SubHeading>
       </div>
 
-      <div className="mx-auto max-w-4xl space-y-12">
+      <div className="mx-auto max-w-4xl space-y-8">
         {posts.map((post) => (
           <article key={post.slug} className="group relative">
             <div className="relative

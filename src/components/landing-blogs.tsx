@@ -22,7 +22,7 @@ interface LandingBlogsProps {
 
 export const LandingBlogs: React.FC<LandingBlogsProps> = async () => {
   const posts = (await getMDXFiles("src/content/posts")) as unknown as BlogPost[];
-  const recentPosts = posts.slice(0, 2); // Show 2 most recent posts
+  const recentPosts = posts.slice(0, 3); // Show 2 most recent posts
   
   const formatDate = (dateString?: string): string => {
     if (!dateString) return 'No date';

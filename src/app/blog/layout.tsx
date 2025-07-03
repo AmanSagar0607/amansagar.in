@@ -37,7 +37,7 @@ export default function BlogLayout({
 }) {
   return (
     <div className={`min-h-screen flex items-start justify-center ${inter.variable} font-sans`}>
-      <Container className="min-h-[200vh] p-4 md:pt-28 pt-20 md:pb-10 pb-10 md:px-12 px-8">
+      <Container className="min-h-[200vh] p-4 md:pt-24 pt-18 md:pb-10 pb-10 md:px-12 px-8">
         <main className="w-full">
           {children}
         </main>

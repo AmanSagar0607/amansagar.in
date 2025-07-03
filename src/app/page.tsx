@@ -4,7 +4,7 @@ import { LandingBlogs } from "@/components/landing-blogs";
 import { Heading } from "@/components/heading";
 import { SubHeading } from "@/components/subheading";
 import { projects } from "@/constants/projects";
-import { ProfileLinks } from "@/components/profile-links";
+import { ProfileLinks } from "@/components/profile-link1";
 
 export default function Home() {
   return (

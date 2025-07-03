@@ -6,9 +6,17 @@ export const Footer = () => {
   return (
     <Container>
       <div className="flex items-center justify-between border-t border-neutral-100 px-6 py-3 dark:border-neutral-800">
-        <p className="text-xs  text-neutral-500 dark:text-neutral-400">
-          Built with love by Aman Sagar
-        </p>
+      <p className="text-xs text-neutral-500 dark:text-neutral-400">
+  Built with love by{" "}
+  <a 
+    href="https://www.linkedin.com/in/amansagar0607/" 
+    target="_blank" 
+    rel="noopener noreferrer"
+    className="hover:text-neutral-700 dark:hover:text-neutral-300 transition-colors underline decoration-dotted underline-offset-2"
+  >
+    Aman Sagar
+  </a>
+</p>
         <div className="flex items-center justify-center gap-4">
           <Link
            href="https://calendly.com/amansagar0307/30min"

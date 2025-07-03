@@ -13,7 +13,7 @@ import {
 } from "framer-motion";
 import { Menu } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
-import { ProfileLinks } from "@/components/profile-links"; // Import ProfileLinks component
+import { ProfileLinks } from "@/components/profile-link2"; // Import ProfileLinks component
 
 type NavItem = {
   title: string;
