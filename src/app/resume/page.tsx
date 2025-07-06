@@ -4,7 +4,7 @@ import { SubHeading } from "@/components/subheading";
 import { ResumeCards } from "@/components/resume/resume-cards";
 
 export default function ResumePage() {
-  const resumeUrl = "https://drive.google.com/file/d/16TXNhVBthaWBVM-13WHx1h8gDH8cggvC/view?usp=sharing";
+  const resumeUrl = "https://drive.google.com/file/d/1Oy5-P43T9cqR4kYKVgUt1xcFTWQ6ngtJ/view?usp=drivesdk";
   const coverLetterUrl = "https://drive.google.com/file/d/16TXNhVBthaWBVM-13WHx1h8gDH8cggvC/view?usp=sharing";
 
   return (
