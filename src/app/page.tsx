@@ -9,7 +9,7 @@ import { ProfileLinks } from "@/components/profile-link1";
 export default function Home() {
   return (
     <div className={`min-h-screen flex items-start justify-center`}>
-      <Container className="min-h-[200vh] p-4 md:pt-28 pt-22 md:pb-10 pb-10 md:px-12 px-8">
+      <Container className="min-h-[200vh] p-4 md:pt-28 pt-22 md:pb-10 pb-10 md:px-12">
         <Heading as="h1">Hey, I&apos;m Aman Sagar</Heading>
         <SubHeading as="h2">
           I am working as a <b>Full Stack Developer</b> with more than 6 months of experience. 

@@ -20,6 +20,7 @@ type NavItem = {
   href: string;
   showInDesktop?: boolean;
   showInMobile?: boolean;
+  isExternal?: boolean;
 };
 
 export const Navbar = () => {
@@ -29,7 +30,13 @@ export const Navbar = () => {
     { title: "Projects", href: "/projects", showInDesktop: false, showInMobile: true },
     { title: "Contact", href: "/contact", showInDesktop: true, showInMobile: true },
     { title: "Blog", href: "/blog", showInDesktop: false, showInMobile: true },
-    { title: "Resume", href: "/resume", showInDesktop: true, showInMobile: true },
+    { 
+      title: "Resume", 
+      href: "https://drive.google.com/file/d/16TXNhVBthaWBVM-13WHx1h8gDH8cggvC/view?usp=sharing", 
+      showInDesktop: true, 
+      showInMobile: true,
+      isExternal: true
+    },
   ];
 
   // Filter navigation items based on view
@@ -169,6 +176,7 @@ export const Navbar = () => {
                 className="relative px-2 py-1 text-[13px] text-primary hover:text-neutral-900 dark:text-neutral-300 dark:hover:text-white transition-colors duration-200 "
                 key={idx}
                 href={item.href}
+                target={item.isExternal ? "_blank" : "_self"}
                 onMouseEnter={() => setHovered(idx)}
                 onMouseLeave={() => setHovered(null)}
               >
@@ -234,6 +242,7 @@ export const Navbar = () => {
                     >
                       <Link
                         href={item.href}
+                        target={item.isExternal ? "_blank" : "_self"}
                         className="text-foreground block w-full rounded-xl bg-transparent px-14 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-neutral-800"
                         onClick={(e) => {
                           e.stopPropagation();
