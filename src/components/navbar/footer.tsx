@@ -1,11 +1,12 @@
 import React from "react";
 import Link from "next/link";
 
+
 export const Footer = () => {
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-3xl">
-        <div className="flex items-center justify-between border-t border-neutral-100 px-6 py-3 dark:border-neutral-800">
+        <div className="flex items-center justify-between   border-neutral-100 px-6 py-3 dark:border-neutral-800">
           <p className="text-xs text-neutral-500 dark:text-neutral-400">
             Built with love by{" "}
             <a

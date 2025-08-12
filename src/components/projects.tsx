@@ -55,7 +55,7 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
                 width={500} 
                 height={500}
                 priority={index < 2}
-                onLoadingComplete={() => setIsLoading(false)}
+                onLoad={() => setIsLoading(false)}
                 className={`w-full h-full object-cover transition-all duration-300 group-hover:scale-105 rounded-2xl border-1 border-neutral-200 dark:border-neutral-800 ${
                   isLoading ? 'opacity-0' : 'opacity-100'
                 }`}
