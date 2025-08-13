@@ -12,8 +12,7 @@ export default function Home() {
       <Container className="min-h-[200vh] p-4 md:pt-28 pt-22 md:pb-10 pb-10 md:px-12">
         <Heading as="h1">Hey, I&apos;m Aman Sagar</Heading>
         <SubHeading as="h2">
-          I am working as a <b>Full Stack Developer</b> with more than 6 months of experience. 
-          I am a quick learner and a team player.
+          👋 Hi, I’m Aman Sagar — a <b>Full Stack Developer</b> crafting scalable web apps, integrating AI solutions with RAG pipelines, and automating workflows using Make.com. I focus on clean UI, fast performance, and building tools that solve real problems.
         </SubHeading>
         <ProfileLinks />
         <Projects 
