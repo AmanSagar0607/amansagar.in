@@ -153,7 +153,7 @@ export default async function BlogPost({
             Back to Blog
           </Link>
           <header className="border-b border-[#e7e7e7] pb-8 dark:border-[#1c1c1c]">
-            <p className="mb-5 text-[#6e6e6e] dark:text-[#7a7a7a]">Essay</p>
+            <p className="mb-5 text-[#6e6e6e] dark:text-[#7a7a7a]">Blog</p>
             <h1 className="max-w-[620px] text-[24px] font-medium leading-8 text-black dark:text-white md:text-[28px] md:leading-9">
               {frontmatter.title}
             </h1>

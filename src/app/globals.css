@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "highlight.js/styles/github-dark.css";
 
 @plugin "@tailwindcss/typography";
 
@@ -219,6 +218,30 @@
   @apply prose-code:rounded-md prose-code:border prose-code:bg-muted/50 prose-code:px-1 prose-code:py-px prose-code:text-sm prose-code:font-normal prose-code:before:content-none prose-code:after:content-none;
   @apply prose-strong:font-medium prose-hr:border-line;
   @apply prose-blockquote:border-l prose-blockquote:border-line prose-blockquote:font-normal prose-blockquote:text-muted-foreground prose-blockquote:not-italic prose-blockquote:[&_p:first-of-type]:before:content-none prose-blockquote:[&_p:last-of-type]:after:content-none;
+}
+
+.hljs,
+.hljs-keyword,
+.hljs-built_in,
+.hljs-type,
+.hljs-literal,
+.hljs-number,
+.hljs-operator,
+.hljs-punctuation,
+.hljs-property,
+.hljs-regexp,
+.hljs-string,
+.hljs-symbol,
+.hljs-variable,
+.hljs-title,
+.hljs-params,
+.hljs-comment {
+  color: inherit;
+  background: transparent;
+}
+
+.hljs-comment {
+  color: var(--muted-foreground);
 }
 
 html {

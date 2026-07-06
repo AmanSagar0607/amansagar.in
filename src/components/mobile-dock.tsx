@@ -41,9 +41,9 @@ export function MobileDock() {
   return (
     <div
       ref={dockRef}
-      className="fixed inset-x-0 bottom-4 z-50 flex justify-center px-4 xl:hidden"
+      className="fixed inset-x-0 bottom-4 z-50 flex justify-center px-4 [--mobile-dock-width:15.5rem] xl:hidden"
     >
-      <div className="bg-background/90 border-border flex items-center gap-1 rounded-full border px-2 py-1.5 shadow-lg backdrop-blur-md">
+      <div className="bg-background/90 border-border flex w-[var(--mobile-dock-width)] items-center justify-between gap-1 rounded-full border px-2 py-1.5 shadow-lg backdrop-blur-md">
         <Link
           href="/"
           className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full transition-colors"
@@ -76,7 +76,7 @@ export function MobileDock() {
           hideShortcut
         />
 
-        <ThemeToggle className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full bg-transparent transition-colors" />
+        <ThemeToggle className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full border-0 bg-transparent transition-colors focus-visible:ring-0" />
 
         <button
           type="button"
@@ -92,7 +92,7 @@ export function MobileDock() {
       </div>
 
       {open && (
-        <div className="bg-background/95 border-border absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 rounded-2xl border p-1.5 shadow-lg backdrop-blur-md">
+        <div className="bg-background/95 border-border absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-[var(--mobile-dock-width)] rounded-2xl border p-1.5 shadow-lg backdrop-blur-md">
           {navItems.map((item) => {
             const isActive = !item.external && pathname === item.href
             return (

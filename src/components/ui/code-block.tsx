@@ -56,7 +56,7 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
       <pre
         ref={preRef}
         className={cn(
-          "bg-gray-50 dark:bg-gray-900 p-4 rounded-lg overflow-x-auto text-sm",
+          "border-border bg-muted/40 text-foreground rounded-lg border p-4 overflow-x-auto text-sm",
           "pr-12",
           className
         )}
@@ -70,17 +70,16 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
         onClick={handleCopy}
         className={cn(
           "absolute top-4 right-4 z-10 p-1.5 rounded-md",
-          "bg-gray-900 dark:bg-gray-700 backdrop-blur-sm",
-          "text-white hover:text-white dark:text-gray-300 dark:hover:text-white",
+          "border-border bg-background/90 text-muted-foreground hover:text-foreground border backdrop-blur-sm",
           "transition-all duration-200",
           "flex items-center justify-center"
         )}
         aria-label="Copy code"
       >
         {copied ? (
-          <Check className="h-3.5 w-3.5 text-white" />
+          <Check className="h-3.5 w-3.5" />
         ) : (
-          <Copy className="h-3.5 w-3.5 text-white" />
+          <Copy className="h-3.5 w-3.5" />
         )}
       </button>
     </div>

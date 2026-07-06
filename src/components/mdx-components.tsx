@@ -65,7 +65,7 @@ const components: MDXComponents = {
   // Links
   a: ({ className, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
     <a
-      className={cn('text-blue-600 hover:underline dark:text-blue-400', className)}
+      className={cn('text-foreground underline decoration-current/30 underline-offset-3 hover:decoration-current', className)}
       target="_blank"
       rel="noopener noreferrer"
       {...props}
@@ -75,7 +75,7 @@ const components: MDXComponents = {
   // Code blocks
   code: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
     <code
-      className={cn('bg-gray-100 dark:bg-gray-800 rounded px-1.5 py-0.5 text-sm', className)}
+      className={cn('border-border bg-muted/50 text-foreground rounded border px-1.5 py-0.5 text-sm', className)}
       {...props}
     />
   ),
