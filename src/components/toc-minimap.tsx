@@ -38,7 +38,7 @@ export function TOCMinimap({ items, className }: TOCMinimapProps) {
   }
 
   return (
-    <div className={cn("ml-auto w-18", className)}>
+    <div className={cn("w-18", className)}>
       <HoverCard
         openDelay={0}
         closeDelay={0}
@@ -51,14 +51,24 @@ export function TOCMinimap({ items, className }: TOCMinimapProps) {
             {items.map((item) => (
               <div
                 key={item.url}
+                role="button"
+                tabIndex={0}
+                title={typeof item.title === "string" ? item.title : undefined}
                 data-depth={item.depth}
                 data-active={item.url === `#${activeHeading}`}
                 className={cn(
-                  "h-0.5 w-6 shrink-0 rounded-xs bg-ring/50 transition-[background-color] duration-200",
+                  "h-0.5 w-6 shrink-0 cursor-pointer rounded-xs bg-ring/50 transition-[background-color] duration-200 hover:bg-foreground",
                   "data-[depth=3]:ml-2 data-[depth=3]:w-4",
                   "data-[depth=4]:ml-4 data-[depth=4]:w-2",
                   "data-active:bg-foreground"
                 )}
+                onClick={() => scrollToHeading(item.url)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault()
+                    scrollToHeading(item.url)
+                  }
+                }}
               />
             ))}
           </div>
@@ -72,21 +82,25 @@ export function TOCMinimap({ items, className }: TOCMinimapProps) {
           sideOffset={-60}
         >
           <div className="flex max-h-[50dvh] overflow-y-auto overscroll-contain">
-            <ul className="flex size-full flex-col px-6 py-4 text-sm">
+            <ul className="flex size-full flex-col gap-0.5 px-5 py-4 text-sm">
               {items.map((item) => (
-                <li key={item.url} className="flex py-1">
+                <li key={item.url} className="flex">
                   <a
                     href={item.url}
                     data-depth={item.depth}
                     data-active={item.url === `#${activeHeading}`}
                     className={cn(
-                      "line-clamp-2 w-full transition-[color] duration-200",
+                      "grid w-full grid-cols-[var(--toc-indent)_minmax(0,1fr)] rounded-md py-1.5 transition-[color,background-color] duration-200 [--toc-indent:0rem]",
                       "text-muted-foreground hover:text-foreground data-active:text-foreground",
-                      "data-[depth=3]:pl-4 data-[depth=4]:pl-8"
+                      "hover:bg-accent/50 data-active:bg-accent/50",
+                      "data-[depth=2]:[--toc-indent:0rem] data-[depth=3]:[--toc-indent:1rem] data-[depth=4]:[--toc-indent:2rem]"
                     )}
                     onClick={handleItemClick}
                   >
-                    {item.title}
+                    <span aria-hidden />
+                    <span className="min-w-0 text-pretty leading-5">
+                      {item.title}
+                    </span>
                   </a>
                 </li>
               ))}

@@ -4,8 +4,9 @@ import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { IconBrandGithub, IconBrandX } from "@tabler/icons-react"
-import { Menu, X } from "lucide-react"
+import { Home, Menu, X } from "lucide-react"
 import { CommandMenu } from "@/components/command-menu"
+import { ThemeToggle } from "@/components/theme/theme-toggle"
 import { cn } from "@/lib/utils"
 
 const navItems = [
@@ -44,6 +45,14 @@ export function MobileDock() {
     >
       <div className="bg-background/90 border-border flex items-center gap-1 rounded-full border px-2 py-1.5 shadow-lg backdrop-blur-md">
         <Link
+          href="/"
+          className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full transition-colors"
+          aria-label="Home"
+        >
+          <Home className="h-4 w-4" />
+        </Link>
+
+        <Link
           href="https://x.com/amansagar0607"
           target="_blank"
           className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full transition-colors"
@@ -66,6 +75,8 @@ export function MobileDock() {
           hideLabel
           hideShortcut
         />
+
+        <ThemeToggle className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full bg-transparent transition-colors" />
 
         <button
           type="button"

@@ -323,7 +323,7 @@ export default async function Home() {
         <div className="page-heading">
           <div className="hero-minimal">
             <div className="hero-minimal-head">
-              <div className="hero-role-row">
+              <div className="hero-role-row hero-role-row-inline">
                 <span className="hero-role-label">Software Engineer</span>
                 <Link
                   href="https://github.com/AmanSagar0607"
@@ -333,7 +333,7 @@ export default async function Home() {
                   @AmanSagar0607
                 </Link>
               </div>
-              <div className="hero-role-row">
+              <div className="hero-role-row hero-role-row-build">
                 <span className="hero-role-label">Building</span>
                 <Link
                   href="https://github.com/AmanSagar0607/Context-OS"

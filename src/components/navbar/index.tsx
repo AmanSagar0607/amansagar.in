@@ -72,7 +72,7 @@ export const Navbar = () => {
 
   return (
     <header className="site-header animate-slide-in slide-in-from-top-10 sticky top-0 z-50 hidden xl:block">
-      <div className="site-header-shell screen-line-top screen-line-bottom">
+      <div className="site-header-shell">
         <nav className="site-nav" aria-label="Primary navigation">
           {primaryNavItems.map((item) => (
             <Link

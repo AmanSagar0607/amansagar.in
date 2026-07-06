@@ -23,11 +23,11 @@ function ThemeGlyph() {
       className="h-4 w-4"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <circle cx="8" cy="8" r="6.25" stroke="currentColor" strokeWidth="1.2" />
+      <circle cx="8" cy="8" r="6.25" stroke="currentColor" strokeWidth="1.25" />
       <path
         d="M8 1.75V14.25"
         stroke="currentColor"
-        strokeWidth="1.2"
+        strokeWidth="1.25"
         strokeLinecap="round"
       />
       <path

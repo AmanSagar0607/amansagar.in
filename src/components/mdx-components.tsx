@@ -4,17 +4,46 @@ import { cn } from '@/lib/utils';
 import { CodeBlock } from '@/components/ui/code-block';
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
 
+function getNodeText(node: React.ReactNode): string {
+  if (typeof node === 'string' || typeof node === 'number') {
+    return String(node);
+  }
+
+  if (Array.isArray(node)) {
+    return node.map(getNodeText).join('');
+  }
+
+  if (React.isValidElement<{ children?: React.ReactNode }>(node)) {
+    return getNodeText(node.props.children);
+  }
+
+  return '';
+}
+
+function getHeadingId(children: React.ReactNode) {
+  return getNodeText(children)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
 // Define base components with proper types
 const components: MDXComponents = {
   // Headers
-  h1: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-    <h1 className={cn('text-3xl font-bold mt-10 mb-6', className)} {...props} />
+  h1: ({ className, children, id, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <h1 id={id ?? getHeadingId(children)} className={cn('text-3xl font-bold mt-10 mb-6', className)} {...props}>
+      {children}
+    </h1>
   ),
-  h2: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-    <h2 className={cn('text-2xl font-bold mt-8 mb-4', className)} {...props} />
+  h2: ({ className, children, id, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <h2 id={id ?? getHeadingId(children)} className={cn('text-2xl font-bold mt-8 mb-4', className)} {...props}>
+      {children}
+    </h2>
   ),
-  h3: ({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
-    <h3 className={cn('text-xl font-bold mt-6 mb-3', className)} {...props} />
+  h3: ({ className, children, id, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <h3 id={id ?? getHeadingId(children)} className={cn('text-xl font-bold mt-6 mb-3', className)} {...props}>
+      {children}
+    </h3>
   ),
   
   // Text

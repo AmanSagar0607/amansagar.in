@@ -49,7 +49,7 @@ const commandGroups: CommandMenuGroup[] = [
         icon: FolderKanban,
         shortcut: "P",
       },
-      { label: "Writing", href: "/blog", icon: FileText, shortcut: "W" },
+      { label: "Blog", href: "/blog", icon: FileText, shortcut: "B" },
       { label: "Contact", href: "/contact", icon: Mail, shortcut: "C" },
     ],
   },

@@ -139,15 +139,18 @@ export default async function BlogPost({
     const headings = extractHeadings(content);
 
     return (
-      <main className="min-h-screen bg-white px-6 pb-16 pt-32 text-[14px] leading-[22px] text-[#0a0a0a] dark:bg-[#0d0d0d] dark:text-[#d8d8d8] md:pt-40">
-        <TOCMinimap items={headings} />
+      <main className="min-h-screen bg-white px-6 pb-16 pt-20 text-[14px] leading-[22px] text-[#0a0a0a] dark:bg-[#0d0d0d] dark:text-[#d8d8d8] md:pt-24">
+        <aside className="fixed right-8 top-1/2 z-40 hidden -translate-y-1/2 xl:block">
+          <TOCMinimap items={headings} />
+        </aside>
+
         <article className="mx-auto w-full max-w-[680px]">
           <Link
             href="/blog"
             className="group mb-8 inline-flex items-center text-[13px] text-[#6e6e6e] transition-colors hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/70 dark:text-[#7a7a7a] dark:hover:text-white dark:focus-visible:ring-white/70"
           >
             <IconArrowLeft className="mr-2 h-3.5 w-3.5 transition-transform group-hover:-translate-x-1" />
-            Back to Writing
+            Back to Blog
           </Link>
           <header className="border-b border-[#e7e7e7] pb-8 dark:border-[#1c1c1c]">
             <p className="mb-5 text-[#6e6e6e] dark:text-[#7a7a7a]">Essay</p>
@@ -161,11 +164,13 @@ export default async function BlogPost({
             ) : null}
             <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[#6e6e6e] dark:text-[#7a7a7a]">
               <span>{frontmatter.author || "Aman Sagar"}</span>
-              <span>{new Date(frontmatter.date).toLocaleDateString("en-US", {
-                month: "short",
-                day: "2-digit",
-                year: "numeric",
-              })}</span>
+              <span>
+                {new Date(frontmatter.date).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "2-digit",
+                  year: "numeric",
+                })}
+              </span>
               <span>{readTime}</span>
               <ShareMenu title={frontmatter.title} url={`/blog/${slug}`} />
             </div>

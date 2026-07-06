@@ -12,7 +12,7 @@ export const Footer = () => (
       </div>
     </div>
     <div className="screen-line-top footer-meta">
-      <p>Last updated · Jul 4, 2026</p>
+      <p>Last updated · Jul 7, 2026</p>
       <p>&copy; {new Date().getFullYear()} Aman Sagar</p>
     </div>
   </footer>
