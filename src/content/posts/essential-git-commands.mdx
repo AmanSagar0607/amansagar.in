@@ -1,0 +1,220 @@
+---
+title: "Essential Git Commands Every Developer Should Know"
+description: "A comprehensive guide to the most commonly used Git commands with practical examples for everyday development workflow."
+date: "2025-05-30"
+author: "Aman Sagar"
+category: "Version Control"
+views: 0
+tags: ["Git", "Version Control", "Development Tools", "Command Line"]
+---
+
+# Essential Git Commands Every Developer Should Know
+
+Git is an essential tool for modern software development. Whether you're working alone or as part of a team, mastering these Git commands will significantly improve your workflow. Here's a comprehensive guide to the most commonly used Git commands.
+
+## Basic Configuration
+
+Before you start, make sure to configure your Git identity:
+
+```bash
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+```
+
+## Getting Started
+
+### Initialize a new repository
+```bash
+git init
+```
+
+### Clone an existing repository
+```bash
+git clone <repository-url>
+```
+
+## Basic Workflow
+
+### Check repository status
+```bash
+git status
+```
+
+### Stage changes
+```bash
+# Stage a specific file
+git add <filename>
+
+# Stage all changes
+git add .
+
+# Stage parts of a file
+git add -p
+```
+
+### Commit changes
+```bash
+# Commit with message
+git commit -m "Your commit message"
+
+# Add and commit in one command
+git commit -am "Your commit message"
+```
+
+## Branching
+
+### Create a new branch
+```bash
+git branch <branch-name>
+```
+
+### Switch to a branch
+```bash
+git checkout <branch-name>
+
+# Create and switch in one command
+git checkout -b <branch-name>
+```
+
+### List all branches
+```bash
+git branch           # Local branches
+git branch -a        # All branches (including remote)
+```
+
+## Remote Repositories
+
+### Add a remote
+```bash
+git remote add <name> <url>
+```
+
+### Push changes
+```bash
+# Push to the current branch
+git push
+
+# Push to a specific branch
+git push origin <branch-name>
+```
+
+### Pull changes
+```bash
+git pull
+```
+
+## Viewing History
+
+### View commit history
+```bash
+git log
+
+# One-line format
+git log --oneline
+
+# Graph view
+git log --graph --oneline --all
+```
+
+### View changes
+```bash
+# Show unstaged changes
+git diff
+
+# Show staged changes
+git diff --staged
+
+# Show changes between commits
+git diff <commit1> <commit2>
+```
+
+## Undoing Things
+
+### Discard changes in working directory
+```bash
+# For a specific file
+git restore <file>
+
+# For all files
+git restore .
+```
+
+### Reset to a previous commit
+```bash
+# Soft reset (keeps changes staged)
+git reset --soft HEAD~1
+
+# Hard reset (discards all changes)
+git reset --hard HEAD~1
+```
+
+### Revert a commit
+```bash
+git revert <commit-hash>
+```
+
+## Stashing
+
+### Stash changes
+```bash
+git stash
+
+# Stash with message
+git stash save "Your stash message"
+```
+
+### List stashes
+```bash
+git stash list
+```
+
+### Apply a stash
+```bash
+# Apply most recent stash
+git stash apply
+
+# Apply specific stash
+git stash apply stash@{n}
+```
+
+## Advanced Commands
+
+### Interactive rebase
+```bash
+git rebase -i HEAD~n  # Where n is the number of commits to include
+```
+
+### Cherry-pick a commit
+```bash
+git cherry-pick <commit-hash>
+```
+
+### Clean untracked files
+```bash
+git clean -n  # Dry run
+git clean -f  # Actually delete files
+```
+
+## Best Practices
+
+1. **Commit Often, Perfect Later, Publish Once**
+   - Make small, atomic commits
+   - Write clear, descriptive commit messages
+
+2. **Branch Naming**
+   - Use descriptive branch names (e.g., `feature/user-authentication`)
+   - Follow your team's naming conventions
+
+3. **Pull Before You Push**
+   - Always pull the latest changes before pushing your work
+
+4. **Review Before Committing**
+   - Use `git status` and `git diff` to review changes before committing
+
+## Conclusion
+
+Mastering these Git commands will make you more efficient and confident when working with version control. Remember that Git is a powerful tool, and there's always more to learn. Practice these commands in a test repository to become comfortable with them.
+
+For more advanced usage, check out the [official Git documentation](https://git-scm.com/doc).
+
+Happy coding! 🚀
