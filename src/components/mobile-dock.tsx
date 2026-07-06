@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { IconBrandGithub, IconBrandX } from "@tabler/icons-react"
-import { Search, Menu, X } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { CommandMenu } from "@/components/command-menu"
 import { cn } from "@/lib/utils"
 
@@ -20,9 +20,28 @@ const navItems = [
 export function MobileDock() {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
+  const dockRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (!open) {
+      return
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!dockRef.current?.contains(event.target as Node)) {
+        setOpen(false)
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown)
+    return () => document.removeEventListener("pointerdown", handlePointerDown)
+  }, [open])
 
   return (
-    <div className="fixed inset-x-0 bottom-4 z-50 flex justify-center px-4 xl:hidden">
+    <div
+      ref={dockRef}
+      className="fixed inset-x-0 bottom-4 z-50 flex justify-center px-4 xl:hidden"
+    >
       <div className="bg-background/90 border-border flex items-center gap-1 rounded-full border px-2 py-1.5 shadow-lg backdrop-blur-md">
         <Link
           href="https://x.com/amansagar0607"
@@ -42,7 +61,11 @@ export function MobileDock() {
           <IconBrandGithub className="h-4 w-4" />
         </Link>
 
-        <CommandMenu triggerClassName="text-muted-foreground hover:text-foreground flex h-9 items-center gap-2 rounded-full px-3 text-sm transition-colors whitespace-nowrap" />
+        <CommandMenu
+          triggerClassName="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full transition-colors"
+          hideLabel
+          hideShortcut
+        />
 
         <button
           type="button"

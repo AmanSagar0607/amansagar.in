@@ -80,9 +80,15 @@ const commandGroups: CommandMenuGroup[] = [
 
 type CommandMenuProps = {
   triggerClassName?: string;
+  hideLabel?: boolean;
+  hideShortcut?: boolean;
 };
 
-export function CommandMenu({ triggerClassName }: CommandMenuProps) {
+export function CommandMenu({
+  triggerClassName,
+  hideLabel = false,
+  hideShortcut = false,
+}: CommandMenuProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
@@ -122,12 +128,14 @@ export function CommandMenu({ triggerClassName }: CommandMenuProps) {
         aria-label="Open command menu"
         onClick={() => setOpen(true)}
       >
-        <Search className="size-3.5 shrink-0" aria-hidden />
-        <span>Search</span>
-        <span aria-hidden className="site-kbd-group hidden xl:inline-flex">
+        <Search className="size-4 shrink-0" aria-hidden />
+        {hideLabel ? null : <span>Search</span>}
+        {hideShortcut ? null : (
+          <span aria-hidden className="site-kbd-group hidden xl:inline-flex">
           <span className="site-kbd">Ctrl</span>
           <span className="site-kbd">K</span>
-        </span>
+          </span>
+        )}
       </button>
 
       <CommandDialog
