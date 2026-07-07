@@ -38,6 +38,8 @@ export default async function BlogPage() {
           meta={`${posts.length} posts`}
         />
 
+        <div className="relative left-1/2 w-screen -translate-x-1/2 border-t border-[#e7e7e7] dark:border-[#1c1c1c]" />
+
         {Object.entries(grouped)
           .sort(([a], [b]) => Number(b) - Number(a))
           .map(([year, yearPosts]) => (

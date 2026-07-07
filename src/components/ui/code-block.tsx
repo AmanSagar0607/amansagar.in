@@ -3,7 +3,6 @@
 import { useState, useRef } from "react";
 import { Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { toast } from 'sonner';
 
 interface CodeBlockProps extends React.HTMLAttributes<HTMLPreElement> {
   children?: React.ReactNode;
@@ -19,7 +18,6 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
         await navigator.clipboard.writeText(text);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
-        toast.success('Copied to clipboard!', { duration: 1500 });
       } catch {
         console.error('Failed to copy text');
       }
@@ -36,7 +34,6 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
         document.body.removeChild(textarea);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
-        toast.success('Copied to clipboard!', { duration: 1500 });
       } catch {
         alert('Copy to clipboard is not supported on this device/browser.');
       }

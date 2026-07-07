@@ -37,7 +37,8 @@ export default function ContactPage() {
           description="Reach out for software engineering roles, AI product work, referrals, or just to talk through an interesting system problem."
           meta="Open to thoughtful work"
         />
-        <div className="screen-line-bottom px-4 py-3">
+        <div className="relative left-1/2 w-screen -translate-x-1/2 border-t border-[#e7e7e7] dark:border-[#1c1c1c]" />
+        <div className="px-4 py-3">
           <p className="mt-4 text-sm text-muted-foreground">
             Direct email:
             {" "}

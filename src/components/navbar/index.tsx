@@ -129,7 +129,7 @@ export const Navbar = () => {
         <div className="site-header-actions" aria-label="Header actions">
           <CommandMenu triggerClassName="site-action-button site-search-button" />
           <Link
-            href="https://github.com/AmanSagar0607/aman-portfolio-template"
+            href="https://github.com/AmanSagar0607/amansagar.in"
             target="_blank"
             rel="noreferrer"
             className="site-action-button site-github-button"

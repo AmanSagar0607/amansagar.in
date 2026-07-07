@@ -1542,13 +1542,17 @@ body {
     padding: 0.95rem 1rem;
   }
 
+  .list-row > :last-child {
+    justify-self: end;
+  }
+
   .list-row-title {
     font-size: 0.95rem;
     line-height: 1.45;
   }
 
   .list-row-meta {
-    text-align: left;
+    text-align: right;
     font-size: 0.78rem;
   }
 

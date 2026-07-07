@@ -1,7 +1,5 @@
 "use client"
 
-import { toast } from "sonner"
-
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -46,7 +44,6 @@ export function ShareMenu({ title, url }: ShareMenuProps) {
         <DropdownMenuItem
           onClick={() => {
             copyText(absoluteUrl)
-            toast.success("Link copied")
           }}
         >
           <LinkIcon

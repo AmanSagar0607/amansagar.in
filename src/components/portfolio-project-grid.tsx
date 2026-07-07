@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Globe, Github, LayoutGrid, List } from "lucide-react";
+import { ExternalLink, Globe, Github, LayoutGrid, List } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import type { Project } from "@/types/project";
 import {
@@ -57,7 +57,8 @@ export function PortfolioProjectGrid({
   }, [handleKeyDown]);
 
   return (
-    <div className={cn("screen-line-top", className)}>
+    <div className={cn(className)}>
+      <div className="relative left-1/2 w-screen -translate-x-1/2 border-t border-[#e7e7e7] dark:border-[#1c1c1c]" />
       <div className="section-bar">
         <div className="mono-note">
           Selected work with product screenshots and deployment proof.
@@ -132,8 +133,8 @@ export function PortfolioProjectGrid({
               className="screen-line-bottom project-card"
             >
               <Link
-                href={project.link}
-                target="_blank"
+                href={project.slug ? `/projects/${project.slug}` : project.link}
+                target={project.slug ? undefined : "_blank"}
                 className="project-frame spotlight-veil"
               >
                 <Image
@@ -192,35 +193,49 @@ export function PortfolioProjectGrid({
         </div>
       ) : (
         <div className="list-grid">
-          {projects.map((project) => (
-            <Link
-              key={project.title}
-              href={`/projects/${project.slug}`}
-              className="screen-line-bottom list-row"
-            >
+          {projects.map((project) => {
+            const liveUrl = project.deployment?.url ?? project.link;
+
+            return (
+            <article key={project.title} className="screen-line-bottom list-row">
               <div className="flex flex-col gap-2">
-                <span className="list-row-title">{project.title}</span>
+                <Link href={`/projects/${project.slug}`} className="list-row-title">
+                  {project.title}
+                </Link>
                 <p className="text-muted-foreground text-sm leading-6">
                   {project.description}
                 </p>
               </div>
-              <div className="flex flex-col items-end gap-2">
+              <div className="flex min-w-[4.75rem] flex-row items-center justify-end gap-3 self-end sm:flex-col sm:items-end sm:self-auto">
                 <span className="list-row-meta">
                   {project.deployment?.platform ?? "Project"}
                 </span>
                 <div className="link-icon-row">
-                  <span className="icon-action">
-                    <Globe className="h-4 w-4" />
-                  </span>
+                  <Link
+                    href={liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="icon-action"
+                    aria-label={`${project.title} live site`}
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                  </Link>
                   {project.githubUrl ? (
-                    <span className="icon-action">
+                    <Link
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="icon-action"
+                      aria-label={`${project.title} GitHub repository`}
+                    >
                       <Github className="h-4 w-4" />
-                    </span>
+                    </Link>
                   ) : null}
                 </div>
               </div>
-            </Link>
-          ))}
+            </article>
+          );
+          })}
         </div>
       )}
     </div>

@@ -17,8 +17,10 @@ export default function AboutPage() {
           meta="Product-minded engineering"
         />
 
-        <div className="hero-grid p-4">
-          <div className="hero-copy">
+        <div className="relative left-1/2 w-screen -translate-x-1/2 border-t border-[#e7e7e7] dark:border-[#1c1c1c]" />
+
+        <div className="px-4 py-6">
+          <div className="hero-copy mx-auto w-full max-w-[680px]">
             <p>
               I&apos;m Aman Sagar, a software engineer from India focused on AI agents,
               retrieval workflows, internal tools, and product-minded full-stack delivery.
