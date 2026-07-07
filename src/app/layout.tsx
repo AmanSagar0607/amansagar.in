@@ -4,7 +4,6 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/navbar/footer";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "sonner";
-import { SectionNav } from "@/components/section-nav";
 import { MobileDock } from "@/components/mobile-dock";
 import "./globals.css";
 
@@ -93,16 +92,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <div className="app-frame min-h-screen bg-background text-foreground">
             <Toaster position="top-center" richColors />
             <Navbar />
-            <SectionNav
-              items={[
-                { title: "About", href: "#about" },
-                { title: "Stack", href: "#stack" },
-                { title: "Projects", href: "#projects" },
-                { title: "Blog", href: "#writing" },
-                { title: "Experience", href: "#experience" },
-                { title: "Socials", href: "#socials" },
-              ]}
-            />
             <MobileDock />
             {children}
             <Footer />
