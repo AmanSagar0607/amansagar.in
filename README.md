@@ -2,7 +2,7 @@
   <img src="/images/readme-banner.png" alt="Aman Sagar portfolio banner" />
 </p>
 
-# aman-portfolio-template
+# amansagar.in
 
 <p align="center">
   <a href="#readme">README</a> ·
@@ -11,11 +11,11 @@
 </p>
 
 <p align="center">
-  <a href="https://amansagar.in">amansagar.in</a> ·
-  <a href="https://github.com/AmanSagar0607/aman-portfolio-template">GitHub repository</a>
+  <a href="https://amansagar.in">Live site</a> ·
+  <a href="https://github.com/AmanSagar0607/amansagar.in">GitHub repository</a>
 </p>
 
-A personal portfolio template for [amansagar.in](https://amansagar.in), built with Next.js, MDX, Tailwind CSS, and shadcn/ui.
+A personal portfolio for [amansagar.in](https://amansagar.in), built with Next.js, MDX, Tailwind CSS, and shadcn/ui.
 
 ## About
 
@@ -71,5 +71,5 @@ Be respectful, constructive, and helpful. Keep feedback focused on the work, and
 ## Related
 
 - Live site: [amansagar.in](https://amansagar.in)
-- GitHub: [AmanSagar0607/aman-portfolio-template](https://github.com/AmanSagar0607/aman-portfolio-template)
+- GitHub: [AmanSagar0607/amansagar.in](https://github.com/AmanSagar0607/amansagar.in)
 - Sponsor: [GitHub Sponsors](https://github.com/sponsors/AmanSagar0607)
