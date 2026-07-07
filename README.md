@@ -44,6 +44,8 @@
   <img src="https://img.shields.io/github/last-commit/AmanSagar0607/amansagar.in?style=flat&label=Last%20commit" alt="Last commit" />
 </p>
 
+![Repobeats analytics image](https://repobeats.axiom.co/api/embed/8fb16e60f10775eadf113e3bb515849e2cc60449.svg "Repobeats analytics image")
+
 A personal portfolio for [amansagar.in](https://amansagar.in), built with Next.js, MDX, Tailwind CSS, and shadcn/ui.
 
 ## About
