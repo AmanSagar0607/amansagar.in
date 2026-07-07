@@ -7,21 +7,18 @@
 <p align="center">
   <a href="#readme">README</a> ·
   <a href="#code-of-conduct">Code of conduct</a> ·
-  <a href="#mit-license">MIT license</a>
-</p>
-
-<p align="center">
-  <a href="https://amansagar.in">Live site</a> ·
-  <a href="https://github.com/AmanSagar0607/amansagar.in">GitHub repository</a>
-</p>
-
-<p align="center">
+  <a href="#mit-license">MIT license</a> ·
   <a href="https://github.com/sponsors/AmanSagar0607">
     <img
       src="https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-30363D?logo=githubsponsors&logoColor=EA4AAA"
       alt="Sponsor on GitHub Sponsors"
     />
   </a>
+</p>
+
+<p align="center">
+  <a href="https://amansagar.in">Live site</a> ·
+  <a href="https://github.com/AmanSagar0607/amansagar.in">GitHub repository</a>
 </p>
 
 <p align="center">
@@ -36,6 +33,12 @@
   <img src="https://img.shields.io/badge/sections-5-111827" alt="Sections" />
   <img src="https://img.shields.io/badge/content-mdx-111827" alt="Content" />
   <img src="https://img.shields.io/badge/status-active-success" alt="Status" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/github/stars/AmanSagar0607/amansagar.in?style=flat&label=Stars" alt="GitHub stars" />
+  <img src="https://img.shields.io/github/forks/AmanSagar0607/amansagar.in?style=flat&label=Forks" alt="GitHub forks" />
+  <img src="https://img.shields.io/github/last-commit/AmanSagar0607/amansagar.in?style=flat&label=Last%20commit" alt="Last commit" />
 </p>
 
 A personal portfolio for [amansagar.in](https://amansagar.in), built with Next.js, MDX, Tailwind CSS, and shadcn/ui.
@@ -80,7 +83,7 @@ If you use this project as a base for your own site, a credit link back to the o
 
 ## Support
 
-- Sponsor the project through [GitHub Sponsors](https://github.com/sponsors/AmanSagar0607)
+- Sponsor the project through the badge above or [GitHub Sponsors](https://github.com/sponsors/AmanSagar0607)
 - Share feedback through issues or pull requests
 
 ## Contributors
