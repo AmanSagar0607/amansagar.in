@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { PageHeader } from "@/components/page-header";
 
 export default function NotFound() {
   return (
@@ -15,7 +14,7 @@ export default function NotFound() {
 
           <div className="flex max-w-xl flex-col gap-5 pt-2 md:pt-6">
             <p className="max-w-lg text-[clamp(0.95rem,4vw,1.15rem)] leading-[1.7] text-muted-foreground">
-              The page you're looking for doesn't exist or has moved.
+              The page you&apos;re looking for doesn&apos;t exist or has moved.
             </p>
             <p className="max-w-lg text-[0.92rem] leading-6 text-muted-foreground/80">
               Use the button below to return to the homepage and keep exploring
