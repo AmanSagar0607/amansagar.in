@@ -1553,12 +1553,22 @@ body {
   }
 
   .social-link {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem;
     padding: 0.95rem 1rem;
   }
 
   .social-label,
   .social-handle {
     font-size: 0.86rem;
+  }
+
+  .social-handle {
+    justify-self: end;
+    text-align: right;
+    white-space: nowrap;
   }
 
   .site-wordmark-wrap {
