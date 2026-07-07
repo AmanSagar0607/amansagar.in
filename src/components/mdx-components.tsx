@@ -73,12 +73,29 @@ const components: MDXComponents = {
   ),
   
   // Code blocks
-  code: ({ className, ...props }: React.HTMLAttributes<HTMLElement>) => (
-    <code
-      className={cn('border-border bg-muted/50 text-foreground rounded border px-1.5 py-0.5 text-sm', className)}
-      {...props}
-    />
-  ),
+  code: ({ className, children, ...props }: React.HTMLAttributes<HTMLElement>) => {
+    const isBlockCode = Boolean(className?.includes("language-"));
+
+    if (isBlockCode) {
+      return (
+        <code className={cn("font-mono block", className)} {...props}>
+          {children}
+        </code>
+      );
+    }
+
+    return (
+      <code
+        className={cn(
+          "border-border bg-muted/50 text-foreground rounded border px-1.5 py-0.5 text-sm",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </code>
+    );
+  },
   
   pre: (props: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>) => (
     <CodeBlock {...props}>{props.children}</CodeBlock>

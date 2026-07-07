@@ -81,7 +81,7 @@ export function TOCMinimap({ items, className }: TOCMinimapProps) {
           side="left"
           sideOffset={-60}
         >
-          <div className="flex max-h-[50dvh] overflow-y-auto overscroll-contain">
+          <div className="toc-scrollbar flex max-h-[50dvh] overflow-y-auto overscroll-contain">
             <ul className="flex size-full flex-col gap-0.5 px-5 py-4 text-sm">
               {items.map((item) => (
                 <li key={item.url} className="flex">
@@ -90,9 +90,9 @@ export function TOCMinimap({ items, className }: TOCMinimapProps) {
                     data-depth={item.depth}
                     data-active={item.url === `#${activeHeading}`}
                     className={cn(
-                      "grid w-full grid-cols-[var(--toc-indent)_minmax(0,1fr)] rounded-md py-1.5 transition-[color,background-color] duration-200 [--toc-indent:0rem]",
-                      "text-muted-foreground hover:text-foreground data-active:text-foreground",
-                      "hover:bg-accent/50 data-active:bg-accent/50",
+                      "grid w-full grid-cols-[var(--toc-indent)_minmax(0,1fr)] py-1.5 transition-[color,background-color] duration-200 [--toc-indent:0rem]",
+                      "pl-2 text-muted-foreground hover:text-foreground data-active:text-foreground",
+                      "hover:bg-accent/30 data-active:bg-accent/10",
                       "data-[depth=2]:[--toc-indent:0rem] data-[depth=3]:[--toc-indent:1rem] data-[depth=4]:[--toc-indent:2rem]"
                     )}
                     onClick={handleItemClick}

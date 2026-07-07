@@ -11,14 +11,16 @@ type SectionNavProps = {
 
 export function SectionNav({ items, className }: SectionNavProps) {
   const pathname = usePathname()
+  const isKnownRoute =
+    pathname === "/" ||
+    pathname.startsWith("/projects") ||
+    pathname.startsWith("/blog") ||
+    pathname.startsWith("/about") ||
+    pathname.startsWith("/contact")
   const [activeHref, setActiveHref] = useState(items[0]?.href ?? "")
 
   useEffect(() => {
-    if (pathname !== "/") {
-      setActiveHref("")
-    } else {
-      setActiveHref(items[0]?.href ?? "")
-    }
+    setActiveHref("")
   }, [items, pathname])
 
   const handleIntersection = useCallback(
@@ -33,10 +35,6 @@ export function SectionNav({ items, className }: SectionNavProps) {
   )
 
   useEffect(() => {
-    if (pathname !== "/") {
-      return
-    }
-
     const observer = new IntersectionObserver(handleIntersection, {
       rootMargin: "-20% 0px -70% 0px",
       threshold: 0,
@@ -51,7 +49,7 @@ export function SectionNav({ items, className }: SectionNavProps) {
     return () => observer.disconnect()
   }, [items, handleIntersection, pathname])
 
-  if (pathname !== "/") {
+  if (!isKnownRoute) {
     return null
   }
 
