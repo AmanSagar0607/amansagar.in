@@ -7,18 +7,21 @@
 <p align="center">
   <a href="#readme">README</a> ·
   <a href="#code-of-conduct">Code of conduct</a> ·
-  <a href="#mit-license">MIT license</a> ·
-  <a href="https://github.com/sponsors/AmanSagar0607">
-    <img
-      src="https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-30363D?logo=githubsponsors&logoColor=EA4AAA"
-      alt="Sponsor on GitHub Sponsors"
-    />
-  </a>
+  <a href="#mit-license">MIT license</a>
 </p>
 
 <p align="center">
   <a href="https://amansagar.in">Live site</a> ·
   <a href="https://github.com/AmanSagar0607/amansagar.in">GitHub repository</a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/sponsors/AmanSagar0607">
+    <img
+      src="https://img.shields.io/badge/Sponsor-GitHub%20Sponsors-30363D?style=flat-square&logo=githubsponsors&logoColor=EA4AAA"
+      alt="Sponsor on GitHub Sponsors"
+    />
+  </a>
 </p>
 
 <p align="center">
@@ -83,7 +86,7 @@ If you use this project as a base for your own site, a credit link back to the o
 
 ## Support
 
-- Sponsor the project through the badge above or [GitHub Sponsors](https://github.com/sponsors/AmanSagar0607)
+- Sponsor the project through [GitHub Sponsors](https://github.com/sponsors/AmanSagar0607)
 - Share feedback through issues or pull requests
 
 ## Contributors
