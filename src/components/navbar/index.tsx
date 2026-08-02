@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { CommandMenu } from "@/components/command-menu";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { IconArrowUpRight, IconBrandGithub } from "@tabler/icons-react";
@@ -35,7 +35,6 @@ const moreNavItems = [
 
 export const Navbar = () => {
   const pathname = usePathname();
-  const router = useRouter();
   const isHome = pathname === "/";
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -45,29 +44,16 @@ export const Navbar = () => {
     return isHome && href !== "/";
   };
 
-  const handleMoreNavigation = (href: string, external?: boolean) => {
-    if (external) {
-      window.open(href, "_blank", "noopener,noreferrer");
-      return;
-    }
+  const scrollToAnchor = (href: string) => {
+    const id = href.split("#")[1];
+    if (!id) return false;
 
-    if (href.startsWith("/#")) {
-      const id = href.slice(2);
+    const element = document.getElementById(id);
+    if (!element) return false;
 
-      if (pathname === "/") {
-        const element = document.getElementById(id);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth", block: "start" });
-          window.history.replaceState(null, "", href);
-          return;
-        }
-      }
-
-      window.location.href = href;
-      return;
-    }
-
-    router.push(href);
+    element.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.history.replaceState(null, "", href);
+    return true;
   };
 
   return (
@@ -109,17 +95,38 @@ export const Navbar = () => {
               {moreNavItems.map((item) => (
                 <DropdownMenuItem
                   key={item.title}
+                  asChild
                   className="rounded-xl px-3 py-2 text-sm"
-                  onSelect={() =>
-                    handleMoreNavigation(item.href, item.external)
-                  }
                 >
-                  <div className="text-foreground flex w-full items-center justify-between gap-3">
-                    <span>{item.title}</span>
-                    {item.external ? (
-                      <IconArrowUpRight className="text-muted-foreground h-3.5 w-3.5" />
-                    ) : null}
-                  </div>
+                  {item.href.startsWith("/#") ? (
+                    <a
+                      href={item.href}
+                      className="text-foreground flex w-full items-center justify-between gap-3"
+                      onClick={(event) => {
+                        event.preventDefault();
+
+                        if (pathname === "/" && scrollToAnchor(item.href)) {
+                          return;
+                        }
+
+                        window.location.href = item.href;
+                      }}
+                    >
+                      <span>{item.title}</span>
+                    </a>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      target={item.external ? "_blank" : undefined}
+                      rel={item.external ? "noopener noreferrer" : undefined}
+                      className="text-foreground flex w-full items-center justify-between gap-3"
+                    >
+                      <span>{item.title}</span>
+                      {item.external ? (
+                        <IconArrowUpRight className="text-muted-foreground h-3.5 w-3.5" />
+                      ) : null}
+                    </Link>
+                  )}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>

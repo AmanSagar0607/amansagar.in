@@ -398,7 +398,7 @@ export default async function Home() {
 
       <div className="stripe-divider" />
 
-      <section id="stack" className="page-section">
+      <section id="stack" className="page-section scroll-mt-24">
         <div className="section-bar screen-line-top screen-line-bottom">
           <h2 className="section-title">Stack</h2>
           <span className="mono-note">
@@ -434,7 +434,7 @@ export default async function Home() {
 
       <div className="stripe-divider" />
 
-      <section id="projects" className="page-section">
+      <section id="projects" className="page-section scroll-mt-24">
         <div className="section-bar screen-line-top screen-line-bottom">
           <h2 className="section-title">Projects</h2>
           <span className="mono-note">
@@ -460,7 +460,7 @@ export default async function Home() {
 
       <div className="stripe-divider" />
 
-      <section id="writing" className="page-section">
+      <section id="writing" className="page-section scroll-mt-24">
         <div className="section-bar screen-line-top screen-line-bottom">
           <h2 className="section-title">Blog</h2>
           <span className="mono-note">
@@ -495,7 +495,7 @@ export default async function Home() {
 
       <div className="stripe-divider" />
 
-      <section id="experience" className="page-section">
+      <section id="experience" className="page-section scroll-mt-24">
         <div className="section-bar screen-line-top screen-line-bottom">
           <h2 className="section-title">Experience</h2>
           <span className="mono-note">
@@ -514,7 +514,7 @@ export default async function Home() {
 
       <div className="stripe-divider" />
 
-      <section id="socials" className="page-section">
+      <section id="socials" className="page-section scroll-mt-24">
         <div className="section-bar screen-line-top screen-line-bottom">
           <h2 className="section-title">Socials</h2>
           <span className="mono-note">
