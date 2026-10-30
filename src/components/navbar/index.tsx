@@ -18,11 +18,13 @@ const primaryNavItems = [
   { title: "home", href: "/" },
   { title: "projects", href: "/projects" },
   { title: "blog", href: "/blog" },
+  { title: "journey", href: "/journey" },
   { title: "contact", href: "/contact" },
 ];
 
 const moreNavItems = [
   { title: "about", href: "/about" },
+  { title: "achievements", href: "/achievements" },
   { title: "stack", href: "/#stack" },
   { title: "experience", href: "/#experience" },
   { title: "socials", href: "/#socials" },
@@ -40,6 +42,7 @@ export const Navbar = () => {
     if (href === "/") return pathname === "/";
     if (href === "/projects") return pathname.startsWith("/projects");
     if (href === "/blog") return pathname.startsWith("/blog");
+    if (href === "/journey") return pathname.startsWith("/journey") || pathname === "/achievements";
     if (href === "/contact") return pathname === "/contact";
     return isHome && href !== "/";
   };

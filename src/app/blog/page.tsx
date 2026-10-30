@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { NotebookPen } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
-import { getMDXFiles } from "@/lib/mdx-utils";
+import { getPublicPosts } from "@/lib/public-posts";
 
 interface BlogPost {
   slug: string;
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
-  const posts = (await getMDXFiles("src/content/posts")) as unknown as BlogPost[];
+  const posts = (await getPublicPosts()) as unknown as BlogPost[];
 
   const grouped = posts.reduce<Record<string, BlogPost[]>>((acc, post) => {
     const year = new Date(post.frontmatter.date).getFullYear().toString();

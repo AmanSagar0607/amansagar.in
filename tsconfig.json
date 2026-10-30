@@ -41,9 +41,10 @@
     "**/*.d.ts",
     "**/*.ts",
     "**/*.tsx",
+    ".next-verification/types/**/*.ts",
+    ".next/types/**/*.ts",
     "next-env.d.ts",
     "src/react-app-env.d.ts",
-    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

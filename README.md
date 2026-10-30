@@ -116,3 +116,8 @@ Be respectful, constructive, and helpful. Keep feedback focused on the work, and
 
 - Live site: [amansagar.in](https://amansagar.in)
 - GitHub: [AmanSagar0607/amansagar.in](https://github.com/AmanSagar0607/amansagar.in)
+## Learning Journey
+
+The public learning journal is at `/journey`, with track details and `/achievements`. The local publishing editor is at `/admin/journey` and requires `JOURNEY_ADMIN_TOKEN` (at least 32 characters) in development. Content remains in repository files; review, commit and redeploy after saving.
+
+See [Journey architecture and publishing guide](docs/journey-implementation.md) for the models, routes, sample-content rules, achievements, SEO and verification instructions.

@@ -7,6 +7,8 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 
 /** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
+  // Isolate verification builds from an open development server.
+  distDir: process.env.NEXT_OUTPUT_DIR || ".next",
   experimental: {
     mdxRs: true,
   },

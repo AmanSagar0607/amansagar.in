@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, Github, LayoutGrid, Zap, GitBranch, Lightbulb } from "lucide-react";
-import { getProjectBySlug, getAllProjects } from "@/lib/projects";
+import { getPublicProject, getPublicProjects } from "@/lib/public-projects";
 import { Heading } from "@/components/heading";
 import { TechStack } from "@/components/ui/tech-stack";
+import { getPublicActivities, getPublicTracks } from '@/lib/public-journey';
+import { activityHref } from '@/lib/journey/logic';
 
 type Props = {
   params: Promise<{
@@ -11,7 +13,7 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  const projects = getAllProjects();
+  const projects = await getPublicProjects();
   return projects.map((project) => ({
     slug: project.slug,
   }));
@@ -19,7 +21,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getPublicProject(slug);
   if (!project) return {};
 
   return {
@@ -46,9 +48,11 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function ProjectPage({ params }: Props) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
+  const project = await getPublicProject(slug);
 
   if (!project) return null;
+  const relatedActivities = (await getPublicActivities()).filter(a => a.projectSlugs.includes(slug));
+  const relatedTracks = (await getPublicTracks()).filter(t => t.projectSlugs.includes(slug) || relatedActivities.some(a => a.trackSlugs.includes(t.slug)));
 
   return (
     <main className="page-shell min-h-screen px-4 py-12 md:px-8 md:py-14">
@@ -234,6 +238,11 @@ export default async function ProjectPage({ params }: Props) {
             </div>
           </div>
         </div>
+      {(relatedActivities.length > 0 || relatedTracks.length > 0) && <section className="mx-auto mt-8 max-w-[46rem] border-t border-border py-6">
+        <h2 className="text-lg font-medium">Behind the build</h2>
+        <p className="mt-2 text-sm text-muted-foreground">Learning, research and milestones connected to this project.</p>
+        <ul className="mt-4 space-y-3 text-sm">{relatedTracks.map(t => <li key={t.slug}><Link className="link-underline" href={`/journey/${t.slug}`}>Track: {t.title}</Link></li>)}{relatedActivities.map(a => <li key={a.slug}><Link className="link-underline" href={activityHref(a)}>{a.title}</Link></li>)}</ul>
+      </section>}
     </main>
   );
 }

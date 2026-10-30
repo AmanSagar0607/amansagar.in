@@ -1,7 +1,8 @@
 import React, { ReactNode } from 'react';
 import Link from "next/link";
 import { Calendar, Dot } from "lucide-react";
-import { getMDXFiles, type MDXFile } from "@/lib/mdx-utils";
+import { type MDXFile } from "@/lib/mdx-utils";
+import { getPublicPosts } from "@/lib/public-posts";
 import { MotionDiv } from "./motion-div";
 
 interface BlogPostFrontmatter {
@@ -20,7 +21,7 @@ interface LandingBlogsProps {
 }
 
 export const LandingBlogs: React.FC<LandingBlogsProps> = async () => {
-  const posts = (await getMDXFiles("src/content/posts")) as unknown as BlogPost[];
+  const posts = (await getPublicPosts()) as unknown as BlogPost[];
   const recentPosts = posts.slice(0, 3); // Show 2 most recent posts
   
   const formatDate = (dateString?: string): string => {

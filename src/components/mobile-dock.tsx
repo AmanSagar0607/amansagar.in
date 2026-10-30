@@ -13,6 +13,8 @@ const navItems = [
   { title: "Home", href: "/" },
   { title: "Projects", href: "/projects" },
   { title: "Blog", href: "/blog" },
+  { title: "Journey", href: "/journey" },
+  { title: "Achievements", href: "/achievements" },
   { title: "About", href: "/about" },
   { title: "Contact", href: "/contact" },
   { title: "Resume", href: "https://drive.google.com/file/d/1flNfObtr9q55WtIA5DJRZLEkj_Trsw7-/view?usp=sharing", external: true },

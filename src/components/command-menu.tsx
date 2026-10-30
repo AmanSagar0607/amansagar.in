@@ -13,6 +13,8 @@ import {
   Send,
   Share2,
   Wrench,
+  BookOpen,
+  Trophy,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -50,6 +52,8 @@ const commandGroups: CommandMenuGroup[] = [
         shortcut: "P",
       },
       { label: "Blog", href: "/blog", icon: FileText, shortcut: "B" },
+      { label: "Journey", href: "/journey", icon: BookOpen, shortcut: "J" },
+      { label: "Achievements", href: "/achievements", icon: Trophy },
       { label: "Contact", href: "/contact", icon: Mail, shortcut: "C" },
     ],
   },

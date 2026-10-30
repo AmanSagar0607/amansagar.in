@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { TallyForm } from "@/components/tally-form";
+import { getPublicSiteSettings } from "@/lib/public-site-settings";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -27,7 +28,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const { contactEmail } = await getPublicSiteSettings();
   return (
     <main className="page-shell">
       <section className="page-section">
@@ -39,11 +41,13 @@ export default function ContactPage() {
         />
         <div className="relative left-1/2 w-screen -translate-x-1/2 border-t border-[#e7e7e7] dark:border-[#1c1c1c]" />
         <div className="px-4 py-3">
-          <p className="mt-4 text-sm text-muted-foreground">
-            Direct email:
-            {" "}
-            <Link href="mailto:amansagar0307@gmail.com" className="footer-link text-foreground">
-              amansagar0307@gmail.com
+          <p className="text-muted-foreground mt-4 text-sm">
+            Direct email:{" "}
+            <Link
+              href={`mailto:${contactEmail}`}
+              className="footer-link text-foreground"
+            >
+              {contactEmail}
             </Link>
           </p>
         </div>

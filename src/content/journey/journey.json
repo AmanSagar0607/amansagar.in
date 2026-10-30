@@ -1,0 +1,239 @@
+{
+  "activities": [
+    {
+      "slug": "understanding-document-ingestion-pipelines",
+      "title": "Understanding document ingestion pipelines",
+      "description": "Sample draft: a proposed exploration, not a record of completed work.",
+      "content": "## Draft exploration plan\n\nThis sample is a writing prompt for a future learning update. No completed learning is claimed.\n\n### Questions to investigate\n\n- What problem does this technique solve in a document processing pipeline?\n- Which assumptions should be tested with real documents?\n- What evidence would demonstrate a useful result?\n\n### Before publishing\n\nReplace this outline with actual observations, a reproducible example, limitations, and references to the official documentation.",
+      "type": "learning",
+      "date": "2026-10-30",
+      "updatedAt": "2026-10-30",
+      "status": "draft",
+      "visibility": "private",
+      "sample": true,
+      "completion": "planned",
+      "trackSlugs": ["document-intelligence-ocr"],
+      "projectSlugs": [],
+      "technologies": ["Python"],
+      "tags": ["document-intelligence"],
+      "references": [],
+      "attachments": []
+    },
+    {
+      "slug": "exploring-ocr-fundamentals",
+      "title": "Exploring OCR fundamentals",
+      "description": "Sample draft: a proposed exploration, not a record of completed work.",
+      "content": "## Draft exploration plan\n\nThis sample is a writing prompt for a future learning update. No completed learning is claimed.\n\n### Questions to investigate\n\n- What problem does this technique solve in a document processing pipeline?\n- Which assumptions should be tested with real documents?\n- What evidence would demonstrate a useful result?\n\n### Before publishing\n\nReplace this outline with actual observations, a reproducible example, limitations, and references to the official documentation.",
+      "type": "learning",
+      "date": "2026-10-30",
+      "updatedAt": "2026-10-30",
+      "status": "draft",
+      "visibility": "private",
+      "sample": true,
+      "completion": "planned",
+      "trackSlugs": ["document-intelligence-ocr"],
+      "projectSlugs": [],
+      "technologies": ["Python"],
+      "tags": ["document-intelligence"],
+      "references": [],
+      "attachments": []
+    },
+    {
+      "slug": "introduction-to-docling",
+      "title": "Introduction to Docling",
+      "description": "Sample draft: a proposed exploration, not a record of completed work.",
+      "content": "## Draft exploration plan\n\nThis sample is a writing prompt for a future learning update. No completed learning is claimed.\n\n### Questions to investigate\n\n- What problem does this technique solve in a document processing pipeline?\n- Which assumptions should be tested with real documents?\n- What evidence would demonstrate a useful result?\n\n### Before publishing\n\nReplace this outline with actual observations, a reproducible example, limitations, and references to the official documentation.",
+      "type": "learning",
+      "date": "2026-10-30",
+      "updatedAt": "2026-10-30",
+      "status": "draft",
+      "visibility": "private",
+      "sample": true,
+      "completion": "planned",
+      "trackSlugs": ["document-intelligence-ocr"],
+      "projectSlugs": [],
+      "technologies": ["Docling", "Python"],
+      "tags": ["document-intelligence"],
+      "references": [],
+      "attachments": []
+    },
+    {
+      "slug": "comparing-docling-and-amazon-textract",
+      "title": "Comparing Docling and Amazon Textract",
+      "description": "Sample draft: a proposed exploration, not a record of completed work.",
+      "content": "## Draft exploration plan\n\nThis sample is a writing prompt for a future learning update. No completed learning is claimed.\n\n### Questions to investigate\n\n- What problem does this technique solve in a document processing pipeline?\n- Which assumptions should be tested with real documents?\n- What evidence would demonstrate a useful result?\n\n### Before publishing\n\nReplace this outline with actual observations, a reproducible example, limitations, and references to the official documentation.",
+      "type": "research",
+      "date": "2026-10-30",
+      "updatedAt": "2026-10-30",
+      "status": "draft",
+      "visibility": "private",
+      "sample": true,
+      "completion": "planned",
+      "trackSlugs": ["document-intelligence-ocr"],
+      "projectSlugs": [],
+      "technologies": ["Docling", "Python"],
+      "tags": ["document-intelligence"],
+      "references": [],
+      "attachments": []
+    },
+    {
+      "slug": "understanding-document-layout-extraction",
+      "title": "Understanding document layout extraction",
+      "description": "Sample draft: a proposed exploration, not a record of completed work.",
+      "content": "## Draft exploration plan\n\nThis sample is a writing prompt for a future learning update. No completed learning is claimed.\n\n### Questions to investigate\n\n- What problem does this technique solve in a document processing pipeline?\n- Which assumptions should be tested with real documents?\n- What evidence would demonstrate a useful result?\n\n### Before publishing\n\nReplace this outline with actual observations, a reproducible example, limitations, and references to the official documentation.",
+      "type": "learning",
+      "date": "2026-10-30",
+      "updatedAt": "2026-10-30",
+      "status": "draft",
+      "visibility": "private",
+      "sample": true,
+      "completion": "planned",
+      "trackSlugs": ["document-intelligence-ocr"],
+      "projectSlugs": [],
+      "technologies": ["Python"],
+      "tags": ["document-intelligence"],
+      "references": [],
+      "attachments": []
+    },
+    {
+      "slug": "exploring-metadata-extraction",
+      "title": "Exploring metadata extraction",
+      "description": "Sample draft: a proposed exploration, not a record of completed work.",
+      "content": "## Draft exploration plan\n\nThis sample is a writing prompt for a future learning update. No completed learning is claimed.\n\n### Questions to investigate\n\n- What problem does this technique solve in a document processing pipeline?\n- Which assumptions should be tested with real documents?\n- What evidence would demonstrate a useful result?\n\n### Before publishing\n\nReplace this outline with actual observations, a reproducible example, limitations, and references to the official documentation.",
+      "type": "learning",
+      "date": "2026-10-30",
+      "updatedAt": "2026-10-30",
+      "status": "draft",
+      "visibility": "private",
+      "sample": true,
+      "completion": "planned",
+      "trackSlugs": ["document-intelligence-ocr"],
+      "projectSlugs": [],
+      "technologies": ["Python"],
+      "tags": ["document-intelligence"],
+      "references": [],
+      "attachments": []
+    }
+  ],
+  "tracks": [
+    {
+      "slug": "document-intelligence-ocr",
+      "title": "Document Intelligence & OCR",
+      "description": "Currently exploring document ingestion, OCR, layout extraction, metadata extraction and document processing frameworks. Milestones describe the intended path; none are marked complete.",
+      "technologies": ["Docling", "PyMuPDF", "Tesseract", "Python"],
+      "status": "active",
+      "visibility": "public",
+      "milestones": [
+        {
+          "id": "step-1",
+          "title": "Document formats and structure"
+        },
+        {
+          "id": "step-2",
+          "title": "OCR fundamentals"
+        },
+        {
+          "id": "step-3",
+          "title": "Docling and document parsing"
+        },
+        {
+          "id": "step-4",
+          "title": "Metadata extraction"
+        },
+        {
+          "id": "step-5",
+          "title": "Table and layout extraction"
+        },
+        {
+          "id": "step-6",
+          "title": "Document classification"
+        },
+        {
+          "id": "step-7",
+          "title": "Building a document ingestion pipeline"
+        },
+        {
+          "id": "step-8",
+          "title": "Complete an end-to-end project"
+        }
+      ],
+      "projectSlugs": []
+    }
+  ],
+  "challenges": [
+    {
+      "id": "read-technical-documentation",
+      "title": "Read official technical documentation",
+      "category": "Learning",
+      "description": "Capture one useful concept and its limitations in a published note. Complete when there is activity or evidence to share.",
+      "visibility": "public"
+    }
+  ],
+  "awards": [],
+  "badgeRules": [
+    {
+      "id": "curious-mind",
+      "title": "Curious Mind",
+      "metric": "learning",
+      "target": 5,
+      "requirement": "Publish 5 learning activities.",
+      "description": "Publish 5 learning activities."
+    },
+    {
+      "id": "researcher",
+      "title": "Researcher",
+      "metric": "research",
+      "target": 5,
+      "requirement": "Publish 5 research activities.",
+      "description": "Publish 5 research activities."
+    },
+    {
+      "id": "builder",
+      "title": "Builder",
+      "metric": "building",
+      "target": 5,
+      "requirement": "Complete 5 published building activities.",
+      "description": "Complete 5 published building activities."
+    },
+    {
+      "id": "first-article",
+      "title": "First Article",
+      "metric": "article",
+      "target": 1,
+      "requirement": "Publish the first technical article in the existing blog.",
+      "description": "Publish the first technical article in the existing blog."
+    },
+    {
+      "id": "consistency",
+      "title": "Consistency",
+      "metric": "active-days",
+      "target": 7,
+      "requirement": "Publish on 7 distinct calendar days.",
+      "description": "Publish on 7 distinct calendar days."
+    },
+    {
+      "id": "open-source-contributor",
+      "title": "Open Source Contributor",
+      "metric": "open-source",
+      "target": 1,
+      "requirement": "Record a completed open-source milestone with a verified contribution URL.",
+      "description": "Record a completed open-source milestone with a verified contribution URL."
+    },
+    {
+      "id": "first-project-shipped",
+      "title": "First Project Shipped",
+      "metric": "project-shipped",
+      "target": 1,
+      "requirement": "Publish a completed shipped milestone linked to an existing project.",
+      "description": "Publish a completed shipped milestone linked to an existing project."
+    },
+    {
+      "id": "knowledge-explorer",
+      "title": "Knowledge Explorer",
+      "metric": "track",
+      "target": 1,
+      "requirement": "Complete every milestone in a public learning track.",
+      "description": "Complete every milestone in a public learning track."
+    }
+  ]
+}

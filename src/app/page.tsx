@@ -52,8 +52,9 @@ import {
   type ExperienceItemType,
 } from "@/components/work-experience";
 import { getCachedContributions } from "@/lib/get-cached-contributions";
-import { getMDXFiles, type MDXFile } from "@/lib/mdx-utils";
-import { getAllProjects } from "@/lib/projects";
+import { type MDXFile } from "@/lib/mdx-utils";
+import { getPublicPosts } from "@/lib/public-posts";
+import { getPublicProjects } from "@/lib/public-projects";
 
 type BlogPostFrontmatter = {
   title: string;
@@ -277,7 +278,7 @@ function formatReadMeta(post: BlogPost) {
 
 export default async function Home() {
   const posts = (
-    (await getMDXFiles("src/content/posts")) as unknown as BlogPost[]
+    (await getPublicPosts()) as unknown as BlogPost[]
   )
     .sort(
       (a, b) =>
@@ -285,7 +286,7 @@ export default async function Home() {
         new Date(a.frontmatter.date).getTime(),
     )
     .slice(0, 4);
-  const projects = getAllProjects();
+  const projects = await getPublicProjects();
   const contributions = getCachedContributions(GITHUB_USERNAME);
 
   return (

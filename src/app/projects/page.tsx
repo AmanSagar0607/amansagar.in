@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/page-header";
 import { PortfolioProjectGrid } from "@/components/portfolio-project-grid";
-import { getAllProjects } from "@/lib/projects";
+import { getPublicProjects } from "@/lib/public-projects";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -24,8 +24,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ProjectsPage() {
-  const projects = getAllProjects();
+export default async function ProjectsPage() {
+  const projects = await getPublicProjects();
 
   return (
     <main className="page-shell">

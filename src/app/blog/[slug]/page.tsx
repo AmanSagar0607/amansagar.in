@@ -1,13 +1,14 @@
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
+import { getPublicPost, getPublicPosts } from "@/lib/public-posts";
 import { Metadata } from "next";
-import fs from "fs";
-import path from "path";
+import { getPublicActivities, getPublicTracks } from "@/lib/public-journey";
+import { getPublicProjectsBySlug } from "@/lib/public-projects";
 import Image from "next/image";
 import Link from "next/link";
-import matter from "gray-matter";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { components as baseComponents } from "@/components/mdx-components";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import { ActivityMarkdown } from "@/components/journey/activity-markdown";
 import { ShareMenu } from "@/components/share-menu";
 import { TOCMinimap } from "@/components/toc-minimap";
 
@@ -21,6 +22,9 @@ export interface BlogPostMetadata {
   views?: number;
   image?: string;
   tags?: string[];
+  seoTitle?: string;
+  seoDescription?: string;
+  updatedAt?: string;
 }
 
 function isBlogPostMetadata(data: unknown): data is BlogPostMetadata {
@@ -67,27 +71,29 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const filePath = path.join(process.cwd(), `src/content/posts/${slug}.mdx`);
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return { title: 'Post Not Found', robots: { index: false } };
 
   try {
-    const fileContent = fs.readFileSync(filePath, "utf8");
-    const { data: frontmatter } = matter(fileContent);
+    const post = await getPublicPost(slug);
+    const frontmatter = post?.frontmatter;
 
-    if (!isBlogPostMetadata(frontmatter)) {
+    if (!post || !isBlogPostMetadata(frontmatter)) {
       throw new Error("Invalid blog post metadata");
     }
 
     const image = frontmatter.image || "/opengraph-image";
+    const seoTitle = typeof frontmatter.seoTitle === "string" && frontmatter.seoTitle.trim() ? frontmatter.seoTitle : frontmatter.title;
+    const seoDescription = typeof frontmatter.seoDescription === "string" && frontmatter.seoDescription.trim() ? frontmatter.seoDescription : frontmatter.description;
 
     return {
-      title: frontmatter.title,
-      description: frontmatter.description,
+      title: seoTitle,
+      description: seoDescription,
       alternates: {
         canonical: `/blog/${slug}`,
       },
       openGraph: {
-        title: frontmatter.title,
-        description: frontmatter.description,
+        title: seoTitle,
+        description: seoDescription,
         url: `/blog/${slug}`,
         type: "article",
         publishedTime: frontmatter.date,
@@ -104,14 +110,15 @@ export async function generateMetadata({
       },
       twitter: {
         card: "summary_large_image",
-        title: frontmatter.title,
-        description: frontmatter.description,
+        title: seoTitle,
+        description: seoDescription,
         images: [image],
       },
     };
   } catch {
     return {
       title: "Post Not Found",
+      robots: { index: false },
       description: "The requested blog post could not be found.",
     };
   }
@@ -123,18 +130,23 @@ export default async function BlogPost({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const filePath = path.join(process.cwd(), "src/content/posts", `${slug}.mdx`);
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) notFound();
 
   try {
-    await fs.promises.access(filePath);
-    const fileContent = fs.readFileSync(filePath, "utf8");
-    const content = fileContent.replace(/^---[\s\S]*?---\s*/, "");
-    const { data: frontmatter } = matter(fileContent);
+    const post = await getPublicPost(slug);
+    const frontmatter = post?.frontmatter;
 
-    if (!isBlogPostMetadata(frontmatter)) {
+    if (!post || !isBlogPostMetadata(frontmatter)) {
       throw new Error("Invalid blog post metadata");
     }
 
+    const content = post.content;
+    const [journeyActivities, journeyTracks] = await Promise.all([getPublicActivities(), getPublicTracks()]);
+    const related = journeyActivities.find(a => a.blogSlug === slug);
+    const relatedTracks = journeyTracks.filter(t => related?.trackSlugs.includes(t.slug));
+    const relatedProjects = await getPublicProjectsBySlug(related?.projectSlugs || []);
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.amansagar.in';
+    const schema = { '@context': 'https://schema.org', '@type': 'TechArticle', headline: frontmatter.title, description: frontmatter.description, datePublished: frontmatter.date, dateModified: frontmatter.updatedAt || frontmatter.date, author: { '@type': 'Person', name: frontmatter.author || 'Aman Sagar', url: siteUrl }, mainEntityOfPage: siteUrl + '/blog/' + slug };
     const readTime = frontmatter.readTime || calculateReadTime(content);
     const headings = extractHeadings(content);
 
@@ -144,6 +156,7 @@ export default async function BlogPost({
           <TOCMinimap items={headings} />
         </aside>
 
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\u003c') }} />
         <article className="mx-auto w-full max-w-[680px]">
           <div className="pt-4 pb-8">
             <Link
@@ -196,30 +209,21 @@ export default async function BlogPost({
           </div>
 
           <div className="article-body pt-10">
-            <MDXRemote source={content} components={baseComponents} />
+            {post.format === "trusted-mdx" ? <MDXRemote source={content} components={baseComponents} /> : <ActivityMarkdown content={content} />}
           </div>
+          {(relatedTracks.length > 0 || relatedProjects.length > 0) && <section className="mt-8 border-t border-border py-6">
+            <h2 className="text-lg font-medium">Related learning and projects</h2>
+            <div className="mt-3 flex flex-wrap gap-4 text-sm">{relatedTracks.map(t => <Link className="link-underline inline-flex min-h-11 items-center" key={t.slug} href={'/journey/' + t.slug}>{t.title}</Link>)}{relatedProjects.map(p => <Link className="link-underline inline-flex min-h-11 items-center" key={p.slug} href={'/projects/' + p.slug}>{p.title}</Link>)}</div>
+          </section>}
         </article>
       </main>
     );
   } catch (error) {
     console.error("Error rendering post:", error);
-    redirect("/blog");
+    notFound();
   }
 }
 
 export async function generateStaticParams() {
-  const postsDir = path.join(process.cwd(), "src/content/posts");
-
-  try {
-    const files = fs.readdirSync(postsDir);
-
-    return files
-      .filter((file) => file.endsWith(".mdx"))
-      .map((file) => ({
-        slug: file.replace(/\.mdx$/, ""),
-      }));
-  } catch (error) {
-    console.error("Error reading posts directory:", error);
-    return [];
-  }
+  return (await getPublicPosts()).map(post => ({ slug: post.slug }));
 }

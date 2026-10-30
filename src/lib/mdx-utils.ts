@@ -8,6 +8,11 @@ interface Frontmatter {
   [key: string]: unknown; // For any additional frontmatter fields
 }
 
+export function isPublishedPost(data: Record<string, unknown>): boolean {
+  return data.status !== 'draft' && data.published !== false && data.visibility !== 'private' && data.sample !== true &&
+    (!data.date || Date.parse(String(data.date)) <= Date.now());
+}
+
 export interface MDXFile {
   slug: string;
   content: string;
@@ -36,7 +41,7 @@ export async function getMDXFiles(directory: string): Promise<MDXFile[]> {
     });
     
     // Sort posts by date in descending order (newest first)
-    return posts.sort((a, b) => {
+    return posts.filter(post => isPublishedPost(post.frontmatter)).sort((a, b) => {
       const dateA = a.frontmatter.date ? new Date(a.frontmatter.date).getTime() : 0;
       const dateB = b.frontmatter.date ? new Date(b.frontmatter.date).getTime() : 0;
       return dateB - dateA;
@@ -48,11 +53,13 @@ export async function getMDXFiles(directory: string): Promise<MDXFile[]> {
 }
 
 export async function getMDXFileBySlug(directory: string, slug: string): Promise<MDXFile | null> {
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return null;
   try {
     const filePath = path.join(directory, `${slug}.mdx`);
     const fileContent = fs.readFileSync(filePath, 'utf8');
     
     const { data: frontmatter } = matter(fileContent);
+    if (!isPublishedPost(frontmatter)) return null;
     
     return {
       slug,
