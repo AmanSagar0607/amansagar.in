@@ -29,6 +29,7 @@ import { ContentTable, type AdminTableRow } from "./content-table";
 import { DeleteContentDialog } from "./delete-content-dialog";
 import { PostEditor } from "./post-editor";
 import { ProjectEditor } from "./project-editor";
+import { ProjectBoard } from "./project-board";
 import { TrackEditor } from "./track-editor";
 
 export { isContentSection } from "@/lib/admin/content-sections";
@@ -229,6 +230,7 @@ export function ContentList({
   section: ContentSection;
   snapshot: InitialContentSnapshot;
 }) {
+  const [projectView, setProjectView] = useState<"board" | "list">("board");
   const definition = contentSections[section];
   const rows = contentRows(section, snapshot);
   const columns = [
@@ -268,12 +270,16 @@ export function ContentList({
           </Link>
         </Button>
       </div>
-      <ContentTable
+      {section === "projects" && <div role="group" aria-label="Project view" className="flex gap-2">
+        <Button variant={projectView === "board" ? "default" : "outline"} aria-pressed={projectView === "board"} onClick={() => setProjectView("board")}>Board</Button>
+        <Button variant={projectView === "list" ? "default" : "outline"} aria-pressed={projectView === "list"} onClick={() => setProjectView("list")}>List</Button>
+      </div>}
+      {section === "projects" && projectView === "board" ? <ProjectBoard projects={snapshot.projects} /> : <ContentTable
         columns={columns}
         rows={rows}
         filters={filters}
         emptyMessage={`No ${definition.label.toLocaleLowerCase()} found.`}
-      />
+      />}
     </div>
   );
 }

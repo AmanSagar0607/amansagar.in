@@ -70,12 +70,12 @@ const commandGroups: CommandMenuGroup[] = [
     items: [
       {
         label: "GitHub",
-        href: "https://github.com/AmanSagar0607",
+        href: "/social/github",
         icon: Github,
       },
       {
         label: "Resume",
-        href: "https://drive.google.com/file/d/1flNfObtr9q55WtIA5DJRZLEkj_Trsw7-/view?usp=sharing",
+        href: "/resume",
         icon: Send,
       },
     ],

@@ -17,7 +17,7 @@ const navItems = [
   { title: "Achievements", href: "/achievements" },
   { title: "About", href: "/about" },
   { title: "Contact", href: "/contact" },
-  { title: "Resume", href: "https://drive.google.com/file/d/1flNfObtr9q55WtIA5DJRZLEkj_Trsw7-/view?usp=sharing", external: true },
+  { title: "Resume", href: "/resume", external: true },
 ]
 
 export function MobileDock() {
@@ -55,7 +55,7 @@ export function MobileDock() {
         </Link>
 
         <Link
-          href="https://x.com/amansagar0607"
+          href="/social/x"
           target="_blank"
           className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full transition-colors"
           aria-label="X (Twitter)"
@@ -64,7 +64,7 @@ export function MobileDock() {
         </Link>
 
         <Link
-          href="https://github.com/AmanSagar0607"
+          href="/social/github"
           target="_blank"
           className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full transition-colors"
           aria-label="GitHub"

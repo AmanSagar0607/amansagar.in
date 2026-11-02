@@ -9,6 +9,13 @@ import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 const nextConfig: NextConfig = {
   // Isolate verification builds from an open development server.
   distDir: process.env.NEXT_OUTPUT_DIR || ".next",
+  // The first-run CMS import reads these source files at request time.
+  outputFileTracingIncludes: {
+    '/api/admin/initialize': [
+      './src/content/posts/*.mdx',
+      './src/content/journey/journey.json',
+    ],
+  },
   experimental: {
     mdxRs: true,
   },

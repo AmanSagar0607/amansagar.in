@@ -30,7 +30,7 @@ const moreNavItems = [
   { title: "socials", href: "/#socials" },
   {
     title: "resume",
-    href: "https://drive.google.com/file/d/1flNfObtr9q55WtIA5DJRZLEkj_Trsw7-/view?usp=sharing",
+    href: "/resume",
     external: true,
   },
 ];

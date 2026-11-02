@@ -45,5 +45,6 @@ next-env.d.ts
 /docs/journey-*.png
 .env.local
 supabase/.temp/
+.strapi-archive/
 
 .env

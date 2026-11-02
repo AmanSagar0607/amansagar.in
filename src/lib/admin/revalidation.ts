@@ -25,7 +25,7 @@ export function affectedPublicPaths(
     { path: "/achievements" },
   ];
   if (kind === "settings")
-    targets.push({ path: "/", type: "layout" }, { path: "/contact" });
+    targets.push({ path: "/", type: "layout" }, { path: "/contact" }, { path: "/about" });
   if (kind === "post")
     targets.push(
       { path: "/blog" },

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 /** One-time import of the existing portfolio after an authenticated admin signs in. */
 export function AdminInitialize() {
@@ -22,6 +23,8 @@ export function AdminInitialize() {
         body: "{}",
       });
       if (!response.ok) throw new Error("Initialization failed.");
+      const result: { revalidated?: boolean } = await response.json();
+      if (result.revalidated === false) toast.warning("Content was imported, but public pages could not be refreshed. Try saving a content item to refresh them.");
       router.refresh();
     } catch {
       setError("Could not import the existing portfolio. Please try again.");

@@ -38,12 +38,15 @@ export const viewport: Viewport = {
 };
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { siteTitle, siteDescription } = await getPublicSiteSettings();
+  const { siteTitle, siteDescription, profileRole, socialLinks } = await getPublicSiteSettings();
+  const role = profileRole || "Software Engineer";
+  const title = `${siteTitle} | ${role === "Software Engineer" ? "Software Engineer building AI tools and products" : role}`;
+  const xHandle = socialLinks?.find((link) => link.label.toLowerCase() === "x")?.handle;
   return {
     metadataBase: new URL(siteUrl),
     applicationName: siteTitle,
     title: {
-      default: `${siteTitle} | Software Engineer building AI tools and products`,
+      default: title,
       template: `%s | ${siteTitle}`,
     },
     description: siteDescription,
@@ -56,9 +59,9 @@ export async function generateMetadata(): Promise<Metadata> {
       "retrieval systems",
       "GenAI products",
     ],
-    authors: [{ name: "Aman Sagar", url: siteUrl }],
-    creator: "Aman Sagar",
-    publisher: "Aman Sagar",
+    authors: [{ name: siteTitle, url: siteUrl }],
+    creator: siteTitle,
+    publisher: siteTitle,
     alternates: { canonical: "/" },
     icons: {
       icon: "/aman-favicon.ico",
@@ -66,7 +69,7 @@ export async function generateMetadata(): Promise<Metadata> {
       apple: "/aman-avatar.webp",
     },
     openGraph: {
-      title: `${siteTitle} | Software Engineer building AI tools and products`,
+      title,
       description: siteDescription,
       url: siteUrl,
       siteName: siteTitle,
@@ -77,15 +80,15 @@ export async function generateMetadata(): Promise<Metadata> {
           url: "/opengraph-image",
           width: 1200,
           height: 630,
-          alt: "Aman Sagar - Software Engineer building AI tools and products",
+          alt: title,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${siteTitle} | Software Engineer building AI tools and products`,
+      title,
       description: siteDescription,
-      creator: "@amansagar0607",
+      ...(xHandle && /^@[A-Za-z0-9_]{1,15}$/.test(xHandle) ? { creator: xHandle } : {}),
       images: ["/opengraph-image"],
     },
   };

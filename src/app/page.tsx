@@ -55,6 +55,8 @@ import { getCachedContributions } from "@/lib/get-cached-contributions";
 import { type MDXFile } from "@/lib/mdx-utils";
 import { getPublicPosts } from "@/lib/public-posts";
 import { getPublicProjects } from "@/lib/public-projects";
+import { getPublicSiteSettings } from "@/lib/public-site-settings";
+import { defaultSiteSettings } from "@/lib/admin/site-settings";
 
 type BlogPostFrontmatter = {
   title: string;
@@ -263,9 +265,6 @@ const profileDetails = [
   },
 ];
 
-const GITHUB_USERNAME = "AmanSagar0607";
-const GITHUB_PROFILE_URL = "https://github.com/AmanSagar0607";
-
 function formatReadMeta(post: BlogPost) {
   if (post.frontmatter.readTime)
     return post.frontmatter.readTime.replace("Read", "read");
@@ -287,7 +286,21 @@ export default async function Home() {
     )
     .slice(0, 4);
   const projects = await getPublicProjects();
-  const contributions = getCachedContributions(GITHUB_USERNAME);
+  const settings = await getPublicSiteSettings();
+  const github = (settings.socialLinks ?? defaultSiteSettings.socialLinks ?? []).find((link) => link.label.toLowerCase() === "github");
+  const githubUsername = github?.href.match(/^https:\/\/github\.com\/([a-z\d](?:[a-z\d-]{0,38}))(?:\/)?$/i)?.[1];
+  const details = profileDetails.filter((item) => item.label !== "GitHub" || github).map((item) => {
+    if (item.label === "Focus") return { ...item, value: settings.profileFocus ?? item.value };
+    if (item.label === "Current") return { ...item, value: settings.profileRole ?? item.value };
+    if (item.label === "Location") return { ...item, value: settings.profileLocation ?? item.value };
+    if (item.label === "Availability") return { ...item, value: settings.profileAvailability ?? item.value };
+    if (item.label === "Email") return { ...item, value: settings.contactEmail, href: `mailto:${settings.contactEmail}` };
+    if (item.label === "GitHub" && github) return { ...item, value: github.handle || github.label, href: github.href };
+    return item;
+  });
+  const knownIcons = new Map(techStack.flatMap((group) => group.items.map((item) => [item.label, item.icon] as const)));
+  const displayedStack = settings.technologyStack?.map((group) => ({ label: group.label, items: group.items.map((label) => ({ label, icon: knownIcons.get(label) ?? badgeIcon(label.slice(0, 2)) })) })) ?? techStack;
+  const contributions = githubUsername ? getCachedContributions(githubUsername) : null;
 
   return (
     <main className="page-shell">
@@ -303,7 +316,7 @@ export default async function Home() {
               <div className="hero-stage-avatar-inner">
                 <Image
                   src="/aman-avatar.webp"
-                  alt="Aman Sagar"
+                  alt={settings.siteTitle}
                   fill
                   priority
                   className="object-cover"
@@ -312,10 +325,10 @@ export default async function Home() {
             </div>
             <div className="hero-stage-title-wrap">
               <div className="hero-stage-title-row">
-                <h1 className="hero-stage-name">Aman Sagar</h1>
+                <h1 className="hero-stage-name">{settings.siteTitle}</h1>
               </div>
               <div className="hero-stage-subline">
-                Building practical AI systems. Small details matter.
+                {settings.profileTagline ?? defaultSiteSettings.profileTagline}
               </div>
             </div>
           </div>
@@ -325,37 +338,35 @@ export default async function Home() {
           <div className="hero-minimal">
             <div className="hero-minimal-head">
               <div className="hero-role-row hero-role-row-inline">
-                <span className="hero-role-label">Software Engineer</span>
-                <Link
-                  href="https://github.com/AmanSagar0607"
+                <span className="hero-role-label">{settings.profileRole ?? defaultSiteSettings.profileRole}</span>
+                {github && <Link
+                  href={github.href}
                   target="_blank"
                   className="hero-role-link"
                 >
-                  @AmanSagar0607
-                </Link>
+                  {github.handle || github.label}
+                </Link>}
               </div>
               <div className="hero-role-row hero-role-row-build">
                 <span className="hero-role-label">Building</span>
                 <Link
-                  href="https://github.com/AmanSagar0607/Context-OS"
+                  href={settings.featuredProjectUrl ?? defaultSiteSettings.featuredProjectUrl!}
                   target="_blank"
                   className="hero-role-link"
                 >
-                  Context-OS
+                  {settings.featuredProjectName ?? defaultSiteSettings.featuredProjectName}
                 </Link>
                 <span className="text-muted-foreground text-sm leading-6">
-                  Open-source memory and retrieval for AI agents.
+                  {settings.featuredProjectDescription ?? defaultSiteSettings.featuredProjectDescription}
                 </span>
               </div>
               <p className="text-muted-foreground max-w-2xl text-sm leading-6">
-                I build full-stack software with a strong bias toward practical
-                AI systems, retrieval workflows, and interfaces that feel clear
-                and human.
+                {settings.profileBio ?? defaultSiteSettings.profileBio}
               </p>
             </div>
 
             <div className="profile-detail-grid">
-              {profileDetails.map((item) => {
+              {details.map((item) => {
                 const Icon = item.icon;
                 const content = (
                   <>
@@ -387,12 +398,12 @@ export default async function Home() {
               })}
             </div>
 
-            <Suspense fallback={<GitHubContributionsFallback />}>
+            {contributions && github && <Suspense fallback={<GitHubContributionsFallback />}>
               <GitHubActivityCard
                 contributions={contributions}
-                profileUrl={GITHUB_PROFILE_URL}
+                profileUrl={github.href}
               />
-            </Suspense>
+            </Suspense>}
           </div>
         </div>
       </section>
@@ -407,7 +418,7 @@ export default async function Home() {
           </span>
         </div>
         <div className="stack-groups list-grid">
-          {techStack.map((group, index) => (
+          {displayedStack.map((group, index) => (
             <div
               key={group.label}
               className="stack-group screen-line-bottom grid gap-4 p-4 sm:grid-cols-[12rem_1fr]"
@@ -508,7 +519,7 @@ export default async function Home() {
           auto-calculated duration from employment dates.
         </div>
         <WorkExperience
-          experiences={experiences}
+          experiences={settings.workExperience ?? experiences}
           className="*:screen-line-bottom"
         />
       </section>
@@ -523,9 +534,9 @@ export default async function Home() {
           </span>
         </div>
         <div className="social-grid">
-          {socialLinks.map((item) => (
+          {(settings.socialLinks ?? socialLinks).map((item) => (
             <Link
-              key={item.label}
+              key={`${item.label}-${item.href}`}
               href={item.href}
               target="_blank"
               className="screen-line-bottom social-link"

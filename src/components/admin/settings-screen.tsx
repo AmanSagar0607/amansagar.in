@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { saveContent } from "@/lib/admin/client";
 import type { SiteSettings } from "@/lib/admin/site-settings";
+import { defaultSiteSettings } from "@/lib/admin/site-settings";
+import { WorkExperienceSettings } from "./work-experience-settings";
 const inputClass =
   "border-input bg-background focus-visible:ring-ring mt-1 min-h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2";
 export function SettingsScreen({ initial }: { initial: SiteSettings }) {
@@ -91,6 +93,26 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
             />
           </label>
           <label className="block text-sm font-medium">
+            Profile tagline
+            <input required maxLength={500} className={inputClass} value={settings.profileTagline ?? defaultSiteSettings.profileTagline} onChange={(event) => change("profileTagline", event.target.value)} />
+          </label>
+          <label className="block text-sm font-medium">
+            Profile role
+            <input required maxLength={500} className={inputClass} value={settings.profileRole ?? defaultSiteSettings.profileRole} onChange={(event) => change("profileRole", event.target.value)} />
+          </label>
+          <label className="block text-sm font-medium">
+            Profile introduction
+            <textarea required maxLength={500} rows={4} className={inputClass} value={settings.profileBio ?? defaultSiteSettings.profileBio} onChange={(event) => change("profileBio", event.target.value)} />
+          </label>
+          {([
+            ["profileFocus", "Focus"],
+            ["profileLocation", "Location"],
+            ["profileAvailability", "Availability"],
+          ] as const).map(([key, label]) => <label key={key} className="block text-sm font-medium">{label}<input required maxLength={500} className={inputClass} value={settings[key] ?? defaultSiteSettings[key]} onChange={(event) => change(key, event.target.value)} /></label>)}
+          <label className="block text-sm font-medium">Featured project name<input required maxLength={500} className={inputClass} value={settings.featuredProjectName ?? defaultSiteSettings.featuredProjectName} onChange={(event) => change("featuredProjectName", event.target.value)} /></label>
+          <label className="block text-sm font-medium">Featured project URL (HTTPS)<input required type="url" maxLength={2048} className={inputClass} value={settings.featuredProjectUrl ?? defaultSiteSettings.featuredProjectUrl} onChange={(event) => change("featuredProjectUrl", event.target.value)} /></label>
+          <label className="block text-sm font-medium">Featured project description<textarea required rows={2} maxLength={500} className={inputClass} value={settings.featuredProjectDescription ?? defaultSiteSettings.featuredProjectDescription} onChange={(event) => change("featuredProjectDescription", event.target.value)} /></label>
+          <label className="block text-sm font-medium">
             Public contact email
             <input
               required
@@ -101,6 +123,44 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
               onChange={(event) => change("contactEmail", event.target.value)}
             />
           </label>
+          <label className="block text-sm font-medium">
+            Résumé URL
+            <input required type="url" maxLength={2048} className={inputClass} value={settings.resumeUrl ?? defaultSiteSettings.resumeUrl} onChange={(event) => change("resumeUrl", event.target.value)} />
+          </label>
+          <label className="block text-sm font-medium">About page description<textarea required maxLength={500} rows={3} className={inputClass} value={settings.aboutDescription ?? defaultSiteSettings.aboutDescription} onChange={(event) => change("aboutDescription", event.target.value)} /></label>
+          <fieldset className="space-y-3 border-t pt-4"><legend className="text-sm font-semibold">About page paragraphs</legend>
+            {(settings.aboutParagraphs ?? defaultSiteSettings.aboutParagraphs ?? []).map((paragraph, index) => <div key={index} className="space-y-2"><label className="block text-sm font-medium">Paragraph {index + 1}<textarea required maxLength={5000} rows={4} className={inputClass} value={paragraph} onChange={(event) => { const paragraphs = [...(settings.aboutParagraphs ?? defaultSiteSettings.aboutParagraphs ?? [])]; paragraphs[index] = event.target.value; change("aboutParagraphs", paragraphs); }} /></label><Button type="button" variant="outline" onClick={() => change("aboutParagraphs", (settings.aboutParagraphs ?? defaultSiteSettings.aboutParagraphs ?? []).filter((_, i) => i !== index))}>Remove paragraph {index + 1}</Button></div>)}
+            <Button type="button" variant="outline" onClick={() => change("aboutParagraphs", [...(settings.aboutParagraphs ?? defaultSiteSettings.aboutParagraphs ?? []), ""])}>Add paragraph</Button>
+          </fieldset>
+          <WorkExperienceSettings value={settings.workExperience ?? defaultSiteSettings.workExperience ?? []} onChange={(value) => change("workExperience", value)} />
+          <fieldset className="space-y-4 border-t pt-4">
+            <legend className="text-sm font-semibold">Technology stack</legend>
+            {(settings.technologyStack ?? defaultSiteSettings.technologyStack ?? []).map((group, index) => <div key={index} className="space-y-2 rounded-md border p-3">
+              <label className="block text-sm font-medium">Group name<input required maxLength={100} className={inputClass} value={group.label} onChange={(event) => { const groups = [...(settings.technologyStack ?? defaultSiteSettings.technologyStack ?? [])]; groups[index] = { ...group, label: event.target.value }; change("technologyStack", groups); }} /></label>
+              <label className="block text-sm font-medium">Technologies (one per line)<textarea key={JSON.stringify(group.items)} rows={4} className={inputClass} defaultValue={group.items.join("\n")} onBlur={(event) => { const groups = [...(settings.technologyStack ?? defaultSiteSettings.technologyStack ?? [])]; groups[index] = { ...groups[index], items: event.target.value.split("\n").map((item) => item.trim()).filter(Boolean) }; change("technologyStack", groups); }} /></label>
+              <Button type="button" variant="outline" onClick={() => change("technologyStack", (settings.technologyStack ?? defaultSiteSettings.technologyStack ?? []).filter((_, i) => i !== index))}>Remove {group.label || "group"}</Button>
+            </div>)}
+            <Button type="button" variant="outline" onClick={() => change("technologyStack", [...(settings.technologyStack ?? defaultSiteSettings.technologyStack ?? []), { label: "", items: [] }])}>Add technology group</Button>
+          </fieldset>
+          <fieldset className="space-y-4 border-t pt-4">
+            <legend className="text-sm font-semibold">Social links</legend>
+            {(settings.socialLinks ?? defaultSiteSettings.socialLinks ?? []).map((link, index) => (
+              <div key={index} className="space-y-2 rounded-md border p-3">
+                {(["label", "handle", "href"] as const).map((field) => (
+                  <label key={field} className="block text-sm font-medium">
+                    {field === "href" ? "HTTPS or email URL" : field === "label" ? "Label" : "Handle"}
+                    <input required={field !== "handle"} className={inputClass} value={link[field]} onChange={(event) => {
+                      const links = [...(settings.socialLinks ?? defaultSiteSettings.socialLinks ?? [])];
+                      links[index] = { ...links[index], [field]: event.target.value };
+                      change("socialLinks", links);
+                    }} />
+                  </label>
+                ))}
+                <Button type="button" variant="outline" onClick={() => change("socialLinks", (settings.socialLinks ?? defaultSiteSettings.socialLinks ?? []).filter((_, position) => position !== index))}>Remove {link.label || "link"}</Button>
+              </div>
+            ))}
+            <Button type="button" variant="outline" onClick={() => change("socialLinks", [...(settings.socialLinks ?? defaultSiteSettings.socialLinks ?? []), { label: "", handle: "", href: "" }])}>Add social link</Button>
+          </fieldset>
         </CardContent>
       </Card>
     </form>

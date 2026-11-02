@@ -72,9 +72,19 @@ describe("public site settings", () => {
       siteTitle: "Updated title",
       siteDescription: "Updated description",
       contactEmail: "owner@example.com",
+      profileTagline: "Building useful tools",
+      profileRole: "Developer",
+      profileBio: "I make software.",
+      resumeUrl: "https://example.com/resume.pdf",
+      socialLinks: [{ label: "Code", handle: "@owner", href: "https://github.com/owner" }],
+      workExperience: [{ id: "company-1", companyName: "Example company", isCurrentEmployer: true, positions: [{ id: "role-1", title: "Engineer", employmentPeriod: { start: "01.2024" }, description: "Builds products", skills: ["TypeScript"] }] }],
+      technologyStack: [{ label: "Languages", items: ["TypeScript", "Rust"] }],
     };
     expect((await routes.PUT(request("PUT", settings))).status).toBe(200);
-    expect(projectPublicSnapshot(store.value).settings).toEqual(settings);
+    expect(projectPublicSnapshot(store.value).settings).toEqual(expect.objectContaining(settings));
+    expect((await routes.PUT(request("PUT", { ...settings, socialLinks: [{ label: "Bad", handle: "", href: "javascript:alert(1)" }] }))).status).toBe(400);
+    expect((await routes.PUT(request("PUT", { ...settings, resumeUrl: "javascript:alert(1)" }))).status).toBe(400);
+    expect((await routes.PUT(request("PUT", { ...settings, workExperience: [{ ...settings.workExperience[0], positions: [{ ...settings.workExperience[0].positions[0], employmentPeriod: { start: "13.2024" } }] }] }))).status).toBe(400);
     expect(revalidate.mock.calls[0][0]).toEqual(
       expect.arrayContaining([
         { path: "/", type: "layout" },
@@ -88,7 +98,7 @@ describe("public site settings", () => {
         )
       ).status,
     ).toBe(400);
-    expect(projectPublicSnapshot(store.value).settings).toEqual(settings);
+    expect(projectPublicSnapshot(store.value).settings).toEqual(expect.objectContaining(settings));
     expect((await routes.DELETE(request("DELETE", settings))).status).toBe(405);
   });
 });

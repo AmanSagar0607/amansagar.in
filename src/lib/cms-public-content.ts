@@ -10,8 +10,8 @@ export const getCmsPublicContent = cache(async () => {
     return null;
   try {
     const repository = createSupabaseContentRepository();
-    await repository.read();
-    return createPublicContentAdapter(() => repository.read());
+    const snapshot = await repository.read();
+    return createPublicContentAdapter(async () => snapshot);
   } catch (error) {
     if (error instanceof ContentNotInitializedError) return null;
     throw error;
