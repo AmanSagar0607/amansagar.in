@@ -11,6 +11,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { ActivityMarkdown } from "@/components/journey/activity-markdown";
 import { ShareMenu } from "@/components/share-menu";
 import { TOCMinimap } from "@/components/toc-minimap";
+import { serializeJsonLd } from "@/lib/json-ld";
 
 export interface BlogPostMetadata {
   title: string;
@@ -156,7 +157,7 @@ export default async function BlogPost({
           <TOCMinimap items={headings} />
         </aside>
 
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, '\u003c') }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
         <article className="mx-auto w-full max-w-[680px]">
           <div className="pt-4 pb-8">
             <Link
