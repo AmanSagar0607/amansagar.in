@@ -1,25 +1,31 @@
 ﻿"use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { saveContent } from "@/lib/admin/client";
 import type { SiteSettings } from "@/lib/admin/site-settings";
 import { defaultSiteSettings } from "@/lib/admin/site-settings";
 import { WorkExperienceSettings } from "./work-experience-settings";
 const inputClass =
   "border-input bg-background focus-visible:ring-ring mt-1 min-h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2";
+const settingsTabs = ["General", "Profile", "About", "Experience", "Stack", "Social"] as const;
 export function SettingsScreen({ initial }: { initial: SiteSettings }) {
   const [settings, setSettings] = useState(initial);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  const [validationError, setValidationError] = useState("");
+  const [activeTab, setActiveTab] = useState<string>("General");
+  const pendingInvalid = useRef(false);
   function change<K extends keyof SiteSettings>(
     key: K,
     value: SiteSettings[K],
   ) {
     setSettings((current) => ({ ...current, [key]: value }));
     setSaved(false);
+    setValidationError("");
   }
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -42,12 +48,24 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
     }
   }
   return (
-    <form onSubmit={submit} className="space-y-5">
+    <form onSubmit={submit} className="space-y-5" onInvalidCapture={(event) => {
+      const target = event.target as HTMLElement;
+      const panel = target.closest<HTMLElement>("[data-settings-tab]");
+      if (!panel) return;
+      event.preventDefault();
+      if (pendingInvalid.current) return;
+      pendingInvalid.current = true;
+      const field = target as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
+      const label = field.closest("label")?.textContent?.trim();
+      setValidationError(`${label ? `${label}: ` : ""}${field.validationMessage || "Please check this field."}`);
+      setActiveTab(panel.dataset.settingsTab ?? "General");
+      window.setTimeout(() => { target.focus(); pendingInvalid.current = false; }, 0);
+    }}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold">Settings</h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Update the public site&apos;s basic information.
+            Manage your public profile and site content.
           </p>
         </div>
         <Button type="submit" disabled={saving}>
@@ -62,13 +80,24 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
           {error}
         </p>
       )}
+      {validationError && (
+        <p role="alert" className="rounded-md border border-red-500/50 px-4 py-3 text-sm text-red-500">
+          {validationError}
+        </p>
+      )}
       {saved && (
         <p role="status" className="text-muted-foreground text-sm">
           Settings saved.
         </p>
       )}
-      <Card className="max-w-3xl gap-0">
-        <CardContent className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-3xl">
+        <div className="overflow-x-auto pb-1">
+          <TabsList aria-label="Settings sections">
+            {settingsTabs.map((tab) => <TabsTrigger key={tab} value={tab}>{tab}</TabsTrigger>)}
+          </TabsList>
+        </div>
+        <Card className="gap-0"><CardContent>
+        <TabsContent forceMount value="General" hidden={activeTab !== "General"} data-settings-tab="General" className="space-y-4">
           <label className="block text-sm font-medium">
             Site title
             <input
@@ -92,6 +121,8 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
               }
             />
           </label>
+          </TabsContent>
+          <TabsContent forceMount value="Profile" hidden={activeTab !== "Profile"} data-settings-tab="Profile" className="space-y-4">
           <label className="block text-sm font-medium">
             Profile tagline
             <input required maxLength={500} className={inputClass} value={settings.profileTagline ?? defaultSiteSettings.profileTagline} onChange={(event) => change("profileTagline", event.target.value)} />
@@ -127,12 +158,18 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
             Résumé URL
             <input required type="url" maxLength={2048} className={inputClass} value={settings.resumeUrl ?? defaultSiteSettings.resumeUrl} onChange={(event) => change("resumeUrl", event.target.value)} />
           </label>
+          </TabsContent>
+          <TabsContent forceMount value="About" hidden={activeTab !== "About"} data-settings-tab="About" className="space-y-4">
           <label className="block text-sm font-medium">About page description<textarea required maxLength={500} rows={3} className={inputClass} value={settings.aboutDescription ?? defaultSiteSettings.aboutDescription} onChange={(event) => change("aboutDescription", event.target.value)} /></label>
           <fieldset className="space-y-3 border-t pt-4"><legend className="text-sm font-semibold">About page paragraphs</legend>
             {(settings.aboutParagraphs ?? defaultSiteSettings.aboutParagraphs ?? []).map((paragraph, index) => <div key={index} className="space-y-2"><label className="block text-sm font-medium">Paragraph {index + 1}<textarea required maxLength={5000} rows={4} className={inputClass} value={paragraph} onChange={(event) => { const paragraphs = [...(settings.aboutParagraphs ?? defaultSiteSettings.aboutParagraphs ?? [])]; paragraphs[index] = event.target.value; change("aboutParagraphs", paragraphs); }} /></label><Button type="button" variant="outline" onClick={() => change("aboutParagraphs", (settings.aboutParagraphs ?? defaultSiteSettings.aboutParagraphs ?? []).filter((_, i) => i !== index))}>Remove paragraph {index + 1}</Button></div>)}
             <Button type="button" variant="outline" onClick={() => change("aboutParagraphs", [...(settings.aboutParagraphs ?? defaultSiteSettings.aboutParagraphs ?? []), ""])}>Add paragraph</Button>
           </fieldset>
+          </TabsContent>
+          <TabsContent forceMount value="Experience" hidden={activeTab !== "Experience"} data-settings-tab="Experience" className="space-y-4">
           <WorkExperienceSettings value={settings.workExperience ?? defaultSiteSettings.workExperience ?? []} onChange={(value) => change("workExperience", value)} />
+          </TabsContent>
+          <TabsContent forceMount value="Stack" hidden={activeTab !== "Stack"} data-settings-tab="Stack" className="space-y-4">
           <fieldset className="space-y-4 border-t pt-4">
             <legend className="text-sm font-semibold">Technology stack</legend>
             {(settings.technologyStack ?? defaultSiteSettings.technologyStack ?? []).map((group, index) => <div key={index} className="space-y-2 rounded-md border p-3">
@@ -142,6 +179,8 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
             </div>)}
             <Button type="button" variant="outline" onClick={() => change("technologyStack", [...(settings.technologyStack ?? defaultSiteSettings.technologyStack ?? []), { label: "", items: [] }])}>Add technology group</Button>
           </fieldset>
+          </TabsContent>
+          <TabsContent forceMount value="Social" hidden={activeTab !== "Social"} data-settings-tab="Social" className="space-y-4">
           <fieldset className="space-y-4 border-t pt-4">
             <legend className="text-sm font-semibold">Social links</legend>
             {(settings.socialLinks ?? defaultSiteSettings.socialLinks ?? []).map((link, index) => (
@@ -161,8 +200,9 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
             ))}
             <Button type="button" variant="outline" onClick={() => change("socialLinks", [...(settings.socialLinks ?? defaultSiteSettings.socialLinks ?? []), { label: "", handle: "", href: "" }])}>Add social link</Button>
           </fieldset>
-        </CardContent>
-      </Card>
+          </TabsContent>
+        </CardContent></Card>
+      </Tabs>
     </form>
   );
 }

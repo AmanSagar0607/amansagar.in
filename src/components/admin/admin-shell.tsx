@@ -81,7 +81,7 @@ function Navigation({
       {groups.map((group) => (
         <div key={group.label}>
           {!collapsed && (
-            <h2 className="text-muted-foreground px-3 pb-2 text-xs font-medium">
+            <h2 className="text-muted-foreground px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.16em]">
               {group.label}
             </h2>
           )}
@@ -103,7 +103,7 @@ function Navigation({
                     className={cn(
                       "focus-visible:ring-ring flex min-h-10 items-center gap-3 rounded-md px-3 text-sm transition-colors focus-visible:ring-2 focus-visible:outline-none",
                       active
-                        ? "bg-accent text-foreground font-medium"
+                        ? "bg-orange-500/10 text-orange-400 font-medium"
                         : "text-muted-foreground hover:bg-accent/60 hover:text-foreground",
                       collapsed && "justify-center px-0",
                     )}
@@ -141,10 +141,10 @@ export function AdminShell({
       (item) => item.href !== "/admin" && pathname.startsWith(item.href + "/"),
     );
   return (
-    <div className="bg-background text-foreground min-h-screen md:flex">
+    <div className="dark bg-[#080809] text-foreground min-h-screen md:flex">
       <aside
         className={cn(
-          "border-border hidden min-h-screen shrink-0 border-r transition-[width] md:block",
+          "border-border hidden min-h-screen shrink-0 border-r bg-[#0b0b0c] transition-[width] md:block",
           collapsed ? "w-16" : "w-60",
         )}
       >
@@ -154,14 +154,15 @@ export function AdminShell({
             collapsed && "justify-center px-0",
           )}
         >
-          <Link href="/admin" className="font-semibold">
-            {collapsed ? "A" : "Aman Sagar"}
+          <Link href="/admin" className="flex items-center gap-3 font-semibold tracking-tight">
+            <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-orange-500 text-sm font-bold text-black">A</span>
+            {!collapsed && <span>Aman Sagar <span className="block text-[10px] font-medium uppercase tracking-[0.17em] text-muted-foreground">Studio</span></span>}
           </Link>
         </div>
         <Navigation collapsed={collapsed} />
       </aside>
       <div className="min-w-0 flex-1">
-        <header className="bg-background border-border sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b px-4 md:px-6">
+        <header className="border-border sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-[#0b0b0c] px-4 md:px-6">
           <div className="flex min-w-0 items-center gap-3">
             <Button
               variant="ghost"
@@ -249,7 +250,7 @@ export function AdminShell({
         </header>
         <main
           id="admin-main"
-          className="mx-auto w-full max-w-screen-2xl p-4 md:p-6"
+          className="mx-auto w-full max-w-screen-2xl p-4 md:p-8"
         >
           {children}
         </main>
