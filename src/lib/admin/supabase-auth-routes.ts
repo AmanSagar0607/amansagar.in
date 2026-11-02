@@ -3,7 +3,10 @@ import { createClient } from "@supabase/supabase-js";
 import { Redis } from "@upstash/redis";
 import { createAuthRouteHandlers } from "./auth-http";
 import { parseAdminSubjects } from "./access-control";
-import { createLoginLimiter } from "./login-limiter";
+import {
+  createLoginLimiter,
+  withDevelopmentLimiterFallback,
+} from "./login-limiter";
 import { createSupabaseAuthProvider } from "./supabase-auth-provider";
 
 export function configuredAuthHandlers() {
@@ -27,9 +30,10 @@ export function configuredAuthHandlers() {
       detectSessionInUrl: false,
     },
   };
-  const limiter = createLoginLimiter(
+  const sharedLimiter = createLoginLimiter(
     new Redis({ url: redisUrl, token: redisToken }),
   );
+  const production = process.env.NODE_ENV === "production";
   return createAuthRouteHandlers({
     providerFor: async () =>
       createSupabaseAuthProvider(
@@ -37,7 +41,9 @@ export function configuredAuthHandlers() {
         createClient(url, secret, options),
       ),
     adminSubjects,
-    allowLogin: limiter,
-    production: process.env.NODE_ENV === "production",
+    allowLogin: production
+      ? sharedLimiter
+      : withDevelopmentLimiterFallback(sharedLimiter),
+    production,
   });
 }

@@ -6,7 +6,7 @@ import { ContentNotInitializedError } from "@/lib/admin/versioned-repository";
 export default async function AdminPage() {
   const { service } = await adminPageContext();
   try {
-    return <AuthorizedDashboard service={service} />;
+    return await AuthorizedDashboard({ service });
   } catch (error) {
     if (error instanceof ContentNotInitializedError) return <AdminInitialize />;
     throw error;
