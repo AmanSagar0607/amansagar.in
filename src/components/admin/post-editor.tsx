@@ -1,4 +1,7 @@
-﻿"use client";
+"use client";
+import { Input as FormInput } from "@/components/ui/input";
+import { Select as FormSelect } from "@/components/ui/select";
+import { Textarea as FormTextarea } from "@/components/ui/textarea";
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
@@ -157,7 +160,7 @@ export function PostEditor({
           <CardContent className="min-w-0 space-y-4">
             <label className="block text-sm font-medium">
               Title
-              <input
+              <FormInput
                 required
                 maxLength={200}
                 className={inputClass}
@@ -167,7 +170,7 @@ export function PostEditor({
             </label>
             <label className="block text-sm font-medium">
               Slug
-              <input
+              <FormInput
                 required
                 maxLength={120}
                 className={inputClass}
@@ -178,7 +181,7 @@ export function PostEditor({
             </label>
             <label className="block text-sm font-medium">
               Description
-              <textarea
+              <FormTextarea
                 required
                 maxLength={1000}
                 rows={3}
@@ -203,7 +206,7 @@ export function PostEditor({
                   <div key={key} className="space-y-2">
                     <label className="block text-sm font-medium">
                       {label}
-                      <input
+                      <FormInput
                         className={inputClass}
                         value={
                           typeof post.frontmatter[key] === "string"
@@ -235,7 +238,7 @@ export function PostEditor({
                   <span className="text-muted-foreground font-normal">
                     (comma separated)
                   </span>
-                  <input
+                  <FormInput
                     className={inputClass}
                     value={tags}
                     onChange={(event) => {
@@ -262,7 +265,7 @@ export function PostEditor({
                             key={option.slug}
                             className="flex items-center gap-2 text-sm"
                           >
-                            <input
+                            <FormInput
                               type="checkbox"
                               checked={selected.includes(option.slug)}
                               onChange={(event) =>
@@ -314,7 +317,7 @@ export function PostEditor({
               <h2 className="font-medium">Publishing</h2>
               <label className="block text-sm font-medium">
                 Status
-                <select
+                <FormSelect
                   className={inputClass}
                   value={post.status}
                   onChange={(event) =>
@@ -326,11 +329,11 @@ export function PostEditor({
                 >
                   <option value="draft">Draft</option>
                   <option value="published">Published</option>
-                </select>
+                </FormSelect>
               </label>
               <label className="block text-sm font-medium">
                 Visibility
-                <select
+                <FormSelect
                   className={inputClass}
                   value={post.visibility}
                   onChange={(event) =>
@@ -342,11 +345,11 @@ export function PostEditor({
                 >
                   <option value="private">Private</option>
                   <option value="public">Public</option>
-                </select>
+                </FormSelect>
               </label>
               <label className="block text-sm font-medium">
                 Publication date
-                <input
+                <FormInput
                   type="date"
                   required
                   className={inputClass}
@@ -357,7 +360,7 @@ export function PostEditor({
                 />
               </label>
               <label className="flex min-h-10 items-center gap-2 text-sm">
-                <input
+                <FormInput
                   type="checkbox"
                   checked={post.sample === true}
                   onChange={(event) => change("sample", event.target.checked)}

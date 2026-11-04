@@ -1,4 +1,7 @@
-﻿"use client";
+"use client";
+import { Input as FormInput } from "@/components/ui/input";
+import { Select as FormSelect } from "@/components/ui/select";
+import { Textarea as FormTextarea } from "@/components/ui/textarea";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -100,7 +103,7 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
         <TabsContent forceMount value="General" hidden={activeTab !== "General"} data-settings-tab="General" className="space-y-4">
           <label className="block text-sm font-medium">
             Site title
-            <input
+            <FormInput
               required
               maxLength={120}
               className={inputClass}
@@ -110,7 +113,7 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
           </label>
           <label className="block text-sm font-medium">
             Site description
-            <textarea
+            <FormTextarea
               required
               maxLength={320}
               rows={4}
@@ -125,27 +128,27 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
           <TabsContent forceMount value="Profile" hidden={activeTab !== "Profile"} data-settings-tab="Profile" className="space-y-4">
           <label className="block text-sm font-medium">
             Profile tagline
-            <input required maxLength={500} className={inputClass} value={settings.profileTagline ?? defaultSiteSettings.profileTagline} onChange={(event) => change("profileTagline", event.target.value)} />
+            <FormInput required maxLength={500} className={inputClass} value={settings.profileTagline ?? defaultSiteSettings.profileTagline} onChange={(event) => change("profileTagline", event.target.value)} />
           </label>
           <label className="block text-sm font-medium">
             Profile role
-            <input required maxLength={500} className={inputClass} value={settings.profileRole ?? defaultSiteSettings.profileRole} onChange={(event) => change("profileRole", event.target.value)} />
+            <FormInput required maxLength={500} className={inputClass} value={settings.profileRole ?? defaultSiteSettings.profileRole} onChange={(event) => change("profileRole", event.target.value)} />
           </label>
           <label className="block text-sm font-medium">
             Profile introduction
-            <textarea required maxLength={500} rows={4} className={inputClass} value={settings.profileBio ?? defaultSiteSettings.profileBio} onChange={(event) => change("profileBio", event.target.value)} />
+            <FormTextarea required maxLength={500} rows={4} className={inputClass} value={settings.profileBio ?? defaultSiteSettings.profileBio} onChange={(event) => change("profileBio", event.target.value)} />
           </label>
           {([
             ["profileFocus", "Focus"],
             ["profileLocation", "Location"],
             ["profileAvailability", "Availability"],
-          ] as const).map(([key, label]) => <label key={key} className="block text-sm font-medium">{label}<input required maxLength={500} className={inputClass} value={settings[key] ?? defaultSiteSettings[key]} onChange={(event) => change(key, event.target.value)} /></label>)}
-          <label className="block text-sm font-medium">Featured project name<input required maxLength={500} className={inputClass} value={settings.featuredProjectName ?? defaultSiteSettings.featuredProjectName} onChange={(event) => change("featuredProjectName", event.target.value)} /></label>
-          <label className="block text-sm font-medium">Featured project URL (HTTPS)<input required type="url" maxLength={2048} className={inputClass} value={settings.featuredProjectUrl ?? defaultSiteSettings.featuredProjectUrl} onChange={(event) => change("featuredProjectUrl", event.target.value)} /></label>
-          <label className="block text-sm font-medium">Featured project description<textarea required rows={2} maxLength={500} className={inputClass} value={settings.featuredProjectDescription ?? defaultSiteSettings.featuredProjectDescription} onChange={(event) => change("featuredProjectDescription", event.target.value)} /></label>
+          ] as const).map(([key, label]) => <label key={key} className="block text-sm font-medium">{label}<FormInput required maxLength={500} className={inputClass} value={settings[key] ?? defaultSiteSettings[key]} onChange={(event) => change(key, event.target.value)} /></label>)}
+          <label className="block text-sm font-medium">Featured project name<FormInput required maxLength={500} className={inputClass} value={settings.featuredProjectName ?? defaultSiteSettings.featuredProjectName} onChange={(event) => change("featuredProjectName", event.target.value)} /></label>
+          <label className="block text-sm font-medium">Featured project URL (HTTPS)<FormInput required type="url" maxLength={2048} className={inputClass} value={settings.featuredProjectUrl ?? defaultSiteSettings.featuredProjectUrl} onChange={(event) => change("featuredProjectUrl", event.target.value)} /></label>
+          <label className="block text-sm font-medium">Featured project description<FormTextarea required rows={2} maxLength={500} className={inputClass} value={settings.featuredProjectDescription ?? defaultSiteSettings.featuredProjectDescription} onChange={(event) => change("featuredProjectDescription", event.target.value)} /></label>
           <label className="block text-sm font-medium">
             Public contact email
-            <input
+            <FormInput
               required
               type="email"
               maxLength={320}
@@ -156,13 +159,13 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
           </label>
           <label className="block text-sm font-medium">
             Résumé URL
-            <input required type="url" maxLength={2048} className={inputClass} value={settings.resumeUrl ?? defaultSiteSettings.resumeUrl} onChange={(event) => change("resumeUrl", event.target.value)} />
+            <FormInput required type="url" maxLength={2048} className={inputClass} value={settings.resumeUrl ?? defaultSiteSettings.resumeUrl} onChange={(event) => change("resumeUrl", event.target.value)} />
           </label>
           </TabsContent>
           <TabsContent forceMount value="About" hidden={activeTab !== "About"} data-settings-tab="About" className="space-y-4">
-          <label className="block text-sm font-medium">About page description<textarea required maxLength={500} rows={3} className={inputClass} value={settings.aboutDescription ?? defaultSiteSettings.aboutDescription} onChange={(event) => change("aboutDescription", event.target.value)} /></label>
+          <label className="block text-sm font-medium">About page description<FormTextarea required maxLength={500} rows={3} className={inputClass} value={settings.aboutDescription ?? defaultSiteSettings.aboutDescription} onChange={(event) => change("aboutDescription", event.target.value)} /></label>
           <fieldset className="space-y-3 border-t pt-4"><legend className="text-sm font-semibold">About page paragraphs</legend>
-            {(settings.aboutParagraphs ?? defaultSiteSettings.aboutParagraphs ?? []).map((paragraph, index) => <div key={index} className="space-y-2"><label className="block text-sm font-medium">Paragraph {index + 1}<textarea required maxLength={5000} rows={4} className={inputClass} value={paragraph} onChange={(event) => { const paragraphs = [...(settings.aboutParagraphs ?? defaultSiteSettings.aboutParagraphs ?? [])]; paragraphs[index] = event.target.value; change("aboutParagraphs", paragraphs); }} /></label><Button type="button" variant="outline" onClick={() => change("aboutParagraphs", (settings.aboutParagraphs ?? defaultSiteSettings.aboutParagraphs ?? []).filter((_, i) => i !== index))}>Remove paragraph {index + 1}</Button></div>)}
+            {(settings.aboutParagraphs ?? defaultSiteSettings.aboutParagraphs ?? []).map((paragraph, index) => <div key={index} className="space-y-2"><label className="block text-sm font-medium">Paragraph {index + 1}<FormTextarea required maxLength={5000} rows={4} className={inputClass} value={paragraph} onChange={(event) => { const paragraphs = [...(settings.aboutParagraphs ?? defaultSiteSettings.aboutParagraphs ?? [])]; paragraphs[index] = event.target.value; change("aboutParagraphs", paragraphs); }} /></label><Button type="button" variant="outline" onClick={() => change("aboutParagraphs", (settings.aboutParagraphs ?? defaultSiteSettings.aboutParagraphs ?? []).filter((_, i) => i !== index))}>Remove paragraph {index + 1}</Button></div>)}
             <Button type="button" variant="outline" onClick={() => change("aboutParagraphs", [...(settings.aboutParagraphs ?? defaultSiteSettings.aboutParagraphs ?? []), ""])}>Add paragraph</Button>
           </fieldset>
           </TabsContent>
@@ -173,8 +176,8 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
           <fieldset className="space-y-4 border-t pt-4">
             <legend className="text-sm font-semibold">Technology stack</legend>
             {(settings.technologyStack ?? defaultSiteSettings.technologyStack ?? []).map((group, index) => <div key={index} className="space-y-2 rounded-md border p-3">
-              <label className="block text-sm font-medium">Group name<input required maxLength={100} className={inputClass} value={group.label} onChange={(event) => { const groups = [...(settings.technologyStack ?? defaultSiteSettings.technologyStack ?? [])]; groups[index] = { ...group, label: event.target.value }; change("technologyStack", groups); }} /></label>
-              <label className="block text-sm font-medium">Technologies (one per line)<textarea key={JSON.stringify(group.items)} rows={4} className={inputClass} defaultValue={group.items.join("\n")} onBlur={(event) => { const groups = [...(settings.technologyStack ?? defaultSiteSettings.technologyStack ?? [])]; groups[index] = { ...groups[index], items: event.target.value.split("\n").map((item) => item.trim()).filter(Boolean) }; change("technologyStack", groups); }} /></label>
+              <label className="block text-sm font-medium">Group name<FormInput required maxLength={100} className={inputClass} value={group.label} onChange={(event) => { const groups = [...(settings.technologyStack ?? defaultSiteSettings.technologyStack ?? [])]; groups[index] = { ...group, label: event.target.value }; change("technologyStack", groups); }} /></label>
+              <label className="block text-sm font-medium">Technologies (one per line)<FormTextarea key={JSON.stringify(group.items)} rows={4} className={inputClass} defaultValue={group.items.join("\n")} onBlur={(event) => { const groups = [...(settings.technologyStack ?? defaultSiteSettings.technologyStack ?? [])]; groups[index] = { ...groups[index], items: event.target.value.split("\n").map((item) => item.trim()).filter(Boolean) }; change("technologyStack", groups); }} /></label>
               <Button type="button" variant="outline" onClick={() => change("technologyStack", (settings.technologyStack ?? defaultSiteSettings.technologyStack ?? []).filter((_, i) => i !== index))}>Remove {group.label || "group"}</Button>
             </div>)}
             <Button type="button" variant="outline" onClick={() => change("technologyStack", [...(settings.technologyStack ?? defaultSiteSettings.technologyStack ?? []), { label: "", items: [] }])}>Add technology group</Button>
@@ -188,7 +191,7 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
                 {(["label", "handle", "href"] as const).map((field) => (
                   <label key={field} className="block text-sm font-medium">
                     {field === "href" ? "HTTPS or email URL" : field === "label" ? "Label" : "Handle"}
-                    <input required={field !== "handle"} className={inputClass} value={link[field]} onChange={(event) => {
+                    <FormInput required={field !== "handle"} className={inputClass} value={link[field]} onChange={(event) => {
                       const links = [...(settings.socialLinks ?? defaultSiteSettings.socialLinks ?? [])];
                       links[index] = { ...links[index], [field]: event.target.value };
                       change("socialLinks", links);
@@ -203,9 +206,9 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
           </TabsContent>
           <TabsContent forceMount value="Homepage" hidden={activeTab !== "Homepage"} data-settings-tab="Homepage" className="space-y-4">
             <h2 className="font-medium">Homepage content</h2>
-            {([ ["homepageProjectsTitle", "Projects heading"], ["homepageProjectsDescription", "Projects introduction"], ["homepageBlogTitle", "Blog heading"], ["homepageBlogDescription", "Blog introduction"] ] as const).map(([key, label]) => <label key={key} className="block text-sm font-medium">{label}<input className={inputClass} maxLength={500} value={settings[key] ?? defaultSiteSettings[key] ?? ""} onChange={(event) => change(key, event.target.value)} /></label>)}
+            {([ ["homepageProjectsTitle", "Projects heading"], ["homepageProjectsDescription", "Projects introduction"], ["homepageBlogTitle", "Blog heading"], ["homepageBlogDescription", "Blog introduction"] ] as const).map(([key, label]) => <label key={key} className="block text-sm font-medium">{label}<FormInput className={inputClass} maxLength={500} value={settings[key] ?? defaultSiteSettings[key] ?? ""} onChange={(event) => change(key, event.target.value)} /></label>)}
             <p className="text-muted-foreground text-sm">Pin projects in each project’s admin editor. When none are pinned, the newest project appears first.</p>
-            <label className="block text-sm font-medium">Release version<input className={inputClass} pattern="[0-9]+\\.[0-9]+\\.[0-9]+" value={settings.releaseVersion ?? "1.0.0"} onChange={(event) => change("releaseVersion", event.target.value)} /></label>
+            <label className="block text-sm font-medium">Release version<FormInput className={inputClass} pattern="[0-9]+\\.[0-9]+\\.[0-9]+" value={settings.releaseVersion ?? "1.0.0"} onChange={(event) => change("releaseVersion", event.target.value)} /></label>
             <div className="flex flex-wrap gap-2">{([ ["patch", 2], ["minor", 1], ["major", 0] ] as const).map(([label, index]) => <Button key={label} type="button" variant="outline" onClick={() => { const parts = (settings.releaseVersion ?? "1.0.0").split(".").map(Number); parts[index] += 1; for (let i = index + 1; i < 3; i++) parts[i] = 0; change("releaseVersion", parts.join(".")); }}>Bump {label}</Button>)}</div>
             <p className="text-muted-foreground text-xs">Release version is shown in admin only and is never included in public page metadata.</p>
           </TabsContent>

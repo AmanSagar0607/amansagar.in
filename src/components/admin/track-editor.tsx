@@ -1,4 +1,7 @@
-﻿"use client";
+"use client";
+import { Input as FormInput } from "@/components/ui/input";
+import { Select as FormSelect } from "@/components/ui/select";
+import { Textarea as FormTextarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -115,7 +118,7 @@ export function TrackEditor({
           <CardContent className="space-y-4">
             <label className="block text-sm font-medium">
               Title
-              <input
+              <FormInput
                 required
                 maxLength={200}
                 className={inputClass}
@@ -125,7 +128,7 @@ export function TrackEditor({
             </label>
             <label className="block text-sm font-medium">
               Slug
-              <input
+              <FormInput
                 required
                 maxLength={120}
                 className={inputClass}
@@ -136,7 +139,7 @@ export function TrackEditor({
             </label>
             <label className="block text-sm font-medium">
               Description
-              <textarea
+              <FormTextarea
                 required
                 rows={4}
                 maxLength={2000}
@@ -150,7 +153,7 @@ export function TrackEditor({
               <span className="text-muted-foreground font-normal">
                 (comma separated)
               </span>
-              <input
+              <FormInput
                 className={inputClass}
                 value={technologies}
                 onChange={(event) => {
@@ -186,7 +189,7 @@ export function TrackEditor({
                   </div>
                   <label className="block text-sm">
                     ID
-                    <input
+                    <FormInput
                       required
                       className={inputClass}
                       value={item.id}
@@ -197,7 +200,7 @@ export function TrackEditor({
                   </label>
                   <label className="block text-sm">
                     Title
-                    <input
+                    <FormInput
                       required
                       className={inputClass}
                       value={item.title}
@@ -208,7 +211,7 @@ export function TrackEditor({
                   </label>
                   <label className="block text-sm">
                     Supporting published activity
-                    <select
+                    <FormSelect
                       className={inputClass}
                       value={item.activitySlug || ""}
                       onChange={(event) =>
@@ -223,11 +226,11 @@ export function TrackEditor({
                           {activity.title}
                         </option>
                       ))}
-                    </select>
+                    </FormSelect>
                   </label>
                   <label className="block text-sm">
                     Completion date
-                    <input
+                    <FormInput
                       type="date"
                       className={inputClass}
                       value={item.completedAt?.slice(0, 10) || ""}
@@ -260,7 +263,7 @@ export function TrackEditor({
             <h2 className="font-medium">Track settings</h2>
             <label className="block text-sm font-medium">
               Status
-              <select
+              <FormSelect
                 className={inputClass}
                 value={track.status}
                 onChange={(event) =>
@@ -272,11 +275,11 @@ export function TrackEditor({
                 <option value="paused">Paused</option>
                 <option value="on-break">On break</option>
                 <option value="completed">Completed</option>
-              </select>
+              </FormSelect>
             </label>
             <label className="block text-sm font-medium">
               Visibility
-              <select
+              <FormSelect
                 className={inputClass}
                 value={track.visibility}
                 onChange={(event) =>
@@ -285,11 +288,11 @@ export function TrackEditor({
               >
                 <option value="private">Private</option>
                 <option value="public">Public</option>
-              </select>
+              </FormSelect>
             </label>
             <label className="block text-sm font-medium">
               Start date
-              <input
+              <FormInput
                 type="date"
                 className={inputClass}
                 value={track.startDate?.slice(0, 10) || ""}
@@ -309,7 +312,7 @@ export function TrackEditor({
                       key={project.slug}
                       className="flex items-center gap-2 text-sm"
                     >
-                      <input
+                      <FormInput
                         type="checkbox"
                         checked={track.projectSlugs.includes(project.slug)}
                         onChange={(event) =>

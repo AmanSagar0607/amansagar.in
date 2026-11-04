@@ -1,4 +1,7 @@
 "use client";
+import { Input as FormInput } from "@/components/ui/input";
+import { Select as FormSelect } from "@/components/ui/select";
+import { Textarea as FormTextarea } from "@/components/ui/textarea";
 
 import { useEffect, useRef, useState } from "react";
 import { Sparkles, Check, CircleAlert } from "lucide-react";
@@ -240,7 +243,7 @@ export function SeoAssistant({
         </p>
         <label className="block space-y-1 text-sm">
           <span>Task</span>
-          <select
+          <FormSelect
             className={input}
             value={action}
             disabled={busy}
@@ -255,12 +258,12 @@ export function SeoAssistant({
             <option value="outline">Create an outline</option>
             <option value="seo">Suggest SEO metadata</option>
             <option value="custom">Custom instruction</option>
-          </select>
+          </FormSelect>
         </label>
         {action === "custom" && (
           <label className="block space-y-1 text-sm">
             <span>Your instruction</span>
-            <textarea
+            <FormTextarea
               rows={3}
               maxLength={2000}
               className={input}

@@ -1,4 +1,7 @@
-﻿"use client";
+"use client";
+import { Input as FormInput } from "@/components/ui/input";
+import { Select as FormSelect } from "@/components/ui/select";
+import { Textarea as FormTextarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -95,7 +98,7 @@ export function ChallengeEditor({
         <CardContent className="space-y-4">
           <label className="block text-sm font-medium">
             ID
-            <input
+            <FormInput
               required
               maxLength={120}
               className={inputClass}
@@ -106,7 +109,7 @@ export function ChallengeEditor({
           </label>
           <label className="block text-sm font-medium">
             Title
-            <input
+            <FormInput
               required
               maxLength={500}
               className={inputClass}
@@ -116,7 +119,7 @@ export function ChallengeEditor({
           </label>
           <label className="block text-sm font-medium">
             Category
-            <input
+            <FormInput
               required
               maxLength={100}
               className={inputClass}
@@ -126,7 +129,7 @@ export function ChallengeEditor({
           </label>
           <label className="block text-sm font-medium">
             Description
-            <textarea
+            <FormTextarea
               rows={4}
               maxLength={2000}
               className={inputClass}
@@ -137,7 +140,7 @@ export function ChallengeEditor({
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block text-sm font-medium">
               Planned date
-              <input
+              <FormInput
                 type="date"
                 className={inputClass}
                 value={item.date?.slice(0, 10) || ""}
@@ -148,7 +151,7 @@ export function ChallengeEditor({
             </label>
             <label className="block text-sm font-medium">
               Completion date
-              <input
+              <FormInput
                 type="date"
                 className={inputClass}
                 value={item.completedAt?.slice(0, 10) || ""}
@@ -160,7 +163,7 @@ export function ChallengeEditor({
           </div>
           <label className="block text-sm font-medium">
             Related published activity
-            <select
+            <FormSelect
               className={inputClass}
               value={item.activitySlug || ""}
               onChange={(event) =>
@@ -173,11 +176,11 @@ export function ChallengeEditor({
                   {a.title}
                 </option>
               ))}
-            </select>
+            </FormSelect>
           </label>
           <label className="block text-sm font-medium">
             Evidence URL
-            <input
+            <FormInput
               type="url"
               className={inputClass}
               value={item.evidenceUrl || ""}
@@ -188,7 +191,7 @@ export function ChallengeEditor({
           </label>
           <label className="block text-sm font-medium">
             Visibility
-            <select
+            <FormSelect
               className={inputClass}
               value={item.visibility}
               onChange={(event) =>
@@ -200,7 +203,7 @@ export function ChallengeEditor({
             >
               <option value="private">Private</option>
               <option value="public">Public</option>
-            </select>
+            </FormSelect>
           </label>
         </CardContent>
       </Card>

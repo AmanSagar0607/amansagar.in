@@ -1,4 +1,7 @@
-﻿"use client";
+"use client";
+import { Input as FormInput } from "@/components/ui/input";
+import { Select as FormSelect } from "@/components/ui/select";
+import { Textarea as FormTextarea } from "@/components/ui/textarea";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -186,7 +189,7 @@ export function ProjectEditor({
           <CardContent className="space-y-4">
             <label className="block text-sm font-medium">
               Slug
-              <input
+              <FormInput
                 required
                 maxLength={120}
                 className={inputClass}
@@ -200,7 +203,7 @@ export function ProjectEditor({
                 <label className="block text-sm font-medium">
                   {label}
                   {key === "description" || key === "overview" ? (
-                    <textarea
+                    <FormTextarea
                       required
                       rows={key === "overview" ? 5 : 3}
                       className={inputClass}
@@ -210,7 +213,7 @@ export function ProjectEditor({
                       }
                     />
                   ) : (
-                    <input
+                    <FormInput
                       required={key === "title"}
                       type={key === "title" || key === "src" ? "text" : "url"}
                       className={inputClass}
@@ -232,7 +235,7 @@ export function ProjectEditor({
                 <span className="text-muted-foreground ml-1 font-normal">
                   (one per line)
                 </span>
-                <textarea
+                <FormTextarea
                   rows={3}
                   className={inputClass}
                   value={techLists[key]}
@@ -252,7 +255,7 @@ export function ProjectEditor({
                 <span className="text-muted-foreground ml-1 font-normal">
                   (one per line)
                 </span>
-                <textarea
+                <FormTextarea
                   rows={3}
                   className={inputClass}
                   value={draftLists[key]}
@@ -273,7 +276,7 @@ export function ProjectEditor({
             <h2 className="font-medium">Publishing</h2>
             <label className="block text-sm font-medium">
               Status
-              <select
+              <FormSelect
                 className={inputClass}
                 value={item.status}
                 onChange={(event) =>
@@ -285,11 +288,11 @@ export function ProjectEditor({
               >
                 <option value="draft">Draft</option>
                 <option value="published">Published</option>
-              </select>
+              </FormSelect>
             </label>
             <label className="block text-sm font-medium">
               Visibility
-              <select
+              <FormSelect
                 className={inputClass}
                 value={item.visibility}
                 onChange={(event) =>
@@ -301,11 +304,11 @@ export function ProjectEditor({
               >
                 <option value="private">Private</option>
                 <option value="public">Public</option>
-              </select>
+              </FormSelect>
             </label>
             <label className="block text-sm font-medium">
               Project date
-              <input
+              <FormInput
                 required
                 type="date"
                 className={inputClass}
@@ -313,8 +316,8 @@ export function ProjectEditor({
                 onChange={(event) => changeProject("date", event.target.value)}
               />
             </label>
-            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={item.pinned === true} onChange={(event) => changeItem("pinned", event.target.checked)} />Pin to homepage</label>
-            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={item.pinned === true} onChange={(event) => changeItem("pinned", event.target.checked)} />Pin to homepage</label>
+            <label className="flex items-center gap-2 text-sm"><FormInput type="checkbox" checked={item.pinned === true} onChange={(event) => changeItem("pinned", event.target.checked)} />Pin to homepage</label>
+            <label className="flex items-center gap-2 text-sm"><FormInput type="checkbox" checked={item.pinned === true} onChange={(event) => changeItem("pinned", event.target.checked)} />Pin to homepage</label>
             <p className="text-muted-foreground text-xs leading-5">
               Existing technology categories and icons are preserved when names
               match.

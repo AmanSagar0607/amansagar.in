@@ -1,4 +1,7 @@
-﻿"use client";
+"use client";
+import { Input as FormInput } from "@/components/ui/input";
+import { Select as FormSelect } from "@/components/ui/select";
+import { Textarea as FormTextarea } from "@/components/ui/textarea";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -105,7 +108,7 @@ export function AchievementEditor({
         <CardContent className="space-y-4">
           <label className="block text-sm font-medium">
             ID
-            <input
+            <FormInput
               required
               maxLength={120}
               className={inputClass}
@@ -116,7 +119,7 @@ export function AchievementEditor({
           </label>
           <label className="block text-sm font-medium">
             Title
-            <input
+            <FormInput
               required
               maxLength={500}
               className={inputClass}
@@ -126,7 +129,7 @@ export function AchievementEditor({
           </label>
           <label className="block text-sm font-medium">
             Description
-            <textarea
+            <FormTextarea
               required
               maxLength={2000}
               rows={3}
@@ -137,7 +140,7 @@ export function AchievementEditor({
           </label>
           <label className="block text-sm font-medium">
             Requirement shown to visitors
-            <input
+            <FormInput
               required
               maxLength={1000}
               className={inputClass}
@@ -147,7 +150,7 @@ export function AchievementEditor({
           </label>
           <label className="block text-sm font-medium">
             Completion criterion
-            <select
+            <FormSelect
               className={inputClass}
               value={rule.metric}
               onChange={(event) =>
@@ -159,11 +162,11 @@ export function AchievementEditor({
                   {metric.label}
                 </option>
               ))}
-            </select>
+            </FormSelect>
           </label>
           <label className="block text-sm font-medium">
             Target
-            <input
+            <FormInput
               type="number"
               required
               min={1}

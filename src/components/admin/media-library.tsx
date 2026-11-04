@@ -1,4 +1,7 @@
-﻿"use client";
+"use client";
+import { Input as FormInput } from "@/components/ui/input";
+import { Select as FormSelect } from "@/components/ui/select";
+import { Textarea as FormTextarea } from "@/components/ui/textarea";
 
 import { useState } from "react";
 import Image from "next/image";
@@ -103,7 +106,7 @@ export function MediaLibrary({
         <label className="bg-primary text-primary-foreground hover:bg-primary/90 focus-within:ring-ring inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-md px-4 text-sm font-medium focus-within:ring-2">
           <ImagePlus className="size-4" aria-hidden />
           Upload image
-          <input
+          <FormInput
             className="sr-only"
             type="file"
             accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
@@ -139,7 +142,7 @@ export function MediaLibrary({
           aria-hidden
           className="text-muted-foreground absolute top-3 left-3 size-4"
         />
-        <input
+        <FormInput
           type="search"
           className="border-input bg-background focus-visible:ring-ring min-h-10 w-full rounded-md border py-2 pr-3 pl-10 text-sm focus-visible:ring-2 focus-visible:outline-none"
           value={query}

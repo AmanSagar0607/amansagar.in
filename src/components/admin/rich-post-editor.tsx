@@ -1,4 +1,7 @@
 "use client";
+import { Input as FormInput } from "@/components/ui/input";
+import { Select as FormSelect } from "@/components/ui/select";
+import { Textarea as FormTextarea } from "@/components/ui/textarea";
 
 import { useEffect, useRef, useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
@@ -291,7 +294,7 @@ export default function RichPostEditor({
             Paste Markdown here to import an article. Apply source before saving
             the post. Keep a copy when importing custom HTML.
           </p>
-          <textarea
+          <FormTextarea
             id="article-source"
             rows={20}
             maxLength={100000}
@@ -340,7 +343,7 @@ export default function RichPostEditor({
             aria-label="Article formatting"
             className="bg-background border-border sticky top-0 z-10 flex flex-wrap items-center gap-0.5 border-b p-2"
           >
-            <select
+            <FormSelect
               aria-label="Text style"
               className={toolbarSelect}
               value={
@@ -368,7 +371,7 @@ export default function RichPostEditor({
               <option value="2">Heading 2</option>
               <option value="3">Heading 3</option>
               <option value="4">Heading 4</option>
-            </select>
+            </FormSelect>
             {toolbar(
               "Bold",
               <Bold size={16} />,
@@ -439,7 +442,7 @@ export default function RichPostEditor({
                 .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
                 .run(),
             )}
-            <select
+            <FormSelect
               aria-label="Text alignment"
               className={toolbarSelect}
               value={
@@ -454,7 +457,7 @@ export default function RichPostEditor({
               <option value="left">Left</option>
               <option value="center">Center</option>
               <option value="right">Right</option>
-            </select>
+            </FormSelect>
             {toolbar(
               "Undo",
               <Undo2 size={16} />,
@@ -474,7 +477,7 @@ export default function RichPostEditor({
             <div className="border-border flex flex-wrap gap-2 border-b p-4">
               <label className="min-w-40 flex-1 text-sm">
                 Link URL
-                <input
+                <FormInput
                   type="url"
                   className={input}
                   value={link}
@@ -549,7 +552,7 @@ export default function RichPostEditor({
               <div className="grid gap-3 sm:grid-cols-2">
                 <label className="text-sm sm:col-span-2">
                   Image URL
-                  <input
+                  <FormInput
                     className={input}
                     value={image.src}
                     onChange={(e) =>
@@ -559,7 +562,7 @@ export default function RichPostEditor({
                 </label>
                 <label className="text-sm">
                   Alternative text
-                  <input
+                  <FormInput
                     className={input}
                     value={image.alt}
                     onChange={(e) =>
@@ -570,7 +573,7 @@ export default function RichPostEditor({
                 </label>
                 <label className="text-sm">
                   Caption / reference
-                  <input
+                  <FormInput
                     className={input}
                     value={image.caption}
                     onChange={(e) =>
@@ -581,7 +584,7 @@ export default function RichPostEditor({
                 </label>
                 <label className="text-sm">
                   Width (px)
-                  <input
+                  <FormInput
                     type="number"
                     min={1}
                     max={10000}
@@ -595,7 +598,7 @@ export default function RichPostEditor({
                 </label>
                 <label className="text-sm">
                   Height (px)
-                  <input
+                  <FormInput
                     type="number"
                     min={1}
                     max={10000}
@@ -609,7 +612,7 @@ export default function RichPostEditor({
                 </label>
                 <label className="text-sm">
                   Alignment
-                  <select
+                  <FormSelect
                     className={input}
                     value={image.align}
                     onChange={(e) =>
@@ -619,7 +622,7 @@ export default function RichPostEditor({
                     <option value="left">Left</option>
                     <option value="center">Center</option>
                     <option value="right">Right</option>
-                  </select>
+                  </FormSelect>
                 </label>
               </div>
               <p className="text-muted-foreground text-xs leading-5">

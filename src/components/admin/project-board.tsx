@@ -1,4 +1,7 @@
 "use client";
+import { Input as FormInput } from "@/components/ui/input";
+import { Select as FormSelect } from "@/components/ui/select";
+import { Textarea as FormTextarea } from "@/components/ui/textarea";
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
@@ -25,7 +28,7 @@ export function ProjectBoard({ projects }: { projects: ManagedProject[] }) {
       <label className="border-input bg-background focus-within:ring-ring flex max-w-md items-center gap-2 rounded-lg border px-3 focus-within:ring-2">
         <Search className="text-muted-foreground size-4" aria-hidden />
         <span className="sr-only">Search projects</span>
-        <input className="h-11 w-full bg-transparent text-sm outline-none" placeholder="Search projects or technology" value={query} onChange={(event) => setQuery(event.target.value)} />
+        <FormInput className="h-11 w-full bg-transparent text-sm outline-none" placeholder="Search projects or technology" value={query} onChange={(event) => setQuery(event.target.value)} />
       </label>
       <div className="grid gap-4 lg:grid-cols-3">
         {columns.map(({ label, matches }) => {

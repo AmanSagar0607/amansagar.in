@@ -1,4 +1,7 @@
-﻿"use client";
+"use client";
+import { Input as FormInput } from "@/components/ui/input";
+import { Select as FormSelect } from "@/components/ui/select";
+import { Textarea as FormTextarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -58,7 +61,7 @@ export function AdminSignIn({
             )}
             <label className="block text-sm font-medium">
               Email
-              <input
+              <FormInput
                 type="email"
                 autoComplete="username"
                 required
@@ -70,7 +73,7 @@ export function AdminSignIn({
             </label>
             <label className="block text-sm font-medium">
               Password
-              <input
+              <FormInput
                 type="password"
                 autoComplete="current-password"
                 required

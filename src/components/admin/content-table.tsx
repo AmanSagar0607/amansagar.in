@@ -1,4 +1,7 @@
-﻿"use client";
+"use client";
+import { Input as FormInput } from "@/components/ui/input";
+import { Select as FormSelect } from "@/components/ui/select";
+import { Textarea as FormTextarea } from "@/components/ui/textarea";
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
@@ -69,7 +72,7 @@ export function ContentTable({
           aria-hidden
           className="text-muted-foreground absolute top-3 left-3 size-4"
         />
-        <input
+        <FormInput
           type="search"
           value={query}
           onChange={(event) => {
@@ -88,7 +91,7 @@ export function ContentTable({
               className="text-muted-foreground flex items-center gap-2 text-sm"
             >
               {filter.label}
-              <select
+              <FormSelect
                 value={selectedFilters[filter.key] || ""}
                 onChange={(event) => {
                   setSelectedFilters((current) => ({
@@ -105,7 +108,7 @@ export function ContentTable({
                     {option}
                   </option>
                 ))}
-              </select>
+              </FormSelect>
             </label>
           ))}
         </div>
