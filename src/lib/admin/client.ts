@@ -110,6 +110,77 @@ export async function uploadMedia(file: File): Promise<MediaAsset> {
   return data.asset as MediaAsset;
 }
 
+export async function renameMedia(
+  id: string,
+  name: string,
+): Promise<MediaAsset> {
+  const data = await call("/api/admin/media", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id, name }),
+  });
+  if (!data.asset || typeof data.asset !== "object")
+    throw new AdminClientError("The server returned invalid media.", 502);
+  return data.asset as MediaAsset;
+}
+
+export async function deleteMedia(id: string): Promise<void> {
+  await call("/api/admin/media", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id }),
+  });
+}
+
+export type AdminDocument = {
+  id: string;
+  originalFilename: string;
+  byteSize: number;
+  createdAt: string;
+};
+export async function listDocuments(): Promise<AdminDocument[]> {
+  const data = await call("/api/admin/documents");
+  if (!Array.isArray(data.documents))
+    throw new AdminClientError("The server returned invalid documents.", 502);
+  return data.documents as AdminDocument[];
+}
+export async function uploadDocument(file: File): Promise<AdminDocument> {
+  const body = new FormData();
+  body.set("file", file);
+  const data = await call("/api/admin/documents", { method: "POST", body });
+  if (!data.document || typeof data.document !== "object")
+    throw new AdminClientError(
+      "The server returned invalid document metadata.",
+      502,
+    );
+  return data.document as AdminDocument;
+}
+export async function renameDocument(id: string, name: string): Promise<void> {
+  await call("/api/admin/documents", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id, name }),
+  });
+}
+export async function deleteDocument(id: string): Promise<void> {
+  await call("/api/admin/documents", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id }),
+  });
+}
+export async function previewDocument(id: string): Promise<string> {
+  const data = await call(
+    `/api/admin/documents/${encodeURIComponent(id)}/preview`,
+  );
+  if (typeof data.url !== "string" || !data.url.startsWith("https://"))
+    throw new AdminClientError(
+      "The server returned an invalid preview link.",
+      502,
+    );
+  return data.url;
+}
+
 /** These endpoints must be mounted with a real identity provider before use. */
 export async function signIn(email: string, password: string): Promise<void> {
   const data = await call("/api/admin/login", {

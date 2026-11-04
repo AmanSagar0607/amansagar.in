@@ -1,18 +1,26 @@
 "use client";
 import { Input as FormInput } from "@/components/ui/input";
-import { Select as FormSelect } from "@/components/ui/select";
-import { Textarea as FormTextarea } from "@/components/ui/textarea";
 
 import { useState } from "react";
 import Image from "next/image";
-import { Clipboard, ImagePlus, Search } from "lucide-react";
+import { Clipboard, ImagePlus, Pencil, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { MediaAsset, MediaPage } from "@/lib/admin/media-service";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type MediaActions = {
   list: (cursor: string) => Promise<MediaPage>;
   upload: (file: File) => Promise<MediaAsset>;
+  rename?: (id: string, name: string) => Promise<MediaAsset>;
+  delete?: (id: string) => Promise<void>;
 };
 /** Displays the authenticated provider's assets. Network operations are supplied by the protected route. */
 export function MediaLibrary({
@@ -20,11 +28,13 @@ export function MediaLibrary({
   actions,
   onSelect,
   compact = false,
+  references = {},
 }: {
   initial: MediaPage;
   actions: MediaActions;
   onSelect?: (asset: MediaAsset) => void;
   compact?: boolean;
+  references?: Record<string, string[]>;
 }) {
   const [assets, setAssets] = useState(initial.assets);
   const [cursor, setCursor] = useState(initial.nextCursor);
@@ -32,8 +42,11 @@ export function MediaLibrary({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [renameTarget, setRenameTarget] = useState<MediaAsset | null>(null);
+  const [renameName, setRenameName] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<MediaAsset | null>(null);
   const filtered = assets.filter((asset) =>
-    asset.publicId
+    `${asset.displayName ?? ""} ${asset.publicId}`
       .toLocaleLowerCase()
       .includes(query.trim().toLocaleLowerCase()),
   );
@@ -88,6 +101,44 @@ export function MediaLibrary({
       setError(
         "Could not copy the image URL. You can open the image and copy its address.",
       );
+    }
+  }
+  async function rename() {
+    if (!renameTarget || !actions.rename) return;
+    setBusy(true);
+    setError("");
+    try {
+      const updated = await actions.rename(renameTarget.id, renameName);
+      setAssets((current) =>
+        current.map((item) => (item.id === updated.id ? updated : item)),
+      );
+      setRenameTarget(null);
+      setMessage("Image name updated. Its public URL is unchanged.");
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : "Could not rename this image.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function remove() {
+    if (!deleteTarget || !actions.delete) return;
+    setBusy(true);
+    setError("");
+    try {
+      await actions.delete(deleteTarget.id);
+      setAssets((current) =>
+        current.filter((item) => item.id !== deleteTarget.id),
+      );
+      setDeleteTarget(null);
+      setMessage("Image deleted.");
+    } catch (cause) {
+      setError(
+        cause instanceof Error ? cause.message : "Could not delete this image.",
+      );
+    } finally {
+      setBusy(false);
     }
   }
   return (
@@ -169,7 +220,7 @@ export function MediaLibrary({
                     className="truncate text-sm font-medium"
                     title={asset.publicId}
                   >
-                    {asset.publicId.split("/").at(-1)}
+                    {asset.displayName || asset.publicId.split("/").at(-1)}
                   </p>
                   <p className="text-muted-foreground text-xs">
                     {asset.format.toUpperCase()} ·{" "}
@@ -195,6 +246,35 @@ export function MediaLibrary({
                         onClick={() => onSelect(asset)}
                       >
                         Select
+                      </Button>
+                    )}
+                    {actions.rename && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setRenameTarget(asset);
+                          setRenameName(
+                            asset.displayName ||
+                              asset.publicId.split("/").at(-1) ||
+                              "",
+                          );
+                        }}
+                      >
+                        <Pencil /> Rename
+                        <span className="sr-only"> {asset.displayName}</span>
+                      </Button>
+                    )}
+                    {actions.delete && (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => setDeleteTarget(asset)}
+                      >
+                        <Trash2 /> Delete
+                        <span className="sr-only"> {asset.displayName}</span>
                       </Button>
                     )}
                     <Button asChild size="sm" variant="ghost">
@@ -229,6 +309,96 @@ export function MediaLibrary({
           {busy ? "Loading…" : "Load more"}
         </Button>
       )}
+      <Dialog
+        open={!!renameTarget}
+        onOpenChange={(open) => {
+          if (!open && !busy) setRenameTarget(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rename image</DialogTitle>
+            <DialogDescription>
+              This changes the library name only. The image URL used by
+              published content stays the same.
+            </DialogDescription>
+          </DialogHeader>
+          <label className="text-sm font-medium">
+            Image name
+            <FormInput
+              value={renameName}
+              maxLength={120}
+              onChange={(event) => setRenameName(event.target.value)}
+            />
+          </label>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={busy}
+              onClick={() => setRenameTarget(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              disabled={busy || !renameName.trim()}
+              onClick={() => void rename()}
+            >
+              {busy ? "Saving…" : "Save name"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => {
+          if (!open && !busy) setDeleteTarget(null);
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete this image?</DialogTitle>
+            <DialogDescription>
+              <strong>
+                {deleteTarget?.displayName || deleteTarget?.publicId}
+              </strong>{" "}
+              will be removed from public image storage. Cached copies may
+              remain temporarily. Any post, project, or profile that uses its
+              URL will show a broken image. Update those references before
+              continuing.
+            </DialogDescription>
+          </DialogHeader>
+          {deleteTarget && (references[deleteTarget.id]?.length ?? 0) > 0 && (
+            <div className="rounded-md border p-3 text-sm">
+              <p className="font-medium">Found in</p>
+              <ul className="text-muted-foreground mt-1 list-inside list-disc">
+                {references[deleteTarget.id].map((reference) => (
+                  <li key={reference}>{reference}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              disabled={busy}
+              onClick={() => setDeleteTarget(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={busy}
+              onClick={() => void remove()}
+            >
+              {busy ? "Deleting…" : "Delete image"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }

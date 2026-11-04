@@ -6,7 +6,6 @@ export interface Technology {
 
 export interface Project {
   pinned?: boolean;
-  pinned?: boolean;
   title: string;
   description: string;
   src: string;

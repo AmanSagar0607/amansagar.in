@@ -1,7 +1,5 @@
 "use client";
 import { Input as FormInput } from "@/components/ui/input";
-import { Select as FormSelect } from "@/components/ui/select";
-import { Textarea as FormTextarea } from "@/components/ui/textarea";
 
 import { useMemo, useState } from "react";
 import Link from "next/link";

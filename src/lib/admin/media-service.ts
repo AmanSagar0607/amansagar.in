@@ -4,6 +4,7 @@ import type { RequireAdmin } from "./content-service";
 export type MediaAsset = {
   id: string;
   publicId: string;
+  displayName?: string;
   url: string;
   format: string;
   bytes: number;
@@ -15,6 +16,8 @@ export type MediaPage = { assets: MediaAsset[]; nextCursor?: string };
 export interface MediaProvider {
   list(cursor?: string): Promise<MediaPage>;
   upload(file: File): Promise<MediaAsset>;
+  rename?(id: string, name: string): Promise<MediaAsset>;
+  delete?(id: string): Promise<void>;
 }
 export interface CloudinaryCredentials {
   cloudName: string;
@@ -81,6 +84,8 @@ function asset(input: unknown, cloudName: string): MediaAsset {
   return {
     id,
     publicId,
+    displayName:
+      text(data.display_name) || publicId.split("/").at(-1) || publicId,
     url,
     format,
     bytes: data.bytes,
@@ -186,5 +191,83 @@ export class CloudinaryMediaProvider implements MediaProvider {
     if (!response.ok)
       throw new MediaProviderError("Could not upload image to storage.");
     return asset(await response.json(), cloudName);
+  }
+
+  /** Change Cloudinary's display name while preserving the stable public ID and URL. */
+  async rename(id: string, name: string): Promise<MediaAsset> {
+    await this.requireAdmin();
+    if (
+      !/^[0-9a-f-]{20,64}$/i.test(id) ||
+      !name.trim() ||
+      name.length > 120 ||
+      /[\u0000-\u001f\u007f]/.test(name)
+    )
+      throw new MediaProviderError("Invalid media name.");
+    const { cloudName, apiKey, apiSecret } = this.getCredentials();
+    const form = new URLSearchParams({ display_name: name.trim() });
+    const response = await this.request(
+      `https://api.cloudinary.com/v1_1/${cloudName}/resources/${encodeURIComponent(id)}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Basic ${Buffer.from(`${apiKey}:${apiSecret}`).toString("base64")}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: form,
+        cache: "no-store",
+        redirect: "error",
+      },
+    );
+    if (!response.ok) throw new MediaProviderError("Could not rename media.");
+    const refreshed = await this.request(
+      `https://api.cloudinary.com/v1_1/${cloudName}/resources/${encodeURIComponent(id)}`,
+      {
+        headers: {
+          Authorization: `Basic ${Buffer.from(`${apiKey}:${apiSecret}`).toString("base64")}`,
+        },
+        cache: "no-store",
+        redirect: "error",
+      },
+    );
+    if (!refreshed.ok)
+      throw new MediaProviderError("Image name could not be verified.");
+    const updated = asset(await refreshed.json(), cloudName);
+    if (updated.displayName !== name.trim())
+      throw new MediaProviderError(
+        "This Cloudinary folder does not support display-name edits.",
+      );
+    return updated;
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.requireAdmin();
+    if (!/^[0-9a-f-]{20,64}$/i.test(id))
+      throw new MediaProviderError("Invalid media item.");
+    const { cloudName, apiKey, apiSecret } = this.getCredentials();
+    const response = await this.request(
+      `https://api.cloudinary.com/v1_1/${cloudName}/resources`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Basic ${Buffer.from(`${apiKey}:${apiSecret}`).toString("base64")}`,
+          "Content-Type": "application/json",
+        },
+        body: new URLSearchParams({ "asset_ids[]": id }),
+        cache: "no-store",
+        redirect: "error",
+      },
+    );
+    if (!response.ok) throw new MediaProviderError("Could not delete media.");
+    const body: unknown = await response.json();
+    const deleted =
+      body && typeof body === "object"
+        ? (body as Record<string, unknown>).deleted
+        : null;
+    if (
+      !deleted ||
+      typeof deleted !== "object" ||
+      (deleted as Record<string, unknown>)[id] !== "deleted"
+    )
+      throw new MediaProviderError("Media was not deleted.");
   }
 }

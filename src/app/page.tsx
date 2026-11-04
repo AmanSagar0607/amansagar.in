@@ -2,6 +2,20 @@ import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  Docker as DevDocker,
+  FastAPI as DevFastAPI,
+  Figma as DevFigma,
+  Git as DevGit,
+  GitHubDark as DevGitHub,
+  NextJs as DevNextJs,
+  Playwright as DevPlaywright,
+  PostgreSQL as DevPostgreSQL,
+  Python as DevPython,
+  React as DevReact,
+  Supabase as DevSupabase,
+  TypeScript as DevTypeScript,
+} from "developer-icons";
+import {
   ArrowUpRight,
   Clock3,
   Code2,
@@ -71,6 +85,14 @@ type BlogPost = Omit<MDXFile, "frontmatter"> & {
 type StackIcon =
   | { type: "simple"; icon: SimpleIcon }
   | { type: "tabler"; icon: TablerIcon }
+  | {
+      type: "developer";
+      icon: (props: {
+        className?: string;
+        size?: number;
+        "aria-hidden"?: boolean;
+      }) => React.ReactNode;
+    }
   | { type: "badge"; label: string };
 
 type StackItem = {
@@ -80,6 +102,9 @@ type StackItem = {
 
 const simpleIcon = (icon: SimpleIcon): StackIcon => ({ type: "simple", icon });
 const tablerIcon = (icon: TablerIcon): StackIcon => ({ type: "tabler", icon });
+const developerIcon = (
+  icon: Extract<StackIcon, { type: "developer" }>["icon"],
+): StackIcon => ({ type: "developer", icon });
 const badgeIcon = (label: string): StackIcon => ({ type: "badge", label });
 
 const techStack: { label: string; items: StackItem[] }[] = [
@@ -276,31 +301,85 @@ function formatReadMeta(post: BlogPost) {
 }
 
 export default async function Home() {
-  const posts = (
-    (await getPublicPosts()) as unknown as BlogPost[]
-  )
+  const posts = ((await getPublicPosts()) as unknown as BlogPost[])
     .sort(
       (a, b) =>
         new Date(b.frontmatter.date).getTime() -
         new Date(a.frontmatter.date).getTime(),
     )
     .slice(0, 4);
-  const projects = (await getPublicProjects()).sort((a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) || Date.parse(b.date) - Date.parse(a.date));
+  const projects = (await getPublicProjects()).sort(
+    (a, b) =>
+      Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) ||
+      Date.parse(b.date) - Date.parse(a.date),
+  );
   const settings = await getPublicSiteSettings();
-  const github = (settings.socialLinks ?? defaultSiteSettings.socialLinks ?? []).find((link) => link.label.toLowerCase() === "github");
-  const githubUsername = github?.href.match(/^https:\/\/github\.com\/([a-z\d](?:[a-z\d-]{0,38}))(?:\/)?$/i)?.[1];
-  const details = profileDetails.filter((item) => item.label !== "GitHub" || github).map((item) => {
-    if (item.label === "Focus") return { ...item, value: settings.profileFocus ?? item.value };
-    if (item.label === "Current") return { ...item, value: settings.profileRole ?? item.value };
-    if (item.label === "Location") return { ...item, value: settings.profileLocation ?? item.value };
-    if (item.label === "Availability") return { ...item, value: settings.profileAvailability ?? item.value };
-    if (item.label === "Email") return { ...item, value: settings.contactEmail, href: `mailto:${settings.contactEmail}` };
-    if (item.label === "GitHub" && github) return { ...item, value: github.handle || github.label, href: github.href };
-    return item;
-  });
-  const knownIcons = new Map(techStack.flatMap((group) => group.items.map((item) => [item.label, item.icon] as const)));
-  const displayedStack = settings.technologyStack?.map((group) => ({ label: group.label, items: group.items.map((label) => ({ label, icon: knownIcons.get(label) ?? badgeIcon(label.slice(0, 2)) })) })) ?? techStack;
-  const contributions = githubUsername ? getCachedContributions(githubUsername) : null;
+  const github = (
+    settings.socialLinks ??
+    defaultSiteSettings.socialLinks ??
+    []
+  ).find((link) => link.label.toLowerCase() === "github");
+  const githubUsername = github?.href.match(
+    /^https:\/\/github\.com\/([a-z\d](?:[a-z\d-]{0,38}))(?:\/)?$/i,
+  )?.[1];
+  const details = profileDetails
+    .filter((item) => item.label !== "GitHub" || github)
+    .map((item) => {
+      if (item.label === "Focus")
+        return { ...item, value: settings.profileFocus ?? item.value };
+      if (item.label === "Current")
+        return { ...item, value: settings.profileRole ?? item.value };
+      if (item.label === "Location")
+        return { ...item, value: settings.profileLocation ?? item.value };
+      if (item.label === "Availability")
+        return { ...item, value: settings.profileAvailability ?? item.value };
+      if (item.label === "Email")
+        return {
+          ...item,
+          value: settings.contactEmail,
+          href: `mailto:${settings.contactEmail}`,
+        };
+      if (item.label === "GitHub" && github)
+        return {
+          ...item,
+          value: github.handle || github.label,
+          href: github.href,
+        };
+      return item;
+    });
+  const knownIcons = new Map(
+    techStack.flatMap((group) =>
+      group.items.map((item) => [item.label.toLowerCase(), item.icon] as const),
+    ),
+  );
+  const developerIcons = new Map<string, StackIcon>([
+    ["next.js", developerIcon(DevNextJs)],
+    ["react", developerIcon(DevReact)],
+    ["typescript", developerIcon(DevTypeScript)],
+    ["python", developerIcon(DevPython)],
+    ["fastapi", developerIcon(DevFastAPI)],
+    ["postgresql", developerIcon(DevPostgreSQL)],
+    ["supabase", developerIcon(DevSupabase)],
+    ["git", developerIcon(DevGit)],
+    ["github", developerIcon(DevGitHub)],
+    ["docker", developerIcon(DevDocker)],
+    ["playwright", developerIcon(DevPlaywright)],
+    ["figma", developerIcon(DevFigma)],
+  ]);
+  const displayedStack =
+    settings.technologyStack?.map((group) => ({
+      label: group.label,
+      items: group.items.map((label) => ({
+        label,
+        icon:
+          developerIcons.get(label.toLowerCase()) ??
+          knownIcons.get(label.toLowerCase()) ??
+          badgeIcon(label.slice(0, 2)),
+      })),
+    })) ?? techStack;
+  const contributions = githubUsername
+    ? getCachedContributions(githubUsername)
+    : null;
 
   return (
     <main className="page-shell">
@@ -338,26 +417,35 @@ export default async function Home() {
           <div className="hero-minimal">
             <div className="hero-minimal-head">
               <div className="hero-role-row hero-role-row-inline">
-                <span className="hero-role-label">{settings.profileRole ?? defaultSiteSettings.profileRole}</span>
-                {github && <Link
-                  href={github.href}
-                  target="_blank"
-                  className="hero-role-link"
-                >
-                  {github.handle || github.label}
-                </Link>}
+                <span className="hero-role-label">
+                  {settings.profileRole ?? defaultSiteSettings.profileRole}
+                </span>
+                {github && (
+                  <Link
+                    href={github.href}
+                    target="_blank"
+                    className="hero-role-link"
+                  >
+                    {github.handle || github.label}
+                  </Link>
+                )}
               </div>
               <div className="hero-role-row hero-role-row-build">
                 <span className="hero-role-label">Building</span>
                 <Link
-                  href={settings.featuredProjectUrl ?? defaultSiteSettings.featuredProjectUrl!}
+                  href={
+                    settings.featuredProjectUrl ??
+                    defaultSiteSettings.featuredProjectUrl!
+                  }
                   target="_blank"
                   className="hero-role-link"
                 >
-                  {settings.featuredProjectName ?? defaultSiteSettings.featuredProjectName}
+                  {settings.featuredProjectName ??
+                    defaultSiteSettings.featuredProjectName}
                 </Link>
                 <span className="text-muted-foreground text-sm leading-6">
-                  {settings.featuredProjectDescription ?? defaultSiteSettings.featuredProjectDescription}
+                  {settings.featuredProjectDescription ??
+                    defaultSiteSettings.featuredProjectDescription}
                 </span>
               </div>
               <p className="text-muted-foreground max-w-2xl text-sm leading-6">
@@ -398,12 +486,14 @@ export default async function Home() {
               })}
             </div>
 
-            {contributions && github && <Suspense fallback={<GitHubContributionsFallback />}>
-              <GitHubActivityCard
-                contributions={contributions}
-                profileUrl={github.href}
-              />
-            </Suspense>}
+            {contributions && github && (
+              <Suspense fallback={<GitHubContributionsFallback />}>
+                <GitHubActivityCard
+                  contributions={contributions}
+                  profileUrl={github.href}
+                />
+              </Suspense>
+            )}
           </div>
         </div>
       </section>
@@ -448,14 +538,19 @@ export default async function Home() {
 
       <section id="projects" className="page-section scroll-mt-24">
         <div className="section-bar screen-line-top screen-line-bottom">
-          <h2 className="section-title">{settings.homepageProjectsTitle ?? "Projects"}</h2>
+          <h2 className="section-title">
+            {settings.homepageProjectsTitle ?? "Projects"}
+          </h2>
           <span className="mono-note">
-            {settings.homepageProjectsDescription ?? "Selected work with product screenshots and deployment proof."}
+            {settings.homepageProjectsDescription ??
+              "Selected work with product screenshots and deployment proof."}
           </span>
         </div>
-        <div className="section-copy">
-        </div>
-        <PortfolioProjectGrid projects={projects} description={settings.homepageProjectsDescription} />
+        <div className="section-copy"></div>
+        <PortfolioProjectGrid
+          projects={projects}
+          description={settings.homepageProjectsDescription}
+        />
         <div className="screen-line-top flex justify-center p-4">
           <Link
             href="/projects"
@@ -471,9 +566,12 @@ export default async function Home() {
 
       <section id="writing" className="page-section scroll-mt-24">
         <div className="section-bar screen-line-top screen-line-bottom">
-          <h2 className="section-title">{settings.homepageBlogTitle ?? "Blog"}</h2>
+          <h2 className="section-title">
+            {settings.homepageBlogTitle ?? "Blog"}
+          </h2>
           <span className="mono-note">
-            {settings.homepageBlogDescription ?? "Notes on AI agents, product engineering, and systems thinking."}
+            {settings.homepageBlogDescription ??
+              "Notes on AI agents, product engineering, and systems thinking."}
           </span>
         </div>
         <div className="list-grid">
@@ -568,6 +666,11 @@ function StackLogo({
     const Icon = icon.icon;
 
     return <Icon className={className} aria-hidden stroke={1.9} />;
+  }
+
+  if (icon.type === "developer") {
+    const Icon = icon.icon;
+    return <Icon className={className} size={20} aria-hidden />;
   }
 
   return (

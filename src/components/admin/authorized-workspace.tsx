@@ -72,5 +72,26 @@ export async function AuthorizedMedia({
 }) {
   await service.authorize();
   const page = await provider.list();
-  return <MediaScreen initial={page} />;
+  const snapshot = await service.readAdmin();
+  const content = [
+    ...snapshot.posts.map((post) => ({
+      title: `Post: ${post.title}`,
+      text: JSON.stringify(post),
+    })),
+    ...snapshot.projects.map((project) => ({
+      title: `Project: ${project.project.title}`,
+      text: JSON.stringify(project),
+    })),
+    { title: "Site settings", text: JSON.stringify(snapshot.settings ?? {}) },
+    { title: "Journey content", text: JSON.stringify(snapshot.journey) },
+  ];
+  const references = Object.fromEntries(
+    page.assets.map((asset) => [
+      asset.id,
+      content
+        .filter((entry) => entry.text.includes(asset.publicId))
+        .map((entry) => entry.title),
+    ]),
+  );
+  return <MediaScreen initial={page} references={references} />;
 }

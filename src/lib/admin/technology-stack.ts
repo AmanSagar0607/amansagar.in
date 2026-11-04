@@ -1,9 +1,24 @@
 export type TechnologyGroup = { label: string; items: string[] };
 export const defaultTechnologyStack: TechnologyGroup[] = [
-  { label: "Language", items: ["TypeScript", "JavaScript", "Python"] },
-  { label: "Frontend", items: ["React", "Next.js", "Tailwind CSS", "shadcn/ui", "Radix UI", "Base UI", "Motion", "Expo", "TanStack", "MobX-State-Tree"] },
-  { label: "Backend & Database", items: ["Node.js", "Python", "Bun", "PostgreSQL", "MongoDB", "Redis", "nginx"] },
-  { label: "Workflow & AI", items: ["Cursor", "Claude", "Gemini", "ChatGPT", "Git", "GitHub", "Docker", "Vercel"] },
-  { label: "Analytics", items: ["OpenPanel", "PostHog"] },
-  { label: "Design", items: ["Figma", "Paper", "Photoshop"] },
+  {
+    label: "Technologies",
+    items: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Python",
+      "FastAPI",
+      "PostgreSQL",
+      "Supabase",
+      "Milvus",
+      "Zilliz Cloud",
+      "Vector Search",
+      "AI Agents",
+    ],
+  },
+  {
+    label: "Development Tools",
+    items: ["Git", "GitHub", "Docker", "Playwright", "Pytest", "REST APIs"],
+  },
+  { label: "Design Tools", items: ["Figma", "Interface Design System"] },
 ];

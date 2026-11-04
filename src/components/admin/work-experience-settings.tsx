@@ -1,6 +1,5 @@
 "use client";
 import { Input as FormInput } from "@/components/ui/input";
-import { Select as FormSelect } from "@/components/ui/select";
 import { Textarea as FormTextarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import type { WorkExperienceRecord, WorkPosition } from "@/lib/admin/work-experience";

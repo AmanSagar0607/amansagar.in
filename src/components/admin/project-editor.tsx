@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { MediaPicker } from "./media-picker";
 import type { ManagedProject } from "@/lib/admin/content-types";
 import type { Project, Technology } from "@/types/project";
+import { suggestTechnologiesFromText } from "@/lib/technology-suggestions";
 
 const inputClass =
   "border-input bg-background focus-visible:ring-ring mt-1 min-h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2";
@@ -161,8 +162,18 @@ export function ProjectEditor({
           <h1 className="text-2xl font-semibold">
             {initial.project.title ? "Edit project" : "New project"}
           </h1>
-          {initial.updatedAt && <p className="text-muted-foreground mt-2 text-xs">Version {initial.version ?? 1} · Last edited {new Date(initial.updatedAt).toLocaleString()}</p>}
-          {initial.updatedAt && <p className="text-muted-foreground mt-2 text-xs">Version {initial.version ?? 1} · Last edited {new Date(initial.updatedAt).toLocaleString()}</p>}
+          {initial.updatedAt && (
+            <p className="text-muted-foreground mt-2 text-xs">
+              Version {initial.version ?? 1} · Last edited{" "}
+              {new Date(initial.updatedAt).toLocaleString()}
+            </p>
+          )}
+          {initial.updatedAt && (
+            <p className="text-muted-foreground mt-2 text-xs">
+              Version {initial.version ?? 1} · Last edited{" "}
+              {new Date(initial.updatedAt).toLocaleString()}
+            </p>
+          )}
           <p className="text-muted-foreground mt-1 text-sm">
             Manage the project details shown on your portfolio.
           </p>
@@ -249,6 +260,29 @@ export function ProjectEditor({
                 />
               </label>
             ))}
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                const source = [
+                  item.project.overview,
+                  ...(item.project.features ?? []),
+                  ...(item.project.challenges ?? []),
+                  ...(item.project.learnings ?? []),
+                  ...(item.project.process ?? []),
+                ].join("\n");
+                const found = suggestTechnologiesFromText(source);
+                setTechLists((current) => ({
+                  ...current,
+                  technologies: [
+                    ...new Set([...lines(current.technologies), ...found]),
+                  ].join("\n"),
+                }));
+                setSaved(false);
+              }}
+            >
+              Suggest technologies from project text
+            </Button>
             {listFields.map(([key, label]) => (
               <label key={key} className="block text-sm font-medium">
                 {label}
@@ -316,8 +350,22 @@ export function ProjectEditor({
                 onChange={(event) => changeProject("date", event.target.value)}
               />
             </label>
-            <label className="flex items-center gap-2 text-sm"><FormInput type="checkbox" checked={item.pinned === true} onChange={(event) => changeItem("pinned", event.target.checked)} />Pin to homepage</label>
-            <label className="flex items-center gap-2 text-sm"><FormInput type="checkbox" checked={item.pinned === true} onChange={(event) => changeItem("pinned", event.target.checked)} />Pin to homepage</label>
+            <label className="flex items-center gap-2 text-sm">
+              <FormInput
+                type="checkbox"
+                checked={item.pinned === true}
+                onChange={(event) => changeItem("pinned", event.target.checked)}
+              />
+              Pin to homepage
+            </label>
+            <label className="flex items-center gap-2 text-sm">
+              <FormInput
+                type="checkbox"
+                checked={item.pinned === true}
+                onChange={(event) => changeItem("pinned", event.target.checked)}
+              />
+              Pin to homepage
+            </label>
             <p className="text-muted-foreground text-xs leading-5">
               Existing technology categories and icons are preserved when names
               match.

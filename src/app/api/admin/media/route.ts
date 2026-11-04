@@ -15,4 +15,4 @@ const handlers = createMediaRouteHandlers({
   },
 });
 
-export const { GET, POST } = handlers;
+export const { GET, POST, PATCH, DELETE } = handlers;

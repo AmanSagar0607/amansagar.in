@@ -90,6 +90,41 @@ async function fileFromRequest(request: NextRequest): Promise<File> {
     throw new RequestError(400, "Select exactly one image.");
   return file;
 }
+async function jsonBody(
+  request: NextRequest,
+): Promise<Record<string, unknown>> {
+  if (
+    !/^application\/json(?:\s*;|$)/i.test(
+      request.headers.get("content-type") || "",
+    )
+  )
+    throw new RequestError(415, "Expected JSON content.");
+  const reader = request.body?.getReader();
+  if (!reader) throw new RequestError(400, "Missing request body.");
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  for (;;) {
+    const part = await reader.read();
+    if (part.done) break;
+    size += part.value.byteLength;
+    if (size > 4096) {
+      await reader.cancel();
+      throw new RequestError(413, "Media request is too large.");
+    }
+    chunks.push(part.value);
+  }
+  let body: unknown;
+  try {
+    body = JSON.parse(
+      new TextDecoder("utf-8", { fatal: true }).decode(Buffer.concat(chunks)),
+    );
+  } catch {
+    throw new RequestError(400, "Invalid JSON content.");
+  }
+  if (!body || typeof body !== "object" || Array.isArray(body))
+    throw new RequestError(400, "Invalid media request.");
+  return body as Record<string, unknown>;
+}
 export function createMediaRouteHandlers(dependencies: MediaRouteDependencies) {
   async function GET(request: NextRequest) {
     try {
@@ -112,5 +147,36 @@ export function createMediaRouteHandlers(dependencies: MediaRouteDependencies) {
       return errorResponse(error);
     }
   }
-  return { GET, POST };
+  async function PATCH(request: NextRequest) {
+    try {
+      checkOrigin(request);
+      await dependencies.authorize(request);
+      const data = await jsonBody(request);
+      if (typeof data.id !== "string" || typeof data.name !== "string")
+        throw new RequestError(400, "Invalid media update.");
+      const provider = await dependencies.providerFor(request);
+      if (!provider.rename)
+        throw new MediaProviderError("Media rename is unavailable.");
+      return respond({ asset: await provider.rename(data.id, data.name) });
+    } catch (error) {
+      return errorResponse(error);
+    }
+  }
+  async function DELETE(request: NextRequest) {
+    try {
+      checkOrigin(request);
+      await dependencies.authorize(request);
+      const body = await jsonBody(request);
+      if (typeof body.id !== "string")
+        throw new RequestError(400, "Invalid media item.");
+      const provider = await dependencies.providerFor(request);
+      if (!provider.delete)
+        throw new MediaProviderError("Media deletion is unavailable.");
+      await provider.delete(body.id);
+      return respond({ deleted: true });
+    } catch (error) {
+      return errorResponse(error);
+    }
+  }
+  return { GET, POST, PATCH, DELETE };
 }
