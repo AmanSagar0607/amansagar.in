@@ -1,0 +1,58 @@
+.article-editor .tiptap {
+  overflow-wrap: anywhere;
+}
+.article-editor .tiptap > :first-child {
+  margin-top: 0;
+}
+.article-editor .tiptap img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+.article-editor .tiptap img[data-align="center"] {
+  margin-inline: auto;
+}
+.article-editor .tiptap img[data-align="right"] {
+  margin-left: auto;
+}
+.article-editor .tiptap [data-align="center"]:not(img) {
+  text-align: center;
+}
+.article-editor .tiptap [data-align="right"]:not(img) {
+  text-align: right;
+}
+.article-editor .tiptap [data-align="left"]:not(img) {
+  text-align: left;
+}
+.article-editor .tiptap .ProseMirror-selectednode {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+.article-editor .tiptap table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+.article-editor .tiptap th,
+.article-editor .tiptap td {
+  min-width: 2rem;
+  border: 1px solid var(--border);
+  padding: 0.6rem;
+  vertical-align: top;
+  position: relative;
+}
+.article-editor .tiptap th {
+  background: var(--muted);
+  font-weight: 600;
+}
+.article-editor .tiptap .selectedCell {
+  background: var(--accent);
+}
+.article-editor .tiptap pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.article-editor .tiptap p:empty::before {
+  content: "\00a0";
+}

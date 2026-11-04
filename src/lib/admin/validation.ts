@@ -93,6 +93,7 @@ export function validateManagedPost(input: unknown): ManagedPost {
   text(post.content, "Content", 100000);
   date(post.publishedAt, "Publication date");
   date(post.updatedAt, "Updated date");
+  if (post.version !== undefined && (!Number.isInteger(post.version) || Number(post.version) < 1)) throw new Error("Invalid content version");
   publishing(post);
   if (post.sample !== undefined && typeof post.sample !== "boolean")
     throw new Error("Sample flag must be boolean");
@@ -120,6 +121,8 @@ export function validateManagedProject(input: unknown): ManagedProject {
   const id = slug(item.slug);
   publishing(item);
   date(item.updatedAt, "Updated date");
+  if (item.version !== undefined && (!Number.isInteger(item.version) || Number(item.version) < 1)) throw new Error("Invalid content version");
+  if (item.pinned !== undefined && typeof item.pinned !== "boolean") throw new Error("Invalid project pin");
   const project = record(item.project, "Project details");
   if (project.slug !== undefined && project.slug !== id)
     throw new Error("Project slug does not match its record");

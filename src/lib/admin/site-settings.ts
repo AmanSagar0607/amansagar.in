@@ -17,6 +17,11 @@
   technologyStack?: TechnologyGroup[];
   aboutDescription?: string;
   aboutParagraphs?: string[];
+  releaseVersion?: string;
+  homepageProjectsTitle?: string;
+  homepageProjectsDescription?: string;
+  homepageBlogTitle?: string;
+  homepageBlogDescription?: string;
 }
 import { defaultWorkExperience, type WorkExperienceRecord, type WorkPosition } from "./work-experience";
 import { defaultTechnologyStack, type TechnologyGroup } from "./technology-stack";
@@ -25,6 +30,11 @@ export const defaultSiteSettings: Readonly<SiteSettings> = {
   siteDescription:
     "Software Engineer from India building Context-OS, AI agents, RAG pipelines, retrieval systems, and GenAI product infrastructure.",
   contactEmail: "amansagar0307@gmail.com",
+  releaseVersion: "1.0.0",
+  homepageProjectsTitle: "Projects",
+  homepageProjectsDescription: "Selected work with product screenshots and deployment proof.",
+  homepageBlogTitle: "Blog",
+  homepageBlogDescription: "Notes on AI agents, product engineering, and systems thinking.",
   profileTagline: "Building practical AI systems. Small details matter.",
   profileRole: "Software Engineer",
   profileBio: "I build full-stack software with a strong bias toward practical AI systems, retrieval workflows, and interfaces that feel clear and human.",
@@ -56,6 +66,7 @@ export function validateSiteSettings(input: unknown): SiteSettings {
   if (!input || typeof input !== "object" || Array.isArray(input))
     throw new Error("Settings must be an object.");
   const data = input as Record<string, unknown>;
+  if (data.releaseVersion !== undefined && (typeof data.releaseVersion !== "string" || !/^\d+\.\d+\.\d+(?:-[a-z0-9.-]+)?$/.test(data.releaseVersion))) throw new Error("Version must use semantic versioning, such as 1.2.3.");
   if (
     typeof data.siteTitle !== "string" ||
     !data.siteTitle.trim() ||
@@ -76,7 +87,7 @@ export function validateSiteSettings(input: unknown): SiteSettings {
     !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.contactEmail)
   )
     throw new Error("Enter a valid contact email.");
-  for (const key of ["profileTagline", "profileRole", "profileBio", "profileFocus", "profileLocation", "profileAvailability", "featuredProjectName", "featuredProjectDescription", "aboutDescription"] as const) {
+  for (const key of ["profileTagline", "profileRole", "profileBio", "profileFocus", "profileLocation", "profileAvailability", "featuredProjectName", "featuredProjectDescription", "aboutDescription", "homepageProjectsTitle", "homepageProjectsDescription", "homepageBlogTitle", "homepageBlogDescription"] as const) {
     if (data[key] !== undefined && (typeof data[key] !== "string" || !(data[key] as string).trim() || (data[key] as string).length > 500))
       throw new Error(`Invalid ${key}.`);
   }
@@ -149,6 +160,11 @@ export function validateSiteSettings(input: unknown): SiteSettings {
     siteTitle: data.siteTitle.trim(),
     siteDescription: data.siteDescription.trim(),
     contactEmail: data.contactEmail.trim(),
+    releaseVersion: typeof data.releaseVersion === "string" ? data.releaseVersion : defaultSiteSettings.releaseVersion,
+    homepageProjectsTitle: typeof data.homepageProjectsTitle === "string" ? data.homepageProjectsTitle.trim() : defaultSiteSettings.homepageProjectsTitle,
+    homepageProjectsDescription: typeof data.homepageProjectsDescription === "string" ? data.homepageProjectsDescription.trim() : defaultSiteSettings.homepageProjectsDescription,
+    homepageBlogTitle: typeof data.homepageBlogTitle === "string" ? data.homepageBlogTitle.trim() : defaultSiteSettings.homepageBlogTitle,
+    homepageBlogDescription: typeof data.homepageBlogDescription === "string" ? data.homepageBlogDescription.trim() : defaultSiteSettings.homepageBlogDescription,
     profileTagline: typeof data.profileTagline === "string" ? data.profileTagline.trim() : defaultSiteSettings.profileTagline,
     profileRole: typeof data.profileRole === "string" ? data.profileRole.trim() : defaultSiteSettings.profileRole,
     profileBio: typeof data.profileBio === "string" ? data.profileBio.trim() : defaultSiteSettings.profileBio,

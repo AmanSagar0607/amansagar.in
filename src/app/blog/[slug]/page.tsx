@@ -12,6 +12,7 @@ import { ActivityMarkdown } from "@/components/journey/activity-markdown";
 import { ShareMenu } from "@/components/share-menu";
 import { TOCMinimap } from "@/components/toc-minimap";
 import { serializeJsonLd } from "@/lib/json-ld";
+import { articleHeadings, articleText } from "@/lib/article-content";
 
 export interface BlogPostMetadata {
   title: string;
@@ -43,27 +44,9 @@ function isBlogPostMetadata(data: unknown): data is BlogPostMetadata {
 
 function calculateReadTime(content: string): string {
   const wordsPerMinute = 200;
-  const wordCount = content.trim().split(/\s+/).length;
+  const wordCount = articleText(content).split(/\s+/).filter(Boolean).length;
   const minutes = Math.ceil(wordCount / wordsPerMinute);
   return `${minutes} min read`;
-}
-
-function extractHeadings(content: string) {
-  const headingRegex = /^(#{1,3})\s+(.+)$/gm;
-  const headings: { title: string; url: string; depth: number }[] = [];
-  let match;
-
-  while ((match = headingRegex.exec(content)) !== null) {
-    const depth = match[1].length;
-    const title = match[2].trim();
-    const url = `#${title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/(^-|-$)/g, "")}`;
-    headings.push({ title, url, depth });
-  }
-
-  return headings;
 }
 
 export async function generateMetadata({
@@ -98,6 +81,7 @@ export async function generateMetadata({
         url: `/blog/${slug}`,
         type: "article",
         publishedTime: frontmatter.date,
+        modifiedTime: frontmatter.updatedAt || frontmatter.date,
         authors: [frontmatter.author || "Aman Sagar"],
         tags: frontmatter.tags,
         images: [
@@ -147,9 +131,9 @@ export default async function BlogPost({
     const relatedTracks = journeyTracks.filter(t => related?.trackSlugs.includes(t.slug));
     const relatedProjects = await getPublicProjectsBySlug(related?.projectSlugs || []);
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.amansagar.in';
-    const schema = { '@context': 'https://schema.org', '@type': 'TechArticle', headline: frontmatter.title, description: frontmatter.description, datePublished: frontmatter.date, dateModified: frontmatter.updatedAt || frontmatter.date, author: { '@type': 'Person', name: frontmatter.author || 'Aman Sagar', url: siteUrl }, mainEntityOfPage: siteUrl + '/blog/' + slug };
+    const schema = { image: frontmatter.image ? new URL(frontmatter.image, siteUrl).href : undefined, keywords: frontmatter.tags, wordCount: articleText(content).split(/\s+/).filter(Boolean).length, articleSection: frontmatter.category || "Technology", inLanguage: "en", '@context': 'https://schema.org', '@type': 'TechArticle', headline: frontmatter.title, description: frontmatter.description, datePublished: frontmatter.date, dateModified: frontmatter.updatedAt || frontmatter.date, author: { '@type': 'Person', name: frontmatter.author || 'Aman Sagar', url: siteUrl }, mainEntityOfPage: siteUrl + '/blog/' + slug };
     const readTime = frontmatter.readTime || calculateReadTime(content);
-    const headings = extractHeadings(content);
+    const headings = articleHeadings(content);
 
     return (
       <main className="page-shell min-h-screen px-6 pb-16 pt-28 text-[14px] leading-[22px] text-[#0a0a0a] dark:text-[#d8d8d8] md:pt-32">

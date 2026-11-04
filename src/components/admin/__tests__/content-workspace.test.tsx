@@ -15,6 +15,27 @@ import {
 import { deleteContent, saveContent } from "@/lib/admin/client";
 const replace = jest.fn();
 const refresh = jest.fn();
+// The workspace test exercises create/update persistence, while editor
+// formatting and import behavior are covered separately.
+jest.mock("next/dynamic", () => ({
+  __esModule: true,
+  default: () =>
+    function ArticleEditor({
+      value,
+      onChange,
+    }: {
+      value: string;
+      onChange: (value: string) => void;
+    }) {
+      return (
+        <textarea
+          aria-label="Article content"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+        />
+      );
+    },
+}));
 jest.mock("next/navigation", () => ({
   useRouter: () => ({ replace, refresh }),
 }));
@@ -83,7 +104,7 @@ describe("admin content workspace", () => {
     await user.type(screen.getByLabelText("Title"), "New note");
     await user.type(screen.getByLabelText("Slug"), "new-note");
     await user.type(screen.getByLabelText("Description"), "Summary");
-    await user.type(screen.getByLabelText(/Content \(Markdown\)/), "Body text");
+    await user.type(screen.getByLabelText("Article content"), "Body text");
     await user.click(screen.getByRole("button", { name: "Save post" }));
     expect(saveContent).toHaveBeenCalledWith(
       "post",

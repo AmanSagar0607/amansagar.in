@@ -97,6 +97,7 @@ export function projectPublicSnapshot(
         status: item.status,
         visibility: item.visibility,
         updatedAt: item.updatedAt,
+        pinned: item.pinned === true,
         project: {
           slug: p.slug,
           title: p.title,
@@ -183,5 +184,6 @@ export function projectPublicSnapshot(
   const settings = snapshot.settings
     ? validateSiteSettings(snapshot.settings)
     : { ...defaultSiteSettings };
+  delete settings.releaseVersion;
   return structuredClone({ posts, projects, journey, settings });
 }

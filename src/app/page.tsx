@@ -285,7 +285,7 @@ export default async function Home() {
         new Date(a.frontmatter.date).getTime(),
     )
     .slice(0, 4);
-  const projects = await getPublicProjects();
+  const projects = (await getPublicProjects()).sort((a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) || Date.parse(b.date) - Date.parse(a.date));
   const settings = await getPublicSiteSettings();
   const github = (settings.socialLinks ?? defaultSiteSettings.socialLinks ?? []).find((link) => link.label.toLowerCase() === "github");
   const githubUsername = github?.href.match(/^https:\/\/github\.com\/([a-z\d](?:[a-z\d-]{0,38}))(?:\/)?$/i)?.[1];
@@ -448,17 +448,14 @@ export default async function Home() {
 
       <section id="projects" className="page-section scroll-mt-24">
         <div className="section-bar screen-line-top screen-line-bottom">
-          <h2 className="section-title">Projects</h2>
+          <h2 className="section-title">{settings.homepageProjectsTitle ?? "Projects"}</h2>
           <span className="mono-note">
-            Image-backed cards using the quieter bordered showcase pattern.
+            {settings.homepageProjectsDescription ?? "Selected work with product screenshots and deployment proof."}
           </span>
         </div>
         <div className="section-copy">
-          I kept your actual project content and links, but shifted the
-          presentation to a reusable gallery/list system with screenshot-led
-          cards and subtle interaction states.
         </div>
-        <PortfolioProjectGrid projects={projects} />
+        <PortfolioProjectGrid projects={projects} description={settings.homepageProjectsDescription} />
         <div className="screen-line-top flex justify-center p-4">
           <Link
             href="/projects"
@@ -474,9 +471,9 @@ export default async function Home() {
 
       <section id="writing" className="page-section scroll-mt-24">
         <div className="section-bar screen-line-top screen-line-bottom">
-          <h2 className="section-title">Blog</h2>
+          <h2 className="section-title">{settings.homepageBlogTitle ?? "Blog"}</h2>
           <span className="mono-note">
-            Notes on AI agents, product engineering, and systems thinking.
+            {settings.homepageBlogDescription ?? "Notes on AI agents, product engineering, and systems thinking."}
           </span>
         </div>
         <div className="list-grid">

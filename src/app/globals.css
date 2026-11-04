@@ -1589,3 +1589,16 @@ body {
     align-items: start;
   }
 }
+
+/* Shared article media and editor alignment; only allowlisted data values apply. */
+.article-content [data-align="left"], .tiptap [data-align="left"] { text-align: left; }
+.article-content [data-align="center"], .tiptap [data-align="center"] { text-align: center; }
+.article-content [data-align="right"], .tiptap [data-align="right"] { text-align: right; }
+.article-content [data-align="justify"], .tiptap [data-align="justify"] { text-align: justify; }
+.article-image { display: block; max-width: 100%; margin-block: 1.5rem; }
+.article-image img { display: inline-block; height: auto; max-width: 100%; margin: 0; border-radius: .5rem; }
+.article-caption { display: block; margin-top: .5rem; font-size: .875rem; color: var(--muted-foreground); }
+.tiptap img { max-width: 100%; height: auto; }
+.tiptap img[data-align="center"] { display: block; margin-inline: auto; }
+.tiptap img[data-align="right"] { display: block; margin-left: auto; }
+.tiptap img.ProseMirror-selectednode { outline: 2px solid var(--ring); outline-offset: 3px; }

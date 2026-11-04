@@ -158,6 +158,8 @@ export function ProjectEditor({
           <h1 className="text-2xl font-semibold">
             {initial.project.title ? "Edit project" : "New project"}
           </h1>
+          {initial.updatedAt && <p className="text-muted-foreground mt-2 text-xs">Version {initial.version ?? 1} · Last edited {new Date(initial.updatedAt).toLocaleString()}</p>}
+          {initial.updatedAt && <p className="text-muted-foreground mt-2 text-xs">Version {initial.version ?? 1} · Last edited {new Date(initial.updatedAt).toLocaleString()}</p>}
           <p className="text-muted-foreground mt-1 text-sm">
             Manage the project details shown on your portfolio.
           </p>
@@ -311,6 +313,8 @@ export function ProjectEditor({
                 onChange={(event) => changeProject("date", event.target.value)}
               />
             </label>
+            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={item.pinned === true} onChange={(event) => changeItem("pinned", event.target.checked)} />Pin to homepage</label>
+            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={item.pinned === true} onChange={(event) => changeItem("pinned", event.target.checked)} />Pin to homepage</label>
             <p className="text-muted-foreground text-xs leading-5">
               Existing technology categories and icons are preserved when names
               match.

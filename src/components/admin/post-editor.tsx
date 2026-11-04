@@ -1,11 +1,23 @@
 ﻿"use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ActivityMarkdown } from "@/components/journey/activity-markdown";
 import { MediaPicker } from "./media-picker";
 import type { ManagedPost } from "@/lib/admin/content-types";
+import { SeoAssistant } from "./seo-assistant";
+import { articleText } from "@/lib/article-content";
+
+const RichPostEditor = dynamic(() => import("./rich-post-editor"), {
+  ssr: false,
+  loading: () => (
+    <p role="status" className="text-muted-foreground p-6 text-sm">
+      Loading article editor…
+    </p>
+  ),
+});
 
 const inputClass =
   "border-input bg-background focus-visible:ring-ring mt-1 min-h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2";
@@ -26,6 +38,7 @@ export function PostEditor({
 }) {
   const [post, setPost] = useState(initial);
   const [preview, setPreview] = useState(false);
+  const [sourcePending, setSourcePending] = useState(false);
   const [tags, setTags] = useState(() =>
     Array.isArray(initial.frontmatter.tags)
       ? initial.frontmatter.tags.join(", ")
@@ -41,6 +54,10 @@ export function PostEditor({
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    if (sourcePending) {
+      setError("Apply or cancel your source import before saving the post.");
+      return;
+    }
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(post.slug)) {
       setError("Use a lowercase slug with letters, numbers and hyphens.");
       return;
@@ -48,9 +65,15 @@ export function PostEditor({
     if (
       !post.title.trim() ||
       !post.description.trim() ||
-      !post.content.trim()
+      (!articleText(post.content).trim() && !/<img\b/i.test(post.content))
     ) {
       setError("Title, description and content are required.");
+      return;
+    }
+    if (post.content.length > 100000) {
+      setError(
+        "This article exceeds the 100,000 character content limit. Split it into multiple posts or reduce its length.",
+      );
       return;
     }
     if (!Number.isFinite(Date.parse(post.publishedAt))) {
@@ -89,6 +112,8 @@ export function PostEditor({
           <p className="text-muted-foreground mt-1 text-sm">
             Write, preview and control when your article is visible.
           </p>
+          {initial.updatedAt && <p className="text-muted-foreground mt-2 text-xs">Version {initial.version ?? 1} · Last edited {new Date(initial.updatedAt).toLocaleString()}</p>}
+          {initial.updatedAt && <p className="text-muted-foreground mt-2 text-xs">Version {initial.version ?? 1} · Last edited {new Date(initial.updatedAt).toLocaleString()}</p>}
         </div>
         <div className="flex gap-2">
           <Button
@@ -96,14 +121,24 @@ export function PostEditor({
             variant="outline"
             onClick={() => setPreview(!preview)}
             aria-pressed={preview}
+            disabled={sourcePending}
           >
             {preview ? "Edit" : "Preview"}
           </Button>
-          <Button type="submit" disabled={saving}>
+          <Button type="submit" disabled={saving || sourcePending}>
             {saving ? "Saving…" : "Save post"}
           </Button>
         </div>
       </div>
+      {sourcePending && (
+        <p
+          role="status"
+          className="text-muted-foreground border-border rounded-md border px-4 py-3 text-sm"
+        >
+          Source import has unapplied changes. Choose Apply source or Cancel
+          import before previewing or saving.
+        </p>
+      )}
       {error && (
         <p
           role="alert"
@@ -119,7 +154,7 @@ export function PostEditor({
       )}
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_18rem]">
         <Card className="gap-0">
-          <CardContent className="space-y-4">
+          <CardContent className="min-w-0 space-y-4">
             <label className="block text-sm font-medium">
               Title
               <input
@@ -255,89 +290,96 @@ export function PostEditor({
               </div>
             </details>
             <div>
-              <label
-                htmlFor="post-content"
-                className="block text-sm font-medium"
-              >
-                Content{" "}
-                <span className="text-muted-foreground font-normal">
-                  (Markdown)
-                </span>
-              </label>
+              <h2 className="mb-2 text-sm font-medium">Content</h2>
               {preview ? (
                 <div className="border-border mt-1 min-h-80 overflow-hidden rounded-md border p-4">
                   <ActivityMarkdown content={post.content} />
                 </div>
               ) : (
-                <textarea
-                  id="post-content"
-                  required
-                  rows={20}
-                  maxLength={100000}
-                  className={`${inputClass} font-mono`}
+                <RichPostEditor
                   value={post.content}
-                  onChange={(event) => change("content", event.target.value)}
+                  onChange={(content) => change("content", content)}
+                  onPendingSourceChange={setSourcePending}
                 />
               )}
             </div>
           </CardContent>
         </Card>
-        <Card className="h-fit gap-0">
-          <CardContent className="space-y-4">
-            <h2 className="font-medium">Publishing</h2>
-            <label className="block text-sm font-medium">
-              Status
-              <select
-                className={inputClass}
-                value={post.status}
-                onChange={(event) =>
-                  change("status", event.target.value as ManagedPost["status"])
-                }
-              >
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
-              </select>
-            </label>
-            <label className="block text-sm font-medium">
-              Visibility
-              <select
-                className={inputClass}
-                value={post.visibility}
-                onChange={(event) =>
-                  change(
-                    "visibility",
-                    event.target.value as ManagedPost["visibility"],
-                  )
-                }
-              >
-                <option value="private">Private</option>
-                <option value="public">Public</option>
-              </select>
-            </label>
-            <label className="block text-sm font-medium">
-              Publication date
-              <input
-                type="date"
-                required
-                className={inputClass}
-                value={post.publishedAt.slice(0, 10)}
-                onChange={(event) => change("publishedAt", event.target.value)}
-              />
-            </label>
-            <label className="flex min-h-10 items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={post.sample === true}
-                onChange={(event) => change("sample", event.target.checked)}
-              />
-              Sample content
-            </label>
-            <p className="text-muted-foreground text-xs leading-5">
-              Only public, published posts whose publication date has arrived
-              and which are not samples appear on the portfolio.
-            </p>
-          </CardContent>
-        </Card>
+        <aside
+          className="min-w-0 space-y-5"
+          aria-label="Article publishing and assistance"
+        >
+          <Card className="h-fit gap-0">
+            <CardContent className="space-y-4">
+              <h2 className="font-medium">Publishing</h2>
+              <label className="block text-sm font-medium">
+                Status
+                <select
+                  className={inputClass}
+                  value={post.status}
+                  onChange={(event) =>
+                    change(
+                      "status",
+                      event.target.value as ManagedPost["status"],
+                    )
+                  }
+                >
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                </select>
+              </label>
+              <label className="block text-sm font-medium">
+                Visibility
+                <select
+                  className={inputClass}
+                  value={post.visibility}
+                  onChange={(event) =>
+                    change(
+                      "visibility",
+                      event.target.value as ManagedPost["visibility"],
+                    )
+                  }
+                >
+                  <option value="private">Private</option>
+                  <option value="public">Public</option>
+                </select>
+              </label>
+              <label className="block text-sm font-medium">
+                Publication date
+                <input
+                  type="date"
+                  required
+                  className={inputClass}
+                  value={post.publishedAt.slice(0, 10)}
+                  onChange={(event) =>
+                    change("publishedAt", event.target.value)
+                  }
+                />
+              </label>
+              <label className="flex min-h-10 items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={post.sample === true}
+                  onChange={(event) => change("sample", event.target.checked)}
+                />
+                Sample content
+              </label>
+              <p className="text-muted-foreground text-xs leading-5">
+                Only public, published posts whose publication date has arrived
+                and which are not samples appear on the portfolio.
+              </p>
+            </CardContent>
+          </Card>
+          <fieldset disabled={sourcePending} className="min-w-0 space-y-5">
+            <SeoAssistant
+              post={post}
+              onContent={(content) => change("content", content)}
+              onSeo={(seo) =>
+                change("frontmatter", { ...post.frontmatter, ...seo })
+              }
+            />
+          </fieldset>
+        </aside>
       </div>
     </form>
   );

@@ -11,6 +11,8 @@ export interface ManagedPost {
   content: string;
   publishedAt: string;
   updatedAt: string;
+  version?: number;
+  history?: { version: number; updatedAt: string; summary: string }[];
   status: ContentStatus;
   visibility: Visibility;
   sample?: boolean;
@@ -21,6 +23,9 @@ export interface ManagedProject {
   status: ContentStatus;
   visibility: Visibility;
   updatedAt: string;
+  version?: number;
+  history?: { version: number; updatedAt: string; summary: string }[];
+  pinned?: boolean;
   project: Project;
 }
 export interface InitialContentSnapshot {

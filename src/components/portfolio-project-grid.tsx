@@ -16,12 +16,14 @@ type PortfolioProjectGridProps = {
   projects: Project[];
   className?: string;
   featuredCount?: number;
+  description?: string;
 };
 
 export function PortfolioProjectGrid({
   projects,
   className,
   featuredCount = 4,
+  description = "Selected work with product screenshots and deployment proof.",
 }: PortfolioProjectGridProps) {
   const [view, setView] = useState<"grid" | "list">("grid");
   const featuredProjects = projects.slice(0, featuredCount);
@@ -61,7 +63,7 @@ export function PortfolioProjectGrid({
       <div className="relative left-1/2 w-screen -translate-x-1/2 border-t border-[#e7e7e7] dark:border-[#1c1c1c]" />
       <div className="section-bar">
         <div className="mono-note">
-          Selected work with product screenshots and deployment proof.
+          {description}
         </div>
         <div className="view-toggle-group" aria-label="Project view mode">
           <Tooltip>

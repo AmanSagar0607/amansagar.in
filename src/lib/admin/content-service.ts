@@ -177,7 +177,10 @@ export class ContentService {
     const post = validate(() => validateManagedPost(input));
     return this.repository.transact((snapshot) => {
       const next = clone(snapshot);
-      const saved = { ...clone(post), updatedAt: new Date().toISOString() };
+      const previous = next.posts.find((row) => row.slug === post.slug);
+      const timestamp = new Date().toISOString();
+      const version = (previous?.version ?? 0) + 1;
+      const saved = { ...clone(post), version, updatedAt: timestamp, history: [...(previous?.history ?? []), { version, updatedAt: timestamp, summary: previous ? "Updated post" : "Created post" }].slice(-20) };
       next.posts = replaceRecord(
         next.posts,
         saved,
@@ -215,7 +218,10 @@ export class ContentService {
     const item = validate(() => validateManagedProject(input));
     return this.repository.transact((snapshot) => {
       const next = clone(snapshot);
-      const saved = { ...clone(item), updatedAt: new Date().toISOString() };
+      const previous = next.projects.find((row) => row.slug === item.slug);
+      const timestamp = new Date().toISOString();
+      const version = (previous?.version ?? 0) + 1;
+      const saved = { ...clone(item), version, updatedAt: timestamp, history: [...(previous?.history ?? []), { version, updatedAt: timestamp, summary: previous ? "Updated project" : "Created project" }].slice(-20) };
       next.projects = replaceRecord(
         next.projects,
         saved,

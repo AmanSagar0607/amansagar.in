@@ -76,7 +76,10 @@ describe("admin editors", () => {
         frontmatter: post.frontmatter,
       }),
     );
-    expect(await screen.findByRole("status")).toHaveTextContent("Post saved.");
+    expect(await screen.findByText("Post saved.")).toHaveAttribute(
+      "role",
+      "status",
+    );
   });
   it("preserves existing technology icons while adding new technologies", async () => {
     const user = userEvent.setup();
