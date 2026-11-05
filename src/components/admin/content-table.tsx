@@ -1,6 +1,6 @@
 "use client";
 import { Input as FormInput } from "@/components/ui/input";
-import { Select as FormSelect } from "@/components/ui/select";
+import { FormSelect } from "@/components/ui/select";
 
 import { useMemo, useState } from "react";
 import Link from "next/link";

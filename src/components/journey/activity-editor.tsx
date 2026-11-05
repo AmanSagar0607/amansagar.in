@@ -6,7 +6,7 @@ import { MediaPicker } from "@/components/admin/media-picker";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input as FormInput } from "@/components/ui/input";
-import { Select as FormSelect } from "@/components/ui/select";
+import { FormSelect } from "@/components/ui/select";
 import { Textarea as FormTextarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";

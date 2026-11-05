@@ -1,5 +1,5 @@
 "use client";
-import { Select as FormSelect } from "@/components/ui/select";
+import { FormSelect } from "@/components/ui/select";
 import { Textarea as FormTextarea } from "@/components/ui/textarea";
 
 import { useEffect, useRef, useState } from "react";
