@@ -52,19 +52,21 @@ export async function createInitialContentSnapshot(): Promise<InitialContentSnap
       } satisfies ManagedPost;
     }),
   );
-  const projects = getAllProjects().map((project) => {
+  const projects = getAllProjects().sort((a, b) => Date.parse(b.date) - Date.parse(a.date)).map((project, sortOrder) => {
     if (!project.slug) throw new Error(`Project ${project.title} has no slug`);
     return {
       slug: project.slug,
       status: "published" as const,
       visibility: "public" as const,
       updatedAt: project.date,
+      sortOrder,
       project,
     };
   });
   return {
     posts,
     projects,
+    pages: [],
     journey: await getJourney(),
     settings: { ...defaultSiteSettings },
   };

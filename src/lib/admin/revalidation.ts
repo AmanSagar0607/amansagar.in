@@ -1,5 +1,6 @@
 ﻿export type ContentKind =
   | "post"
+  | "page"
   | "project"
   | "activity"
   | "track"
@@ -26,6 +27,8 @@ export function affectedPublicPaths(
   ];
   if (kind === "settings")
     targets.push({ path: "/", type: "layout" }, { path: "/contact" }, { path: "/about" });
+  if (kind === "page")
+    targets.push({ path: `/${identifier}` }, { path: "/", type: "layout" });
   if (kind === "post")
     targets.push(
       { path: "/blog" },

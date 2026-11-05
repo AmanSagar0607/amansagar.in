@@ -10,12 +10,14 @@ import { isPublicActivity, reconcileAwards } from "@/lib/journey/logic";
 import { validateJourney } from "@/lib/journey/validation";
 import type {
   InitialContentSnapshot,
+  ManagedPage,
   ManagedPost,
   ManagedProject,
 } from "./content-types";
 import {
   isPublicContent,
   validateManagedPost,
+  validateManagedPage,
   validateManagedProject,
 } from "./validation";
 
@@ -210,6 +212,39 @@ export class ContentService {
       return { snapshot: next, result: undefined };
     });
   }
+  async savePage(input: unknown, previousSlug?: string): Promise<ManagedPage> {
+    await this.requireAdmin();
+    const page = validate(() => validateManagedPage(input));
+    return this.repository.transact((snapshot) => {
+      const next = clone(snapshot);
+      const rows = next.pages ?? [];
+      const previous = rows.find((row) => row.slug === page.slug);
+      const timestamp = new Date().toISOString();
+      const version = (previous?.version ?? 0) + 1;
+      const saved: ManagedPage = {
+        ...clone(page),
+        version,
+        updatedAt: timestamp,
+        history: [...(previous?.history ?? []), {
+          version,
+          updatedAt: timestamp,
+          summary: previous ? "Updated page" : "Created page",
+        }].slice(-20),
+      };
+      next.pages = replaceRecord(rows, saved, (row) => row.slug, previousSlug);
+      return { snapshot: next, result: saved };
+    });
+  }
+  async deletePage(slug: string): Promise<void> {
+    await this.requireAdmin();
+    return this.repository.transact((snapshot) => {
+      const rows = snapshot.pages ?? [];
+      assertPresent(rows, (item) => item.slug, slug);
+      const next = clone(snapshot);
+      next.pages = rows.filter((page) => page.slug !== slug);
+      return { snapshot: next, result: undefined };
+    });
+  }
   async saveProject(
     input: unknown,
     previousSlug?: string,
@@ -218,10 +253,33 @@ export class ContentService {
     const item = validate(() => validateManagedProject(input));
     return this.repository.transact((snapshot) => {
       const next = clone(snapshot);
+      if (next.projects.some((project) => project.sortOrder === undefined)) {
+        next.projects = next.projects
+          .map((project, index) => ({ project, index }))
+          .sort((a, b) => {
+            const pinOrder = Number(b.project.pinned === true) - Number(a.project.pinned === true);
+            if (pinOrder) return pinOrder;
+            if (a.project.sortOrder !== undefined && b.project.sortOrder !== undefined)
+              return a.project.sortOrder - b.project.sortOrder;
+            const dateOrder = Date.parse(b.project.project.date) - Date.parse(a.project.project.date);
+            return dateOrder || a.index - b.index;
+          })
+          .map(({ project }, sortOrder) => ({ ...project, sortOrder }));
+      }
       const previous = next.projects.find((row) => row.slug === item.slug);
+      const previousPosition = next.projects.findIndex((row) => row.slug === item.slug);
+      const sortOrder = previous
+        ? previous.sortOrder ?? previousPosition
+        : 0;
+      if (!previous) {
+        next.projects = next.projects.map((row, index) => ({
+          ...row,
+          sortOrder: (row.sortOrder ?? index) + 1,
+        }));
+      }
       const timestamp = new Date().toISOString();
       const version = (previous?.version ?? 0) + 1;
-      const saved = { ...clone(item), version, updatedAt: timestamp, history: [...(previous?.history ?? []), { version, updatedAt: timestamp, summary: previous ? "Updated project" : "Created project" }].slice(-20) };
+      const saved = { ...clone(item), sortOrder, version, updatedAt: timestamp, history: [...(previous?.history ?? []), { version, updatedAt: timestamp, summary: previous ? "Updated project" : "Created project" }].slice(-20) };
       next.projects = replaceRecord(
         next.projects,
         saved,
@@ -231,6 +289,42 @@ export class ContentService {
       validateReferences(next);
       updateAwards(next);
       return { snapshot: next, result: saved };
+    });
+  }
+  async reorderProjects(input: unknown): Promise<void> {
+    await this.requireAdmin();
+    const slugs = validate(() => {
+      if (!Array.isArray(input) || input.length > 500)
+        throw new Error("Project order must be a list of at most 500 slugs.");
+      const values = input.map((value) => {
+        if (
+          typeof value !== "string" ||
+          value.length > 120 ||
+          !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)
+        )
+          throw new Error("Project order contains an invalid slug.");
+        return value;
+      });
+      if (new Set(values).size !== values.length)
+        throw new Error("Project order contains duplicate slugs.");
+      return values;
+    });
+    await this.repository.transact((snapshot) => {
+      const currentSlugs = snapshot.projects.map((project) => project.slug);
+      if (
+        currentSlugs.length !== slugs.length ||
+        currentSlugs.some((slug) => !slugs.includes(slug))
+      )
+        throw new ContentConflictError(
+          "Projects changed while you were editing the order. Reload and try again.",
+        );
+      const bySlug = new Map(snapshot.projects.map((project) => [project.slug, project]));
+      const next = clone(snapshot);
+      next.projects = slugs.map((slug, sortOrder) => ({
+        ...bySlug.get(slug)!,
+        sortOrder,
+      }));
+      return { snapshot: next, result: undefined };
     });
   }
   async deleteProject(slug: string): Promise<void> {

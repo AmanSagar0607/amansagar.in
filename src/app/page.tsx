@@ -308,11 +308,7 @@ export default async function Home() {
         new Date(a.frontmatter.date).getTime(),
     )
     .slice(0, 4);
-  const projects = (await getPublicProjects()).sort(
-    (a, b) =>
-      Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) ||
-      Date.parse(b.date) - Date.parse(a.date),
-  );
+  const projects = await getPublicProjects();
   const settings = await getPublicSiteSettings();
   const github = (
     settings.socialLinks ??

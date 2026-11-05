@@ -1,4 +1,4 @@
-﻿import type { ManagedPost, ManagedProject } from "./content-types";
+import type { ManagedPage, ManagedPost, ManagedProject } from "./content-types";
 
 function record(value: unknown, name: string): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value))
@@ -123,6 +123,7 @@ export function validateManagedProject(input: unknown): ManagedProject {
   date(item.updatedAt, "Updated date");
   if (item.version !== undefined && (!Number.isInteger(item.version) || Number(item.version) < 1)) throw new Error("Invalid content version");
   if (item.pinned !== undefined && typeof item.pinned !== "boolean") throw new Error("Invalid project pin");
+  if (item.sortOrder !== undefined && (!Number.isInteger(item.sortOrder) || Number(item.sortOrder) < 0)) throw new Error("Invalid project order");
   const project = record(item.project, "Project details");
   if (project.slug !== undefined && project.slug !== id)
     throw new Error("Project slug does not match its record");
@@ -146,6 +147,28 @@ export function validateManagedProject(input: unknown): ManagedProject {
     optionalUrl(deploy.url, "Deployment URL");
   }
   return input as ManagedProject;
+}
+const reservedPageSlugs = new Set([
+  "about", "achievements", "admin", "api", "blog", "contact", "journey",
+  "projects", "resume", "robots", "sitemap", "social", "opengraph-image",
+]);
+export function validateManagedPage(input: unknown): ManagedPage {
+  const page = record(input, "Page");
+  const id = slug(page.slug);
+  if (reservedPageSlugs.has(id))
+    throw new Error("That slug belongs to a built-in route. Choose a different slug.");
+  text(page.title, "Title", 200);
+  text(page.description, "Description", 1000, true);
+  text(page.content, "Content", 100000, true);
+  publishing(page);
+  date(page.updatedAt, "Updated date");
+  if (page.version !== undefined && (!Number.isInteger(page.version) || Number(page.version) < 1)) throw new Error("Invalid page version");
+  for (const field of ["navigationTitle", "seoTitle", "seoDescription"])
+    if (page[field] !== undefined) text(page[field], field, field === "navigationTitle" ? 80 : 200, true);
+  if (page.showInNavigation !== undefined && typeof page.showInNavigation !== "boolean")
+    throw new Error("Navigation visibility must be a boolean");
+  if (page.image !== undefined) optionalUrl(page.image, "Cover image", true);
+  return input as ManagedPage;
 }
 export function isPublicContent(
   item: {

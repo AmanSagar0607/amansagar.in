@@ -8,6 +8,7 @@ import { MobileDock } from "@/components/mobile-dock";
 import { SiteChrome } from "@/components/site-chrome";
 import "./globals.css";
 import { getPublicSiteSettings } from "@/lib/public-site-settings";
+import { getPublicPages } from "@/lib/public-pages";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -94,9 +95,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const customPages = (await getPublicPages())
+    .filter((page) => page.showInNavigation)
+    .map(({ slug, title, navigationTitle }) => ({ slug, title, navigationTitle }));
   return (
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <body
@@ -112,7 +116,7 @@ export default function RootLayout({
           <div className="app-frame bg-background text-foreground min-h-screen">
             <Toaster position="top-center" richColors />
             <SiteChrome
-              header={<Navbar />}
+              header={<Navbar customPages={customPages} />}
               dock={<MobileDock />}
               footer={<Footer />}
             >

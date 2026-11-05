@@ -356,7 +356,7 @@ export function ProjectEditor({
                 checked={item.pinned === true}
                 onCheckedChange={(checked) => changeItem("pinned", checked === true)}
               />
-              Pin to homepage
+              Pin on homepage and Projects page
             </label>
             <p className="text-muted-foreground text-xs leading-5">
               Existing technology categories and icons are preserved when names

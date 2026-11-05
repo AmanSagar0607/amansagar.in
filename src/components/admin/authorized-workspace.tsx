@@ -78,6 +78,10 @@ export async function AuthorizedMedia({
       title: `Post: ${post.title}`,
       text: JSON.stringify(post),
     })),
+    ...(snapshot.pages ?? []).map((page) => ({
+      title: `Page: ${page.title}`,
+      text: JSON.stringify(page),
+    })),
     ...snapshot.projects.map((project) => ({
       title: `Project: ${project.project.title}`,
       text: JSON.stringify(project),

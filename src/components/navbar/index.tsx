@@ -36,10 +36,26 @@ const moreNavItems = [
   },
 ];
 
-export const Navbar = () => {
+export const Navbar = ({
+  customPages = [],
+}: {
+  customPages?: { slug: string; title: string; navigationTitle?: string }[];
+}) => {
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const navigationItems = [
+    ...moreNavItems.map((item) => ({
+      ...item,
+      external: "external" in item && item.external === true,
+    })),
+    ...customPages.map((page) => ({
+      title: page.navigationTitle?.trim() || page.title,
+      href: `/${page.slug}`,
+      external: false,
+    })),
+  ];
   const isActive = (href: string) => {
+    if (customPages.some((page) => `/${page.slug}` === href)) return pathname === href;
     if (href === "/") return pathname === "/";
     if (href === "/projects") return pathname.startsWith("/projects");
     if (href === "/blog") return pathname.startsWith("/blog");
@@ -97,7 +113,7 @@ export const Navbar = () => {
               sideOffset={10}
               className="border-border bg-card min-w-44 rounded-2xl border p-2 shadow-sm"
             >
-              {moreNavItems.map((item) => (
+              {navigationItems.map((item) => (
                 <DropdownMenuItem
                   key={item.title}
                   asChild

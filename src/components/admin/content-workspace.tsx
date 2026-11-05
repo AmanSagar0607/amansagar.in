@@ -14,6 +14,7 @@ import { saveContent, deleteContent } from "@/lib/admin/client";
 import type { ContentKind } from "@/lib/admin/revalidation";
 import type {
   InitialContentSnapshot,
+  ManagedPage,
   ManagedPost,
   ManagedProject,
 } from "@/lib/admin/content-types";
@@ -30,7 +31,9 @@ import { DeleteContentDialog } from "./delete-content-dialog";
 import { PostEditor } from "./post-editor";
 import { ProjectEditor } from "./project-editor";
 import { ProjectBoard } from "./project-board";
+import { ProjectOrderControl } from "./project-order-control";
 import { TrackEditor } from "./track-editor";
+import { PageEditor } from "./page-editor";
 
 export { isContentSection } from "@/lib/admin/content-sections";
 import {
@@ -52,6 +55,18 @@ function emptyPost(): ManagedPost {
     visibility: "private",
     sample: false,
     frontmatter: {},
+  };
+}
+function emptyPage(): ManagedPage {
+  return {
+    slug: "",
+    title: "",
+    description: "",
+    content: "",
+    status: "draft",
+    visibility: "private",
+    updatedAt: now(),
+    showInNavigation: false,
   };
 }
 function emptyProject(): ManagedProject {
@@ -148,6 +163,17 @@ export function contentRows(
   snapshot: InitialContentSnapshot,
 ): AdminTableRow[] {
   const root = `/admin/${section}`;
+  if (section === "pages")
+    return (snapshot.pages ?? []).map((item) => ({
+      id: item.slug,
+      href: `${root}/edit/${item.slug}`,
+      values: {
+        title: item.title,
+        status: status(item),
+        visibility: item.visibility,
+        date: item.updatedAt.slice(0, 10),
+      },
+    }));
   if (section === "posts")
     return snapshot.posts.map((item) => ({
       id: item.slug,
@@ -238,7 +264,7 @@ export function ContentList({
     { key: "status", label: "Status", sortable: true },
     ...(section === "activities"
       ? [{ key: "type", label: "Type", sortable: true }]
-      : section === "tracks"
+      : section === "pages" || section === "tracks"
         ? [{ key: "visibility", label: "Visibility", sortable: true }]
         : section === "challenges"
           ? [{ key: "category", label: "Category", sortable: true }]
@@ -253,6 +279,15 @@ export function ContentList({
       label: "Status",
       options: [...new Set(rows.map((row) => row.values.status))].sort(),
     },
+  ];
+  const builtInPages = [
+    { title: "Home", href: "/admin/settings", editor: "Homepage settings" },
+    { title: "About", href: "/admin/settings", editor: "About settings" },
+    { title: "Projects", href: "/admin/projects", editor: "Project content" },
+    { title: "Blog", href: "/admin/posts", editor: "Blog posts" },
+    { title: "Journey", href: "/admin/activities", editor: "Journey activities" },
+    { title: "Achievements", href: "/admin/achievements", editor: "Achievement settings" },
+    { title: "Contact", href: "/admin/settings", editor: "Contact settings" },
   ];
   return (
     <div className="space-y-6">
@@ -270,10 +305,27 @@ export function ContentList({
           </Link>
         </Button>
       </div>
+      {section === "pages" && (
+        <section className="space-y-3 rounded-xl border p-4" aria-labelledby="built-in-pages-heading">
+          <div>
+            <h2 id="built-in-pages-heading" className="font-semibold">Built-in pages</h2>
+            <p className="text-muted-foreground mt-1 text-sm">Edit existing site content in its current editor. Create custom pages below without code.</p>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+            {builtInPages.map((page) => (
+              <Link key={page.title} href={page.href} className="hover:bg-muted/40 flex min-h-16 items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2">
+                <span className="font-medium">{page.title}</span>
+                <span className="text-muted-foreground text-right text-xs">{page.editor}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
       {section === "projects" && <div role="group" aria-label="Project view" className="flex gap-2">
         <Button variant={projectView === "board" ? "default" : "outline"} aria-pressed={projectView === "board"} onClick={() => setProjectView("board")}>Board</Button>
         <Button variant={projectView === "list" ? "default" : "outline"} aria-pressed={projectView === "list"} onClick={() => setProjectView("list")}>List</Button>
       </div>}
+      {section === "projects" && <ProjectOrderControl projects={snapshot.projects} />}
       {section === "projects" && projectView === "board" ? <ProjectBoard projects={snapshot.projects} /> : <ContentTable
         columns={columns}
         rows={rows}
@@ -389,6 +441,10 @@ export function ContentEdit({
       return creating
         ? emptyPost()
         : snapshot.posts.find((row) => row.slug === id);
+    if (section === "pages")
+      return creating
+        ? emptyPage()
+        : (snapshot.pages ?? []).find((row) => row.slug === id);
     if (section === "projects")
       return creating
         ? emptyProject()
@@ -486,6 +542,14 @@ export function ContentEdit({
           identifierLocked={!creating || Boolean(createdId)}
           tracks={tracks}
           projects={projects}
+          onSave={save}
+        />
+      )}
+      {section === "pages" && (
+        <PageEditor
+          key={`${section}:${id}`}
+          initial={item as ManagedPage}
+          identifierLocked={!creating || Boolean(createdId)}
           onSave={save}
         />
       )}

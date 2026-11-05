@@ -47,6 +47,7 @@ const groups = [
     label: "Content management",
     items: [
       { label: "Blog posts", href: "/admin/posts", icon: FileText },
+      { label: "Pages", href: "/admin/pages", icon: FileText },
       { label: "Projects", href: "/admin/projects", icon: FolderKanban },
       { label: "Journey", href: "/admin/activities", icon: BookOpen },
       { label: "Learning tracks", href: "/admin/tracks", icon: BookOpen },

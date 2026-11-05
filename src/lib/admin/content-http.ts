@@ -20,6 +20,7 @@ const noStore = {
 const maxBytes = 1_048_576;
 const kinds = [
   "post",
+  "page",
   "project",
   "activity",
   "track",
@@ -28,7 +29,7 @@ const kinds = [
   "settings",
 ] as const;
 const collections: Record<
-  Exclude<ContentKind, "post" | "project" | "settings">,
+  Exclude<ContentKind, "post" | "page" | "project" | "settings">,
   JourneyCollection
 > = {
   activity: "activities",
@@ -156,6 +157,7 @@ async function save(
 ) {
   if (type === "settings") return service.saveSettings(record);
   if (type === "post") return service.savePost(record, previous);
+  if (type === "page") return service.savePage(record, previous);
   if (type === "project") return service.saveProject(record, previous);
   return service.saveJourneyRecord(collections[type], record, previous);
 }
@@ -163,6 +165,7 @@ async function remove(service: ContentService, type: ContentKind, id: string) {
   if (type === "settings")
     throw new RequestError(405, "Settings cannot be deleted.");
   if (type === "post") return service.deletePost(id);
+  if (type === "page") return service.deletePage(id);
   if (type === "project") return service.deleteProject(id);
   return service.deleteJourneyRecord(collections[type], id);
 }
@@ -191,6 +194,22 @@ export function createContentRouteHandlers(
       sameOrigin(request);
       const instance = await service(request);
       const input = await body(request);
+      if (input.kind === "project-order") {
+        if (method !== "PUT")
+          throw new RequestError(405, "Project order can only be updated.");
+        await instance.reorderProjects(input.order);
+        let revalidated = true;
+        try {
+          await dependencies.revalidate([
+            { path: "/" },
+            { path: "/projects" },
+            { path: "/projects/[slug]", type: "page" },
+          ]);
+        } catch {
+          revalidated = false;
+        }
+        return response({ result: null, revalidated });
+      }
       const type = kind(input.kind);
       if (type === "settings" && method !== "PUT")
         throw new RequestError(405, "Settings can only be updated.");

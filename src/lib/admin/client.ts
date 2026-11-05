@@ -86,6 +86,16 @@ export async function deleteContent(
   });
   return { revalidated: data.revalidated === true };
 }
+export async function reorderProjects(
+  order: string[],
+): Promise<{ revalidated: boolean }> {
+  const data = await call("/api/admin/content", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ kind: "project-order", order }),
+  });
+  return { revalidated: data.revalidated === true };
+}
 export async function listMedia(cursor?: string): Promise<MediaPage> {
   const query = cursor ? `?cursor=${encodeURIComponent(cursor)}` : "";
   const data = await call(`/api/admin/media${query}`);

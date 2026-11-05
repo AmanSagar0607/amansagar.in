@@ -1,4 +1,5 @@
 export const contentSections = {
+  pages: { label: "Pages", singular: "page", kind: "page" },
   posts: { label: "Blog posts", singular: "post", kind: "post" },
   projects: { label: "Projects", singular: "project", kind: "project" },
   activities: {

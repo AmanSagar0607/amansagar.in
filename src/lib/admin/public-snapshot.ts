@@ -2,6 +2,7 @@
 import { reconcileAwards } from "@/lib/journey/logic";
 import type {
   InitialContentSnapshot,
+  ManagedPage,
   ManagedPost,
   ManagedProject,
 } from "./content-types";
@@ -14,6 +15,7 @@ import {
 } from "./site-settings";
 
 export interface PublicContentSnapshot {
+  pages: ManagedPage[];
   posts: ManagedPost[];
   projects: ManagedProject[];
   journey: JourneyData;
@@ -86,9 +88,36 @@ export function projectPublicSnapshot(
           : {}),
       },
     }));
+  const pages = (snapshot.pages ?? [])
+    .filter((page) => isPublicContent(page, now))
+    .map((page) => ({
+      slug: page.slug,
+      title: page.title,
+      description: page.description,
+      content: page.content,
+      status: page.status,
+      visibility: page.visibility,
+      updatedAt: page.updatedAt,
+      navigationTitle: page.navigationTitle,
+      showInNavigation: page.showInNavigation === true,
+      seoTitle: page.seoTitle,
+      seoDescription: page.seoDescription,
+      image: page.image,
+    }));
   const projects = snapshot.projects
-    .filter((project) => isPublicContent(project, now))
-    .map((item) => {
+    .map((project, index) => ({ project, index }))
+    .filter(({ project }) => isPublicContent(project, now))
+    .sort((a, b) => {
+      const pinnedOrder = Number(b.project.pinned === true) - Number(a.project.pinned === true);
+      if (pinnedOrder) return pinnedOrder;
+      if (a.project.sortOrder !== undefined && b.project.sortOrder !== undefined)
+        return a.project.sortOrder - b.project.sortOrder;
+      if (a.project.sortOrder !== undefined) return -1;
+      if (b.project.sortOrder !== undefined) return 1;
+      const dateOrder = Date.parse(b.project.project.date) - Date.parse(a.project.project.date);
+      return dateOrder || a.index - b.index;
+    })
+    .map(({ project: item }) => {
       const p = item.project;
       const technologies = (items: typeof p.technologies) =>
         items.map(({ name, icon, category }) => ({ name, icon, category }));
@@ -98,8 +127,10 @@ export function projectPublicSnapshot(
         visibility: item.visibility,
         updatedAt: item.updatedAt,
         pinned: item.pinned === true,
+        sortOrder: item.sortOrder,
         project: {
           slug: p.slug,
+          pinned: item.pinned === true,
           title: p.title,
           description: p.description,
           src: p.src,
@@ -185,5 +216,5 @@ export function projectPublicSnapshot(
     ? validateSiteSettings(snapshot.settings)
     : { ...defaultSiteSettings };
   delete settings.releaseVersion;
-  return structuredClone({ posts, projects, journey, settings });
+  return structuredClone({ pages, posts, projects, journey, settings });
 }

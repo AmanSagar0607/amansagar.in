@@ -7,7 +7,11 @@ import type { Project } from "@/types/project";
 export async function getPublicProjects(): Promise<Project[]> {
   const cms = await getCmsPublicContent();
   if (cms) return cms.projects();
-  return getAllProjects();
+  return getAllProjects().sort(
+    (a, b) =>
+      Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) ||
+      Date.parse(b.date) - Date.parse(a.date),
+  );
 }
 export async function getPublicProject(
   slug: string,
