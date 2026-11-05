@@ -18,8 +18,10 @@ import type { NavigationItem } from "@/lib/admin/site-settings";
 
 export const Navbar = ({
   items,
+  externalLinks,
 }: {
   items: NavigationItem[];
+  externalLinks: { github: string; x: string; resume: string };
 }) => {
   const pathname = usePathname();
   const isActive = (href: string) => {
@@ -60,6 +62,14 @@ export const Navbar = ({
       );
     }
     const external = item.external === true || !item.href.startsWith("/");
+    if (external) {
+      return (
+        <a key={item.id} href={item.href} target="_blank" rel="noopener noreferrer" className={className}>
+          {item.label}
+          <IconArrowUpRight className="text-muted-foreground h-3.5 w-3.5" />
+        </a>
+      );
+    }
     return (
       <Link
         key={item.id}
@@ -115,7 +125,7 @@ export const Navbar = ({
         </nav>
 
         <div className="site-header-actions" aria-label="Header actions">
-          <CommandMenu triggerClassName="site-action-button site-search-button" />
+          <CommandMenu triggerClassName="site-action-button site-search-button" externalLinks={externalLinks} />
           <Link
             href="https://github.com/AmanSagar0607/amansagar.in"
             target="_blank"

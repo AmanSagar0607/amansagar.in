@@ -87,12 +87,18 @@ type CommandMenuProps = {
   triggerClassName?: string;
   hideLabel?: boolean;
   hideShortcut?: boolean;
+  externalLinks?: { github: string; x: string; resume: string };
 };
 
 export function CommandMenu({
   triggerClassName,
   hideLabel = false,
   hideShortcut = false,
+  externalLinks = {
+    github: "https://github.com/AmanSagar0607",
+    x: "https://x.com/amansagar0607",
+    resume: "/resume",
+  },
 }: CommandMenuProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -117,13 +123,32 @@ export function CommandMenu({
   const runCommand = (href: string) => {
     setOpen(false);
 
-    if (href.startsWith("http")) {
+    if (href.startsWith("http") || href.startsWith("mailto:")) {
       window.open(href, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    if (href === "/resume" || href.startsWith("/social/")) {
+      window.location.assign(href);
       return;
     }
 
     router.push(href);
   };
+
+  const resolvedGroups = commandGroups.map((group) => ({
+    ...group,
+    items: group.items.map((item) => ({
+      ...item,
+      href: item.href === "/social/github"
+        ? externalLinks.github
+        : item.href === "/social/x"
+          ? externalLinks.x
+          : item.href === "/resume"
+            ? externalLinks.resume
+            : item.href,
+    })),
+  }));
 
   return (
     <>
@@ -154,7 +179,7 @@ export function CommandMenu({
         <CommandInput placeholder="Search Aman Sagar..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
-          {commandGroups.map((group, groupIndex) => (
+          {resolvedGroups.map((group, groupIndex) => (
             <div key={group.heading}>
               {groupIndex > 0 ? <CommandSeparator /> : null}
               <CommandGroup heading={group.heading}>

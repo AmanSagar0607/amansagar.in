@@ -12,7 +12,13 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import type { NavigationItem } from "@/lib/admin/site-settings"
 
-export function MobileDock({ items }: { items: NavigationItem[] }) {
+export function MobileDock({
+  items,
+  externalLinks,
+}: {
+  items: NavigationItem[];
+  externalLinks: { github: string; x: string; resume: string };
+}) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const dockRef = useRef<HTMLDivElement | null>(null)
@@ -38,28 +44,31 @@ export function MobileDock({ items }: { items: NavigationItem[] }) {
       className="fixed inset-x-0 bottom-4 z-50 flex justify-center px-4 [--mobile-dock-width:15.5rem] xl:hidden"
     >
       <div className="bg-background/90 border-border flex w-[var(--mobile-dock-width)] items-center justify-between gap-1 rounded-full border px-2 py-1.5 shadow-lg backdrop-blur-md">
-        <Link
-          href="/social/x"
+        <a
+          href={externalLinks.x}
           target="_blank"
+          rel="noopener noreferrer"
           className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full transition-colors"
           aria-label="X (Twitter)"
         >
           <IconBrandX className="h-4 w-4" />
-        </Link>
+        </a>
 
-        <Link
-          href="/social/github"
+        <a
+          href={externalLinks.github}
           target="_blank"
+          rel="noopener noreferrer"
           className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full transition-colors"
           aria-label="GitHub"
         >
           <IconBrandGithub className="h-4 w-4" />
-        </Link>
+        </a>
 
         <CommandMenu
           triggerClassName="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full transition-colors"
           hideLabel
           hideShortcut
+          externalLinks={externalLinks}
         />
 
         <ThemeToggle className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full border-0 bg-transparent transition-colors focus-visible:ring-0" />
@@ -94,6 +103,9 @@ export function MobileDock({ items }: { items: NavigationItem[] }) {
                 : "text-muted-foreground hover:text-foreground hover:bg-accent/50",
             )
             const content = <>{item.label}{external ? <span aria-hidden="true" className="float-right">↗</span> : null}</>
+            if (external) return (
+              <a key={item.id} href={item.href} target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className={classes}>{content}</a>
+            )
             if (item.href.startsWith("/#")) return (
               <a key={item.id} href={item.href} onClick={() => setOpen(false)} className={classes}>{content}</a>
             )

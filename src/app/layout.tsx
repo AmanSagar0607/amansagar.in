@@ -102,6 +102,11 @@ export default async function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const settings = await getPublicSiteSettings();
   const hiddenPages = settings.hiddenPages ?? [];
+  const externalLinks = {
+    github: settings.socialLinks?.find((link) => link.label.toLowerCase() === "github")?.href ?? "https://github.com/AmanSagar0607",
+    x: settings.socialLinks?.find((link) => link.label.toLowerCase() === "x")?.href ?? "https://x.com/amansagar0607",
+    resume: settings.resumeUrl ?? defaultSiteSettings.resumeUrl ?? "/resume",
+  };
   const navigationItems = [
     ...(settings.navigationItems ?? defaultSiteSettings.navigationItems ?? []),
     ...(await getPublicPages())
@@ -115,7 +120,9 @@ export default async function RootLayout({
         tablet: true,
         mobile: true,
       })),
-  ].filter((item) => isPagePathVisible(item.href, hiddenPages));
+  ].map((item) => item.id === "resume"
+    ? { ...item, href: externalLinks.resume, external: true }
+    : item).filter((item) => isPagePathVisible(item.href, hiddenPages));
   return (
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <body
@@ -131,8 +138,8 @@ export default async function RootLayout({
           <div className="app-frame bg-background text-foreground min-h-screen">
             <Toaster position="top-center" richColors />
             <SiteChrome
-              header={<Navbar items={navigationItems} />}
-              dock={<MobileDock items={navigationItems} />}
+              header={<Navbar items={navigationItems} externalLinks={externalLinks} />}
+              dock={<MobileDock items={navigationItems} externalLinks={externalLinks} />}
               footer={<Footer />}
             >
               {children}
