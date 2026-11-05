@@ -8,9 +8,9 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
 const lineVariants = {
-  normal: { width: 24 },
-  active: { width: 40 },
-  hover: { width: 40 },
+  normal: { width: 12 },
+  active: { width: 20 },
+  hover: { width: 20 },
 }
 
 export type LineNavItem = {
@@ -60,7 +60,7 @@ export function LineNav({
   return (
     <nav
       aria-label={ariaLabel}
-      className={cn("flex flex-col gap-2 py-5.25", className)}
+      className={cn("flex w-full min-w-0 flex-col gap-2 py-5.25", className)}
     >
       {items.map((item, index) => {
         const isActive = item.href === activeHref
@@ -111,7 +111,7 @@ const LineNavItem = memo(function LineNavItem({
   onClick?: React.MouseEventHandler<HTMLAnchorElement>
 }) {
   return (
-    <div className="flex min-w-0 flex-wrap items-center gap-x-1">
+    <div className="flex w-full min-w-0 flex-wrap items-center gap-x-1 overflow-hidden">
       {/*
         Rendered as a plain anchor to stay framework-agnostic. For client-side
         navigation in Next.js, swap `motion.a` for `motion.create(Link)`
@@ -121,7 +121,7 @@ const LineNavItem = memo(function LineNavItem({
         ref={ref}
         aria-current={active ? "location" : undefined}
         data-depth={depth}
-        className="group relative flex min-h-8 min-w-0 flex-1 items-center gap-2 py-1 after:absolute after:top-1/2 after:left-0 after:size-full after:-translate-y-1/2 after:p-3.5 data-[depth=3]:pl-2 data-[depth=4]:pl-4"
+        className="group relative flex min-h-8 min-w-0 flex-1 basis-0 items-center gap-2 overflow-hidden py-1 after:absolute after:top-1/2 after:left-0 after:size-full after:-translate-y-1/2 after:p-3.5 data-[depth=3]:pl-2 data-[depth=4]:pl-4"
         href={href}
         initial={false}
         animate={active ? "active" : "normal"}
@@ -133,7 +133,7 @@ const LineNavItem = memo(function LineNavItem({
           variants={lineVariants}
           transition={{ type: "spring", stiffness: 200, damping: 20 }}
         />
-        <span className={cn("block min-w-0 flex-1 text-sm text-muted-foreground transition-[color] ease-out group-hover:text-foreground group-aria-[current=location]:text-foreground", !expanded && "truncate", expanded && "whitespace-normal break-words")}>
+        <span className={cn("block min-w-0 flex-1 overflow-hidden text-sm text-muted-foreground transition-[color] ease-out group-hover:text-foreground group-aria-[current=location]:text-foreground", !expanded && "text-ellipsis whitespace-nowrap", expanded && "whitespace-normal break-words")}>
           {title}
         </span>
       </motion.a>
@@ -154,7 +154,7 @@ const LineNavItem = memo(function LineNavItem({
 
       {!isLast && showSeparator && (
         <>
-          <span className="block h-px w-6 basis-full bg-foreground/10" />
+          <span className="block h-px w-4 basis-full bg-foreground/10" />
         </>
       )}
     </div>

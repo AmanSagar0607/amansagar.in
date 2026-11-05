@@ -1,8 +1,9 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import { usePathname } from "next/navigation"
 import { motion } from "motion/react"
-import { ListTree } from "lucide-react"
+import { Bookmark, BookmarkCheck, ListTree } from "lucide-react"
 
 import { uMiniMapOpenSound } from "@/lib/u-mini-map-open"
 import { cn } from "@/lib/utils"
@@ -16,6 +17,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { LineNav } from "@/components/line-nav"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 export type TOCItemType = {
   title: React.ReactNode
@@ -37,7 +39,9 @@ export function TOCMinimap({ items, className, mobile = false }: TOCMinimapProps
   )
 
   const activeHeading = useActiveHeading(itemIds)
+  const pathname = usePathname()
   const [hoveredHeading, setHoveredHeading] = useState<string | null>(null)
+  const [bookmarkedHeading, setBookmarkedHeading] = useState<string | null>(null)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [expandedTitles, setExpandedTitles] = useState<Set<string>>(() => new Set())
   const toggleTitle = (href: string) => {
@@ -50,6 +54,68 @@ export function TOCMinimap({ items, className, mobile = false }: TOCMinimapProps
   }
 
   const [play] = useSound(uMiniMapOpenSound, { volume: 0.3 })
+
+  useEffect(() => {
+    const storageKey = `article-bookmark:${pathname}`
+    let saved: string | null = null
+    try {
+      saved = window.localStorage.getItem(storageKey)
+    } catch {
+      // Storage may be unavailable in private or restricted browser contexts.
+    }
+    if (!saved || !itemIds.includes(saved)) {
+      setBookmarkedHeading(null)
+      return
+    }
+    setBookmarkedHeading(saved)
+    const timer = window.setTimeout(() => {
+      const target = document.getElementById(saved)
+      if (!target) return
+      history.replaceState(null, "", `${pathname}#${saved}`)
+      target.scrollIntoView({ behavior: "auto", block: "start" })
+    }, 120)
+    return () => window.clearTimeout(timer)
+  }, [itemIds, pathname])
+
+  const toggleBookmark = () => {
+    if (!activeHeading) return
+    const next = bookmarkedHeading === activeHeading ? null : activeHeading
+    setBookmarkedHeading(next)
+    try {
+      const storageKey = `article-bookmark:${pathname}`
+      if (next) window.localStorage.setItem(storageKey, next)
+      else window.localStorage.removeItem(storageKey)
+    } catch {
+      // Keep this session's bookmark state even if persistent storage is blocked.
+    }
+  }
+
+  const bookmarkControl = activeHeading ? (
+    <div className="flex items-center justify-between gap-2 border-b px-3 py-2">
+      <span className="min-w-0 truncate text-xs text-muted-foreground">
+        {bookmarkedHeading === activeHeading ? "Bookmarked on this device" : "Save your place on this device"}
+      </span>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-8 shrink-0"
+            aria-label={bookmarkedHeading === activeHeading ? "Remove bookmark" : "Bookmark current section"}
+            onClick={toggleBookmark}
+          >
+            {bookmarkedHeading === activeHeading ? <BookmarkCheck className="size-4" /> : <Bookmark className="size-4" />}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="left">
+          {bookmarkedHeading === activeHeading
+            ? "Remove this bookmark. Your saved place stays in this browser."
+            : "Bookmark this section. This browser will return here when you revisit."}
+        </TooltipContent>
+      </Tooltip>
+    </div>
+  ) : null
 
   if (!items.length) {
     return null
@@ -65,8 +131,9 @@ export function TOCMinimap({ items, className, mobile = false }: TOCMinimapProps
           </Button>
         </PopoverTrigger>
         <PopoverContent align="end" side="top" className="w-[min(20rem,calc(100vw-2rem))] p-0">
+          {bookmarkControl}
           <ScrollArea
-            className="max-h-[55dvh] w-full"
+            className="max-h-[55dvh] w-full min-w-0"
             style={{ height: `${Math.min(items.length * 40 + 24, 512)}px` }}
           >
             <LineNav
@@ -90,7 +157,7 @@ export function TOCMinimap({ items, className, mobile = false }: TOCMinimapProps
   }
 
   return (
-    <div className={cn("w-18", className)}>
+    <div className={cn("w-18 min-w-0", className)}>
       <HoverCard
         openDelay={0}
         closeDelay={0}
@@ -108,8 +175,8 @@ export function TOCMinimap({ items, className, mobile = false }: TOCMinimapProps
                 data-depth={item.depth}
                 data-active={item.url === `#${activeHeading}`}
                 className={cn(
-                  "group/tick relative flex h-3 w-10 shrink-0 items-center after:absolute after:-inset-y-1 after:-left-2 after:right-0 after:content-['']",
-                  "data-[depth=3]:ml-2 data-[depth=3]:w-4",
+                  "group/tick relative flex h-3 w-8 shrink-0 items-center after:absolute after:-inset-y-1 after:-left-2 after:right-0 after:content-['']",
+                  "data-[depth=3]:ml-2 data-[depth=3]:w-3",
                   "data-[depth=4]:ml-4 data-[depth=4]:w-2",
                   "data-active:[&>span]:bg-foreground"
                 )}
@@ -126,7 +193,7 @@ export function TOCMinimap({ items, className, mobile = false }: TOCMinimapProps
                 <motion.span
                   className="h-px rounded-full bg-foreground/35 transition-colors group-hover/tick:bg-foreground group-focus-visible/tick:bg-foreground"
                   initial={false}
-                  animate={{ width: item.url === `#${activeHeading}` || item.url === hoveredHeading ? 40 : 24 }}
+                  animate={{ width: item.url === `#${activeHeading}` || item.url === hoveredHeading ? 20 : 12 }}
                   transition={{ type: "spring", stiffness: 360, damping: 28 }}
                 />
               </a>
@@ -135,14 +202,15 @@ export function TOCMinimap({ items, className, mobile = false }: TOCMinimapProps
         </HoverCardTrigger>
 
         <HoverCardContent
-          className="w-72 overflow-hidden p-0 duration-200 data-[side=left]:slide-in-from-right-3 data-[side=left]:slide-out-to-right-3 data-open:zoom-in-100 data-closed:zoom-out-100"
+          className="w-[min(20rem,calc(100vw-2rem))] min-w-0 overflow-hidden p-0 duration-200 data-[side=left]:slide-in-from-right-3 data-[side=left]:slide-out-to-right-3 data-open:zoom-in-100 data-closed:zoom-out-100"
           align="start"
           alignOffset={0}
           side="left"
           sideOffset={-60}
         >
+          {bookmarkControl}
           <ScrollArea
-            className="toc-scrollbar max-h-[55dvh] w-full overscroll-contain"
+            className="toc-scrollbar max-h-[55dvh] w-full min-w-0 overscroll-contain"
             style={{ height: `${Math.min(items.length * 40 + 24, 512)}px` }}
           >
             <LineNav
