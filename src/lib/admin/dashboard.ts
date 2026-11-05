@@ -47,9 +47,9 @@ export function dashboardMetrics(
     activities: publicActivities,
   });
   const now = new Date();
-  const monthlyActivity = Array.from({ length: 6 }, (_, index) => {
+  const monthRange = Array.from({ length: 12 }, (_, index) => {
     const month = new Date(
-      Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - (5 - index), 1),
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - (11 - index), 1),
     );
     const id = month.toISOString().slice(0, 7);
     return {
@@ -64,6 +64,12 @@ export function dashboardMetrics(
       ).length,
     };
   });
+  const monthlyActivity = monthRange.slice(-6).map((month) => ({
+    ...month,
+    count: publicActivities.filter((activity) =>
+      new Date(activity.date).toISOString().startsWith(month.month),
+    ).length,
+  }));
   const allUpdates: DashboardUpdate[] = [
     ...snapshot.posts.map((post) => ({
       id: `post:${post.slug}`,
@@ -128,10 +134,12 @@ export function dashboardMetrics(
       ).length,
     recentUpdates: allUpdates.slice(0, 8),
     monthlyActivity,
-    monthlyPublications: monthlyActivity.map((month) => ({
+    monthlyPublications: monthRange.map((month) => ({
       month: month.month,
       label: month.label,
-      activities: month.count,
+      activities: publicActivities.filter((activity) =>
+        new Date(activity.date).toISOString().startsWith(month.month),
+      ).length,
       posts: publishedPosts.filter((post) =>
         new Date(post.publishedAt).toISOString().startsWith(month.month),
       ).length,

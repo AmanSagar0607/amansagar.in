@@ -3,7 +3,7 @@
 ## What changed
 
 - Replaced the seven equal-weight count cards with four primary signals: published posts, projects, journey activities, and drafts. Learning progress remains available as a quieter secondary section.
-- Added a six-month publication chart comparing posts with public journey entries. The accessible chart includes a monthly data table; drafts, private records, samples, and future posts are excluded.
+- Added an interactive publication chart comparing posts with public journey entries. Admins can switch between 3, 6, and 12 months, select a month for its counts, and open an accessible monthly data table; drafts, private records, samples, and future posts are excluded.
 - Added a draft work queue with direct edit links and a next scheduled post when one exists.
 - Added a responsive recent-work table with content type, status, updated date, and direct edit actions.
 - Kept all metrics derived from the existing admin content snapshot. The dashboard does not imply visitor analytics, revenue, or other data the CMS does not collect.
@@ -21,5 +21,6 @@ References:
 ## Implementation
 
 - Dashboard presentation: `src/components/admin/dashboard-overview.tsx`
+- Interactive publication chart: `src/components/admin/dashboard-publishing-chart.tsx`
 - Snapshot-derived metrics: `src/lib/admin/dashboard.ts`
 
