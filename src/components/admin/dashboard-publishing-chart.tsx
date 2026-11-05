@@ -1,14 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CalendarCheck } from "lucide-react";
+import { endOfMonth, format, parseISO, startOfMonth, subMonths } from "date-fns";
+import type { DateRange } from "react-day-picker";
+import { CalendarDays } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import type { DashboardMetrics } from "@/lib/admin/dashboard";
 
 type PublicationMonth = {
@@ -34,11 +36,25 @@ export function DashboardPublishingChart({
       posts: 0,
       activities: month.count,
     }));
-  const [range, setRange] = useState("6");
+  const [dateRange, setDateRange] = useState<DateRange>(() => {
+    const lastMonth = allMonths.at(-1)?.month;
+    const firstMonth = allMonths.at(-6)?.month ?? allMonths.at(0)?.month;
+    return {
+      from: firstMonth ? startOfMonth(parseISO(`${firstMonth}-01`)) : undefined,
+      to: lastMonth ? endOfMonth(parseISO(`${lastMonth}-01`)) : undefined,
+    };
+  });
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const months = useMemo(
-    () => allMonths.slice(-Number(range)),
-    [allMonths, range],
+    () =>
+      allMonths.filter((month) => {
+        const date = parseISO(`${month.month}-01`);
+        return (
+          (!dateRange.from || endOfMonth(date) >= startOfMonth(dateRange.from)) &&
+          (!dateRange.to || startOfMonth(date) <= endOfMonth(dateRange.to))
+        );
+      }),
+    [allMonths, dateRange],
   );
   const selected = months.find((month) => month.month === selectedMonth);
   const postTotal = months.reduce((total, month) => total + month.posts, 0);
@@ -55,9 +71,19 @@ export function DashboardPublishingChart({
       ) / 4,
     ) * 4,
   );
-  const period = months.length
-    ? `${months[0].label} – ${months[months.length - 1].label}`
-    : "No publication data";
+  const dateLabel = dateRange.from
+    ? `${format(dateRange.from, "MMM d, yyyy")} – ${dateRange.to ? format(dateRange.to, "MMM d, yyyy") : "Choose end date"}`
+    : "Choose date range";
+  const setPreset = (monthsBack: number) => {
+    const lastMonth = allMonths.at(-1)?.month;
+    if (!lastMonth) return;
+    const end = parseISO(`${lastMonth}-01`);
+    setDateRange({
+      from: startOfMonth(subMonths(end, monthsBack - 1)),
+      to: endOfMonth(end),
+    });
+    setSelectedMonth(null);
+  };
   const isEmpty = postTotal + activityTotal === 0;
 
   return (
@@ -77,35 +103,63 @@ export function DashboardPublishingChart({
             Posts and published journey entries by publication month.
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-white/[0.08] px-2.5 text-[11px] text-zinc-400">
-            <CalendarCheck className="size-3.5" aria-hidden />
-            {period}
-          </span>
-          <label className="sr-only" htmlFor="publication-range">
-            Chart date range
-          </label>
-          <Select
-            value={range}
-            onValueChange={(value) => {
-              setRange(value);
-              setSelectedMonth(null);
-            }}
-          >
-            <SelectTrigger
-              id="publication-range"
-              aria-label="Chart date range"
-              className="h-9 w-[124px] border-white/[0.08] bg-transparent text-xs text-zinc-300"
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              aria-label={`Choose publication date range. Current range: ${dateLabel}`}
+              className="h-auto min-h-9 max-w-full justify-start gap-2 border-white/[0.08] bg-transparent px-2.5 py-2 text-left text-[11px] font-normal text-zinc-300 hover:bg-white/[0.04]"
             >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent align="end">
-              <SelectItem value="3">Last 3 months</SelectItem>
-              <SelectItem value="6">Last 6 months</SelectItem>
-              <SelectItem value="12">Last 12 months</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+              <CalendarDays className="size-3.5 shrink-0 text-zinc-400" aria-hidden />
+              <span className="truncate">{dateLabel}</span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-auto max-w-[calc(100vw-2rem)] p-0">
+            <div className="border-b border-border p-3">
+              <p className="mb-2 text-[11px] font-medium text-muted-foreground">
+                Quick ranges
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {[3, 6, 12].map((monthsBack) => (
+                  <Button
+                    key={monthsBack}
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="h-7 px-2 text-[11px]"
+                    onClick={() => setPreset(monthsBack)}
+                  >
+                    Last {monthsBack} months
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <Calendar
+              mode="range"
+              selected={dateRange}
+              onSelect={(range) => {
+                setDateRange(range ?? { from: undefined, to: undefined });
+                setSelectedMonth(null);
+              }}
+              defaultMonth={dateRange.from}
+              disabled={
+                allMonths.length
+                  ? {
+                      after: endOfMonth(
+                        parseISO(`${allMonths.at(-1)!.month}-01`),
+                      ),
+                    }
+                  : undefined
+              }
+              numberOfMonths={1}
+              className="rounded-lg border-0 bg-transparent"
+            />
+            <div className="border-t border-border px-3 py-2 text-[10px] text-muted-foreground">
+              Monthly totals include every month touched by this date range.
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
       <div className="mt-6 flex flex-wrap items-center gap-x-8 gap-y-3">
         {hasPosts && (
@@ -149,7 +203,7 @@ export function DashboardPublishingChart({
             aria-labelledby="publication-chart-title publication-chart-description"
           >
             <title id="publication-chart-title">
-              Publications over the {range} months selected
+              Publications from {dateLabel}
             </title>
             <desc id="publication-chart-description">
               {months
