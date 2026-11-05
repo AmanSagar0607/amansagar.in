@@ -221,11 +221,11 @@ export function AdminShell({
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="max-w-48"
+                className="min-w-0 max-w-[48vw] shrink-0 px-2 sm:max-w-48 sm:px-3"
                 aria-label="Account menu"
               >
-                <UserRound />
-                <span className="hidden truncate sm:inline">{email}</span>
+                <UserRound className="size-4 shrink-0" />
+                <span className="min-w-0 truncate text-xs sm:text-sm">{email}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
