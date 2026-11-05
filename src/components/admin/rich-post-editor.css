@@ -1,5 +1,32 @@
 .article-editor .tiptap {
   overflow-wrap: anywhere;
+  width: 100%;
+  max-width: 76ch;
+  min-height: 34rem;
+  margin-inline: auto;
+  padding: 2rem clamp(1.25rem, 5vw, 3.5rem) 4rem;
+  line-height: 1.8;
+}
+.article-editor .article-toolbar-group {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 2px;
+  border-right: 1px solid var(--border);
+  padding-right: 0.25rem;
+}
+.article-editor .article-toolbar-group:last-child {
+  border-right: 0;
+  padding-right: 0;
+}
+.article-editor .article-toolbar [data-slot="scroll-area-viewport"] {
+  overscroll-behavior-x: contain;
+}
+@media (max-width: 639px) {
+  .article-editor .tiptap {
+    padding-top: 1.5rem;
+    min-height: 28rem;
+  }
 }
 .article-editor .tiptap > :first-child {
   margin-top: 0;

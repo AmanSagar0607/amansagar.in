@@ -28,9 +28,16 @@ import {
   Table2,
   ImageIcon,
   Trash2,
+  Plus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 import {
   ContextMenu,
   ContextMenuTrigger,
@@ -52,7 +59,7 @@ import "./rich-post-editor.css";
 const input =
   "bg-background border-input focus-visible:ring-ring min-h-11 w-full rounded-md border px-3 py-2 text-sm outline-none focus-visible:ring-2";
 const toolbarSelect =
-  "bg-background border-input focus-visible:ring-ring min-h-11 max-w-full shrink-0 rounded-md border px-3 py-2 text-sm outline-none focus-visible:ring-2";
+  "bg-transparent border-transparent focus-visible:ring-ring h-11 shrink-0 rounded-md px-2 py-1 text-xs font-medium shadow-none outline-none focus-visible:ring-2 sm:h-9";
 const AlignedText = TextAlign.extend({
   addGlobalAttributes() {
     return [
@@ -134,32 +141,9 @@ export default function RichPostEditor({
   const [message, setMessage] = useState("");
   const [link, setLink] = useState("");
   const [showLink, setShowLink] = useState(false);
-  const canvasRef = useRef<HTMLDivElement>(null);
   const imageSelection = useRef<SelectionBookmark | null>(null);
   const imageInsertAt = useRef<number | null>(null);
   const [editingImage, setEditingImage] = useState(false);
-  const [caretAction, setCaretAction] = useState<{
-    top: number;
-    image: boolean;
-  } | null>(null);
-  function positionImageAction(current: Editor) {
-    if (!canvasRef.current) return;
-    const imageSelected = current.isActive("image");
-    const node = imageSelected
-      ? current.view.nodeDOM(current.state.selection.from)
-      : null;
-    const bounds =
-      node instanceof HTMLElement
-        ? node.getBoundingClientRect()
-        : current.view.coordsAtPos(current.state.selection.from);
-    setCaretAction({
-      top: Math.max(
-        8,
-        bounds.top - canvasRef.current.getBoundingClientRect().top,
-      ),
-      image: imageSelected,
-    });
-  }
   const editor = useEditor({
     immediatelyRender: false,
     shouldRerenderOnTransaction: true,
@@ -177,8 +161,7 @@ export default function RichPostEditor({
     contentType: isRichArticle(value) ? "html" : "markdown",
     editorProps: {
       attributes: {
-        class:
-          "prose prose-ncdai dark:prose-invert max-w-none min-h-[28rem] py-5 pl-5 pr-14 sm:py-8 sm:pl-8 sm:pr-16 outline-none",
+        class: "prose prose-ncdai dark:prose-invert outline-none",
         "aria-label": "Article content",
         role: "textbox",
         "aria-multiline": "true",
@@ -217,23 +200,6 @@ export default function RichPostEditor({
       lastValue.current = html;
       onChangeRef.current(html);
     },
-    onSelectionUpdate({ editor: current }) {
-      positionImageAction(current);
-      if (current.isActive("image")) {
-        const attrs = current.getAttributes("image");
-        setImage({
-          src: attrs.src || "",
-          alt: attrs.alt || "",
-          caption: attrs.caption || "",
-          width: attrs.width?.toString() || "",
-          height: attrs.height?.toString() || "",
-          align: attrs.align || "center",
-        });
-      }
-    },
-    onFocus({ editor: current }) {
-      positionImageAction(current);
-    },
   });
   useEffect(() => {
     if (!editor || value === lastValue.current) return;
@@ -262,7 +228,7 @@ export default function RichPostEditor({
         key={label}
         type="button"
         variant={active ? "secondary" : "ghost"}
-        className="min-h-11 min-w-11 px-3"
+        className="size-11 shrink-0 rounded-md p-0 sm:size-9"
         aria-label={label}
         title={label}
         aria-pressed={active}
@@ -359,15 +325,11 @@ export default function RichPostEditor({
   }
   return (
     <div className="article-editor border-border min-w-0 rounded-lg border">
-      <div className="bg-muted/40 border-border flex flex-wrap items-center justify-between gap-2 border-b px-3 py-2">
+      <div className="bg-muted/20 border-border flex items-center justify-between gap-2 border-b px-3 py-2">
         <div className="min-w-0">
           <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
             Article canvas
           </span>
-          <p className="text-muted-foreground mt-1 text-xs">
-            Place your cursor, then choose Image, right-click, or press
-            Ctrl/⌘+Alt+I.
-          </p>
         </div>
         <div className="flex gap-1" aria-label="Editor mode">
           <Button
@@ -452,143 +414,232 @@ export default function RichPostEditor({
         </div>
       ) : (
         <>
-          <div
-            role="group"
-            aria-label="Article formatting"
-            className="bg-background border-border sticky top-0 z-10 flex flex-wrap items-center gap-0.5 border-b p-2"
-          >
-            <FormSelect
-              aria-label="Text style"
-              className={toolbarSelect}
-              value={
-                editor.isActive("heading", { level: 2 })
-                  ? "2"
-                  : editor.isActive("heading", { level: 3 })
-                    ? "3"
-                    : editor.isActive("heading", { level: 4 })
-                      ? "4"
-                      : "p"
-              }
-              onChange={(e) =>
-                e.target.value === "p"
-                  ? editor.chain().focus().setParagraph().run()
-                  : editor
-                      .chain()
-                      .focus()
-                      .toggleHeading({
-                        level: Number(e.target.value) as 2 | 3 | 4,
-                      })
-                      .run()
-              }
+          <div className="article-toolbar border-border bg-background sticky top-0 z-10 flex min-w-0 items-center border-b">
+            <ScrollArea className="min-w-0 flex-1" type="auto">
+              <div
+                role="group"
+                aria-label="Article formatting"
+                className="flex w-max min-w-full items-center gap-1 px-2 py-2"
+              >
+                <div
+                  role="group"
+                  aria-label="History"
+                  className="article-toolbar-group"
+                >
+                  {toolbar(
+                    "Undo",
+                    <Undo2 size={16} />,
+                    () => editor.chain().focus().undo().run(),
+                    false,
+                    !editor.can().undo(),
+                  )}
+                  {toolbar(
+                    "Redo",
+                    <Redo2 size={16} />,
+                    () => editor.chain().focus().redo().run(),
+                    false,
+                    !editor.can().redo(),
+                  )}
+                </div>
+                <div
+                  role="group"
+                  aria-label="Text structure"
+                  className="article-toolbar-group"
+                >
+                  <FormSelect
+                    aria-label="Text style"
+                    className={`${toolbarSelect} w-[7.5rem]`}
+                    value={
+                      editor.isActive("heading", { level: 2 })
+                        ? "2"
+                        : editor.isActive("heading", { level: 3 })
+                          ? "3"
+                          : editor.isActive("heading", { level: 4 })
+                            ? "4"
+                            : "p"
+                    }
+                    onChange={(e) =>
+                      e.target.value === "p"
+                        ? editor.chain().focus().setParagraph().run()
+                        : editor
+                            .chain()
+                            .focus()
+                            .toggleHeading({
+                              level: Number(e.target.value) as 2 | 3 | 4,
+                            })
+                            .run()
+                    }
+                  >
+                    <option value="p">Paragraph</option>
+                    <option value="2">Heading 2</option>
+                    <option value="3">Heading 3</option>
+                    <option value="4">Heading 4</option>
+                  </FormSelect>
+                </div>
+                <div
+                  role="group"
+                  aria-label="Text formatting"
+                  className="article-toolbar-group"
+                >
+                  {toolbar(
+                    "Bold",
+                    <Bold size={16} />,
+                    () => editor.chain().focus().toggleBold().run(),
+                    editor.isActive("bold"),
+                  )}
+                  {toolbar(
+                    "Italic",
+                    <Italic size={16} />,
+                    () => editor.chain().focus().toggleItalic().run(),
+                    editor.isActive("italic"),
+                  )}
+                  {toolbar(
+                    "Strikethrough",
+                    <Strikethrough size={16} />,
+                    () => editor.chain().focus().toggleStrike().run(),
+                    editor.isActive("strike"),
+                  )}
+                  {toolbar(
+                    "Code block",
+                    <Code2 size={16} />,
+                    () => editor.chain().focus().toggleCodeBlock().run(),
+                    editor.isActive("codeBlock"),
+                  )}
+                </div>
+                <div
+                  role="group"
+                  aria-label="Lists and quotes"
+                  className="article-toolbar-group"
+                >
+                  {toolbar(
+                    "Bullet list",
+                    <List size={16} />,
+                    () => editor.chain().focus().toggleBulletList().run(),
+                    editor.isActive("bulletList"),
+                  )}
+                  {toolbar(
+                    "Numbered list",
+                    <ListOrdered size={16} />,
+                    () => editor.chain().focus().toggleOrderedList().run(),
+                    editor.isActive("orderedList"),
+                  )}
+                  {toolbar(
+                    "Callout or quote",
+                    <Quote size={16} />,
+                    () => editor.chain().focus().toggleBlockquote().run(),
+                    editor.isActive("blockquote"),
+                  )}
+                </div>
+                <div
+                  role="group"
+                  aria-label="Alignment"
+                  className="article-toolbar-group"
+                >
+                  <FormSelect
+                    aria-label="Text alignment"
+                    className={`${toolbarSelect} w-[6rem]`}
+                    value={
+                      editor.getAttributes("paragraph").textAlign ||
+                      editor.getAttributes("heading").textAlign ||
+                      "left"
+                    }
+                    onChange={(e) =>
+                      editor.chain().focus().setTextAlign(e.target.value).run()
+                    }
+                  >
+                    <option value="left">Left</option>
+                    <option value="center">Center</option>
+                    <option value="right">Right</option>
+                  </FormSelect>
+                </div>
+                <div
+                  role="group"
+                  aria-label="Links"
+                  className="article-toolbar-group border-r-0 pr-0"
+                >
+                  {toolbar(
+                    "Add or edit link",
+                    <Link2 size={16} />,
+                    () => {
+                      setLink(editor.getAttributes("link").href || "");
+                      setShowLink(!showLink);
+                    },
+                    editor.isActive("link"),
+                  )}
+                </div>
+              </div>
+              <ScrollBar orientation="horizontal" className="h-1.5" />
+            </ScrollArea>
+            <div
+              role="group"
+              aria-label="Insert content"
+              className="border-border flex shrink-0 items-center gap-0.5 border-l px-1"
             >
-              <option value="p">Paragraph</option>
-              <option value="2">Heading 2</option>
-              <option value="3">Heading 3</option>
-              <option value="4">Heading 4</option>
-            </FormSelect>
-            {toolbar(
-              "Bold",
-              <Bold size={16} />,
-              () => editor.chain().focus().toggleBold().run(),
-              editor.isActive("bold"),
-            )}
-            {toolbar(
-              "Italic",
-              <Italic size={16} />,
-              () => editor.chain().focus().toggleItalic().run(),
-              editor.isActive("italic"),
-            )}
-            {toolbar(
-              "Strikethrough",
-              <Strikethrough size={16} />,
-              () => editor.chain().focus().toggleStrike().run(),
-              editor.isActive("strike"),
-            )}
-            {toolbar(
-              "Add or edit link",
-              <Link2 size={16} />,
-              () => {
-                setLink(editor.getAttributes("link").href || "");
-                setShowLink(!showLink);
-              },
-              editor.isActive("link"),
-            )}
-            {toolbar(
-              "Bullet list",
-              <List size={16} />,
-              () => editor.chain().focus().toggleBulletList().run(),
-              editor.isActive("bulletList"),
-            )}
-            {toolbar(
-              "Numbered list",
-              <ListOrdered size={16} />,
-              () => editor.chain().focus().toggleOrderedList().run(),
-              editor.isActive("orderedList"),
-            )}
-            {toolbar(
-              "Callout or quote",
-              <Quote size={16} />,
-              () => editor.chain().focus().toggleBlockquote().run(),
-              editor.isActive("blockquote"),
-            )}
-            {toolbar(
-              "Code block",
-              <Code2 size={16} />,
-              () => editor.chain().focus().toggleCodeBlock().run(),
-              editor.isActive("codeBlock"),
-            )}
-            {toolbar("Divider", <Minus size={16} />, () =>
-              editor.chain().focus().setHorizontalRule().run(),
-            )}
-            <Button
-              type="button"
-              variant={showImage ? "secondary" : "ghost"}
-              className="min-h-11 gap-2 px-3"
-              aria-label="Insert image at cursor"
-              title="Insert image where your cursor is"
-              onMouseDown={(event) => event.preventDefault()}
-              onClick={() => openImageSettings(editor)}
-            >
-              <ImagePlus size={16} />
-              <span>Image</span>
-            </Button>
-            {toolbar("Insert table", <Table2 size={16} />, () =>
-              editor
-                .chain()
-                .focus()
-                .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-                .run(),
-            )}
-            <FormSelect
-              aria-label="Text alignment"
-              className={toolbarSelect}
-              value={
-                editor.getAttributes("paragraph").textAlign ||
-                editor.getAttributes("heading").textAlign ||
-                "left"
-              }
-              onChange={(e) =>
-                editor.chain().focus().setTextAlign(e.target.value).run()
-              }
-            >
-              <option value="left">Left</option>
-              <option value="center">Center</option>
-              <option value="right">Right</option>
-            </FormSelect>
-            {toolbar(
-              "Undo",
-              <Undo2 size={16} />,
-              () => editor.chain().focus().undo().run(),
-              false,
-              !editor.can().undo(),
-            )}
-            {toolbar(
-              "Redo",
-              <Redo2 size={16} />,
-              () => editor.chain().focus().redo().run(),
-              false,
-              !editor.can().redo(),
-            )}
+              <Button
+                type="button"
+                variant={showImage ? "secondary" : "ghost"}
+                className="h-11 shrink-0 gap-2 rounded-md px-3 text-xs sm:h-9"
+                aria-label="Insert image at cursor"
+                title="Insert image where your cursor is"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => openImageSettings(editor)}
+              >
+                <ImagePlus size={16} />
+                <span>Image</span>
+              </Button>
+              <DropdownMenu modal={false}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="size-11 shrink-0 rounded-md p-0 sm:size-9"
+                    aria-label="Insert block"
+                    title="Insert block"
+                    onMouseDown={(event) => event.preventDefault()}
+                  >
+                    <Plus size={16} />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  onCloseAutoFocus={(event) => event.preventDefault()}
+                >
+                  <DropdownMenuItem
+                    className="min-h-11"
+                    onSelect={() => openImageSettings(editor)}
+                  >
+                    <ImagePlus />
+                    Image
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="min-h-11"
+                    onSelect={() =>
+                      editor
+                        .chain()
+                        .focus()
+                        .insertTable({
+                          rows: 3,
+                          cols: 3,
+                          withHeaderRow: true,
+                        })
+                        .run()
+                    }
+                  >
+                    <Table2 />
+                    Table
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="min-h-11"
+                    onSelect={() =>
+                      editor.chain().focus().setHorizontalRule().run()
+                    }
+                  >
+                    <Minus />
+                    Divider
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
           {showLink && (
             <div className="border-border flex flex-wrap gap-2 border-b p-4">
@@ -670,159 +721,169 @@ export default function RichPostEditor({
                 place in the article is preserved.
               </DialogDescription>
               <ScrollArea className="min-h-0">
-              <fieldset className="space-y-4 pr-4">
-                <legend className="sr-only">Image properties</legend>
-                <MediaPicker
-                  onSelect={(url) =>
-                    setImage((current) => ({ ...current, src: url }))
-                  }
-                />
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <label className="text-sm sm:col-span-2">
-                    Image URL
-                    <FormInput
-                      className={input}
-                      value={image.src}
-                      onChange={(e) =>
-                        setImage({ ...image, src: e.target.value })
-                      }
-                    />
-                  </label>
-                  <label className="text-sm">
-                    Alternative text
-                    <FormInput
-                      className={input}
-                      value={image.alt}
-                      onChange={(e) =>
-                        setImage({ ...image, alt: e.target.value })
-                      }
-                      placeholder="Describe what the image shows"
-                    />
-                  </label>
-                  <label className="text-sm">
-                    Caption / reference
-                    <FormInput
-                      className={input}
-                      value={image.caption}
-                      onChange={(e) =>
-                        setImage({ ...image, caption: e.target.value })
-                      }
-                      placeholder="Source or explanation"
-                    />
-                  </label>
-                  <label className="text-sm">
-                    Width (px)
-                    <FormInput
-                      type="number"
-                      min={1}
-                      max={10000}
-                      className={input}
-                      value={image.width}
-                      onChange={(e) =>
-                        setImage({ ...image, width: e.target.value })
-                      }
-                      placeholder="Automatic"
-                    />
-                  </label>
-                  <label className="text-sm">
-                    Height (px)
-                    <FormInput
-                      type="number"
-                      min={1}
-                      max={10000}
-                      className={input}
-                      value={image.height}
-                      onChange={(e) =>
-                        setImage({ ...image, height: e.target.value })
-                      }
-                      placeholder="Automatic"
-                    />
-                  </label>
-                  <label className="text-sm">
-                    Alignment
-                    <FormSelect
-                      className={input}
-                      value={image.align}
-                      onChange={(e) =>
-                        setImage({ ...image, align: e.target.value })
-                      }
-                    >
-                      <option value="left">Left</option>
-                      <option value="center">Center</option>
-                      <option value="right">Right</option>
-                    </FormSelect>
-                  </label>
-                </div>
-                <p className="text-muted-foreground text-xs leading-5">
-                  Images stay within the article width on mobile. Leave one
-                  dimension empty to keep the natural aspect ratio. Select an
-                  image in the canvas to edit it later.
-                </p>
-                {message && (
-                  <p role="alert" className="text-destructive text-sm">
-                    {message}
+                <fieldset className="space-y-4 pr-4">
+                  <legend className="sr-only">Image properties</legend>
+                  <MediaPicker
+                    onSelect={(url) =>
+                      setImage((current) => ({ ...current, src: url }))
+                    }
+                  />
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <label className="text-sm sm:col-span-2">
+                      Image URL
+                      <FormInput
+                        className={input}
+                        value={image.src}
+                        onChange={(e) =>
+                          setImage({ ...image, src: e.target.value })
+                        }
+                      />
+                    </label>
+                    <label className="text-sm">
+                      Alternative text
+                      <FormInput
+                        className={input}
+                        value={image.alt}
+                        onChange={(e) =>
+                          setImage({ ...image, alt: e.target.value })
+                        }
+                        placeholder="Describe what the image shows"
+                      />
+                    </label>
+                    <label className="text-sm">
+                      Caption / reference
+                      <FormInput
+                        className={input}
+                        value={image.caption}
+                        onChange={(e) =>
+                          setImage({ ...image, caption: e.target.value })
+                        }
+                        placeholder="Source or explanation"
+                      />
+                    </label>
+                    <label className="text-sm">
+                      Width (px)
+                      <FormInput
+                        type="number"
+                        min={1}
+                        max={10000}
+                        className={input}
+                        value={image.width}
+                        onChange={(e) =>
+                          setImage({ ...image, width: e.target.value })
+                        }
+                        placeholder="Automatic"
+                      />
+                    </label>
+                    <label className="text-sm">
+                      Height (px)
+                      <FormInput
+                        type="number"
+                        min={1}
+                        max={10000}
+                        className={input}
+                        value={image.height}
+                        onChange={(e) =>
+                          setImage({ ...image, height: e.target.value })
+                        }
+                        placeholder="Automatic"
+                      />
+                    </label>
+                    <label className="text-sm">
+                      Alignment
+                      <FormSelect
+                        className={input}
+                        value={image.align}
+                        onChange={(e) =>
+                          setImage({ ...image, align: e.target.value })
+                        }
+                      >
+                        <option value="left">Left</option>
+                        <option value="center">Center</option>
+                        <option value="right">Right</option>
+                      </FormSelect>
+                    </label>
+                  </div>
+                  <p className="text-muted-foreground text-xs leading-5">
+                    Images stay within the article width on mobile. Leave one
+                    dimension empty to keep the natural aspect ratio. Select an
+                    image in the canvas to edit it later.
                   </p>
-                )}
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    type="button"
-                    className="min-h-11"
-                    onClick={saveImage}
-                  >
-                    {editingImage ? "Update image" : "Insert image"}
-                  </Button>
-                  {editingImage && (
+                  {message && (
+                    <p role="alert" className="text-destructive text-sm">
+                      {message}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap gap-2">
                     <Button
                       type="button"
-                      variant="outline"
                       className="min-h-11"
-                      onClick={removeImage}
+                      onClick={saveImage}
                     >
-                      Remove image
+                      {editingImage ? "Update image" : "Insert image"}
                     </Button>
-                  )}
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className="min-h-11"
-                    onClick={() => setShowImage(false)}
-                  >
-                    Close
-                  </Button>
-                </div>
-              </fieldset>
+                    {editingImage && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="min-h-11"
+                        onClick={removeImage}
+                      >
+                        Remove image
+                      </Button>
+                    )}
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="min-h-11"
+                      onClick={() => setShowImage(false)}
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </fieldset>
               </ScrollArea>
             </DialogContent>
           </Dialog>
           {editor.isActive("table") && (
-            <div className="border-border flex flex-wrap gap-2 border-b p-2">
-              {[
-                ["Add row", () => editor.chain().focus().addRowAfter().run()],
-                [
-                  "Add column",
-                  () => editor.chain().focus().addColumnAfter().run(),
-                ],
-                ["Delete row", () => editor.chain().focus().deleteRow().run()],
-                [
-                  "Delete column",
-                  () => editor.chain().focus().deleteColumn().run(),
-                ],
-                [
-                  "Delete table",
-                  () => editor.chain().focus().deleteTable().run(),
-                ],
-              ].map(([label, action]) => (
-                <Button
-                  key={label as string}
-                  type="button"
-                  variant="ghost"
-                  className="min-h-11"
-                  onClick={action as () => void}
-                >
-                  {label as string}
-                </Button>
-              ))}
-            </div>
+            <ScrollArea className="border-border min-w-0 border-b" type="auto">
+              <div
+                role="group"
+                aria-label="Table actions"
+                className="flex w-max min-w-full gap-1 p-2"
+              >
+                {[
+                  ["Add row", () => editor.chain().focus().addRowAfter().run()],
+                  [
+                    "Add column",
+                    () => editor.chain().focus().addColumnAfter().run(),
+                  ],
+                  [
+                    "Delete row",
+                    () => editor.chain().focus().deleteRow().run(),
+                  ],
+                  [
+                    "Delete column",
+                    () => editor.chain().focus().deleteColumn().run(),
+                  ],
+                  [
+                    "Delete table",
+                    () => editor.chain().focus().deleteTable().run(),
+                  ],
+                ].map(([label, action]) => (
+                  <Button
+                    key={label as string}
+                    type="button"
+                    variant="ghost"
+                    className="h-11 shrink-0 text-xs sm:h-9"
+                    onClick={action as () => void}
+                  >
+                    {label as string}
+                  </Button>
+                ))}
+              </div>
+              <ScrollBar orientation="horizontal" className="h-1.5" />
+            </ScrollArea>
           )}
           {message && !showImage && (
             <p role="alert" className="text-destructive px-4 py-3 text-sm">
@@ -832,7 +893,6 @@ export default function RichPostEditor({
           <ContextMenu modal={false}>
             <ContextMenuTrigger asChild>
               <div
-                ref={canvasRef}
                 className="relative"
                 onContextMenuCapture={(event) => {
                   const target =
@@ -855,28 +915,6 @@ export default function RichPostEditor({
                 }}
               >
                 <EditorContent editor={editor} />
-                {caretAction && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="bg-background absolute right-1 z-10 min-h-11 min-w-11 shadow-sm sm:right-2"
-                    style={{ top: caretAction.top }}
-                    aria-label={
-                      caretAction.image
-                        ? "Edit selected image"
-                        : "Insert image at cursor"
-                    }
-                    title={
-                      caretAction.image
-                        ? "Edit image"
-                        : "Insert image here (Ctrl/⌘+Alt+I)"
-                    }
-                    onMouseDown={(event) => event.preventDefault()}
-                    onClick={() => openImageSettings(editor)}
-                  >
-                    <ImagePlus className="size-4" />
-                  </Button>
-                )}
               </div>
             </ContextMenuTrigger>
             <ContextMenuContent
