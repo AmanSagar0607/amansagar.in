@@ -931,6 +931,66 @@ export default function RichPostEditor({
                   ? "Insert image after this one…"
                   : "Insert image here…"}
               </ContextMenuItem>
+              {editor.isActive("table") && (
+                <>
+                  <ContextMenuSeparator />
+                  <ContextMenuLabel>Table actions</ContextMenuLabel>
+                  <ContextMenuItem
+                    onSelect={() =>
+                      editor.chain().focus().addRowBefore().run()
+                    }
+                  >
+                    <Table2 />
+                    Insert row above
+                  </ContextMenuItem>
+                  <ContextMenuItem
+                    onSelect={() =>
+                      editor.chain().focus().addRowAfter().run()
+                    }
+                  >
+                    <Table2 />
+                    Insert row below
+                  </ContextMenuItem>
+                  <ContextMenuItem
+                    onSelect={() =>
+                      editor.chain().focus().addColumnBefore().run()
+                    }
+                  >
+                    <Table2 />
+                    Insert column left
+                  </ContextMenuItem>
+                  <ContextMenuItem
+                    onSelect={() =>
+                      editor.chain().focus().addColumnAfter().run()
+                    }
+                  >
+                    <Table2 />
+                    Insert column right
+                  </ContextMenuItem>
+                  <ContextMenuSeparator />
+                  <ContextMenuItem
+                    variant="destructive"
+                    onSelect={() => editor.chain().focus().deleteRow().run()}
+                  >
+                    <Trash2 />
+                    Delete row
+                  </ContextMenuItem>
+                  <ContextMenuItem
+                    variant="destructive"
+                    onSelect={() => editor.chain().focus().deleteColumn().run()}
+                  >
+                    <Trash2 />
+                    Delete column
+                  </ContextMenuItem>
+                  <ContextMenuItem
+                    variant="destructive"
+                    onSelect={() => editor.chain().focus().deleteTable().run()}
+                  >
+                    <Trash2 />
+                    Delete table
+                  </ContextMenuItem>
+                </>
+              )}
               {editor.isActive("image") && (
                 <>
                   <ContextMenuItem onSelect={() => openImageSettings(editor)}>
