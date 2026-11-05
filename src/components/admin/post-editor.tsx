@@ -6,6 +6,8 @@ import { Textarea as FormTextarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
 import { ActivityMarkdown } from "@/components/journey/activity-markdown";
 import { MediaPicker } from "./media-picker";
@@ -258,36 +260,40 @@ export function PostEditor({
                     ["projectSlugs", "Projects", projects],
                   ] as const
                 ).map(([key, label, options]) => (
-                  <fieldset key={key} className="space-y-2">
+                  <fieldset key={key} className="min-w-0 space-y-2">
                     <legend className="text-sm font-medium">{label}</legend>
                     {options.length ? (
-                      options.map((option) => {
-                        const selected = Array.isArray(post.frontmatter[key])
-                          ? (post.frontmatter[key] as string[])
-                          : [];
-                        return (
-                          <label
-                            key={option.slug}
-                            className="flex items-center gap-2 text-sm"
-                          >
-                            <FormInput
-                              type="checkbox"
-                              checked={selected.includes(option.slug)}
-                              onChange={(event) =>
-                                change("frontmatter", {
-                                  ...post.frontmatter,
-                                  [key]: event.target.checked
-                                    ? [...selected, option.slug]
-                                    : selected.filter(
-                                        (slug) => slug !== option.slug,
-                                      ),
-                                })
-                              }
-                            />
-                            {option.title}
-                          </label>
-                        );
-                      })
+                      <ScrollArea className="mt-1 max-h-56 min-w-0 pr-1">
+                        <div className="grid min-w-0 gap-1">
+                          {options.map((option) => {
+                            const selected = Array.isArray(post.frontmatter[key])
+                              ? (post.frontmatter[key] as string[])
+                              : [];
+                            return (
+                              <label
+                                key={option.slug}
+                                className="flex min-h-11 min-w-0 cursor-pointer items-start gap-2 rounded-md px-2 py-2 text-sm leading-5 hover:bg-muted/50"
+                              >
+                                <Checkbox
+                                  className="mt-0.5"
+                                  checked={selected.includes(option.slug)}
+                                  onCheckedChange={(checked) =>
+                                    change("frontmatter", {
+                                      ...post.frontmatter,
+                                      [key]: checked === true
+                                        ? [...selected, option.slug]
+                                        : selected.filter(
+                                            (slug) => slug !== option.slug,
+                                          ),
+                                    })
+                                  }
+                                />
+                                <span className="min-w-0 break-words">{option.title}</span>
+                              </label>
+                            );
+                        })}
+                        </div>
+                      </ScrollArea>
                     ) : (
                       <p className="text-muted-foreground text-xs">
                         No options available.
@@ -364,11 +370,10 @@ export function PostEditor({
                   }
                 />
               </label>
-              <label className="flex min-h-10 items-center gap-2 text-sm">
-                <FormInput
-                  type="checkbox"
+              <label className="flex min-h-10 min-w-0 items-center gap-2 text-sm">
+                <Checkbox
                   checked={post.sample === true}
-                  onChange={(event) => change("sample", event.target.checked)}
+                  onCheckedChange={(checked) => change("sample", checked === true)}
                 />
                 Sample content
               </label>

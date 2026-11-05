@@ -2,6 +2,7 @@ import type { MDXComponents } from 'mdx/types';
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { CodeBlock } from '@/components/ui/code-block';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import type { DetailedHTMLProps, HTMLAttributes } from 'react';
 
 function getNodeText(node: React.ReactNode): string {
@@ -111,12 +112,13 @@ const components: MDXComponents = {
   
   // Tables
   table: ({ className, ...props }: React.TableHTMLAttributes<HTMLTableElement>) => (
-    <div className="overflow-x-auto">
+    <ScrollArea className="w-full" aria-label="Scrollable table" role="region" tabIndex={0}>
       <table
         className={cn('min-w-full divide-y divide-gray-300', className)}
         {...props}
       />
-    </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   ),
   
   thead: ({ className, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) => (

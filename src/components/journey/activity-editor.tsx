@@ -4,6 +4,11 @@ import { useState } from "react";
 import { ActivityMarkdown } from "@/components/journey/activity-markdown";
 import { MediaPicker } from "@/components/admin/media-picker";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input as FormInput } from "@/components/ui/input";
+import { Select as FormSelect } from "@/components/ui/select";
+import { Textarea as FormTextarea } from "@/components/ui/textarea";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   activityTypes,
@@ -48,7 +53,7 @@ function StringListField({
   const [text, setText] = useState(values.join(", "));
   return (
     <Field label={label}>
-      <input
+      <FormInput
         className={inputClass}
         value={text}
         onChange={(event) => {
@@ -118,7 +123,7 @@ export function ActivityEditor({
   ) => (
     <div className="space-y-2">
       <Field label={label}>
-        <input
+        <FormInput
           className={inputClass}
           type={type}
           readOnly={key === "slug" && identifierLocked}
@@ -139,26 +144,27 @@ export function ActivityEditor({
     <fieldset className="border-border rounded-md border p-3">
       <legend className="px-1 text-sm font-medium">{label}</legend>
       {options.length ? (
-        options.map((option) => (
-          <label
-            key={option.slug}
-            className="flex min-h-11 items-center gap-2 text-sm"
-          >
-            <input
-              type="checkbox"
-              checked={a[key].includes(option.slug)}
-              onChange={(e) =>
-                set(
-                  key,
-                  e.target.checked
-                    ? [...a[key], option.slug]
-                    : a[key].filter((s) => s !== option.slug),
-                )
-              }
-            />
-            {option.title}
-          </label>
-        ))
+        <ScrollArea className="max-h-56 min-w-0 pr-1">
+          {options.map((option) => (
+            <label
+              key={option.slug}
+              className="flex min-h-11 min-w-0 items-center gap-2 text-sm"
+            >
+              <Checkbox
+                checked={a[key].includes(option.slug)}
+                onCheckedChange={(checked) =>
+                  set(
+                    key,
+                    checked === true
+                      ? [...a[key], option.slug]
+                      : a[key].filter((s) => s !== option.slug),
+                  )
+                }
+              />
+              <span className="min-w-0 break-words">{option.title}</span>
+            </label>
+          ))}
+        </ScrollArea>
       ) : (
         <p className="text-muted-foreground text-sm">No options yet.</p>
       )}
@@ -168,7 +174,7 @@ export function ActivityEditor({
     <div className="space-y-5">
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Activity type">
-          <select
+          <FormSelect
             className={inputClass}
             value={a.type}
             onChange={(e) => set("type", e.target.value as Activity["type"])}
@@ -176,7 +182,7 @@ export function ActivityEditor({
             {activityTypes.map((type) => (
               <option key={type}>{type}</option>
             ))}
-          </select>
+          </FormSelect>
         </Field>
         {textField("title", "Title")}
         {textField("slug", "URL slug")}
@@ -190,7 +196,7 @@ export function ActivityEditor({
             publication visibility come from that post.
           </p>
           <Field label="Existing article">
-            <select
+            <FormSelect
               className={inputClass}
               value={a.blogSlug || ""}
               onChange={(e) => set("blogSlug", e.target.value || undefined)}
@@ -201,7 +207,7 @@ export function ActivityEditor({
                   {p.title}
                 </option>
               ))}
-            </select>
+            </FormSelect>
           </Field>
         </div>
       ) : (
@@ -226,7 +232,7 @@ export function ActivityEditor({
             </div>
           ) : (
             <Field label="Content">
-              <textarea
+              <FormTextarea
                 className={`${inputClass} min-h-64 font-mono`}
                 value={a.content}
                 onChange={(e) => set("content", e.target.value)}
@@ -251,7 +257,7 @@ export function ActivityEditor({
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Publication date (UTC)">
-          <input
+          <FormInput
             className={inputClass}
             type="datetime-local"
             value={a.date.slice(0, 16)}
@@ -261,7 +267,7 @@ export function ActivityEditor({
           />
         </Field>
         <Field label="Completion">
-          <select
+          <FormSelect
             className={inputClass}
             value={a.completion}
             onChange={(e) =>
@@ -271,10 +277,10 @@ export function ActivityEditor({
             {["planned", "in-progress", "completed"].map((s) => (
               <option key={s}>{s}</option>
             ))}
-          </select>
+          </FormSelect>
         </Field>
         <Field label="Publication state">
-          <select
+          <FormSelect
             className={inputClass}
             value={a.status}
             onChange={(e) =>
@@ -283,10 +289,10 @@ export function ActivityEditor({
           >
             <option>draft</option>
             <option>published</option>
-          </select>
+          </FormSelect>
         </Field>
         <Field label="Visibility">
-          <select
+          <FormSelect
             className={inputClass}
             value={a.visibility}
             onChange={(e) =>
@@ -295,14 +301,13 @@ export function ActivityEditor({
           >
             <option>private</option>
             <option>public</option>
-          </select>
+          </FormSelect>
         </Field>
       </div>
       <label className="flex min-h-11 items-center gap-2 text-sm">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={a.sample}
-          onChange={(e) => set("sample", e.target.checked)}
+          onCheckedChange={(checked) => set("sample", checked === true)}
         />
         Sample content / excluded from public pages and achievements
       </label>
@@ -317,7 +322,7 @@ export function ActivityEditor({
           {textField("seoTitle", "SEO title")}
           {textField("seoDescription", "SEO description")}
           <Field label="Milestone kind">
-            <select
+            <FormSelect
               className={inputClass}
               value={a.milestoneKind || ""}
               onChange={(e) =>
@@ -332,7 +337,7 @@ export function ActivityEditor({
               <option value="open-source">
                 Verified open-source contribution
               </option>
-            </select>
+            </FormSelect>
           </Field>
           {textField(
             "verifiedEvidenceUrl",
@@ -345,7 +350,7 @@ export function ActivityEditor({
               {a[key].map((resource, i) => (
                 <div className="grid gap-2 sm:grid-cols-[1fr_2fr_auto]" key={i}>
                   <Field label="Label">
-                    <input
+                    <FormInput
                       className={inputClass}
                       value={resource.title}
                       onChange={(e) =>
@@ -359,7 +364,7 @@ export function ActivityEditor({
                     />
                   </Field>
                   <Field label="URL">
-                    <input
+                    <FormInput
                       type="url"
                       className={inputClass}
                       value={resource.url}
@@ -419,7 +424,7 @@ function MilestoneControls({
         >
           <legend className="px-1 text-sm font-medium">{track.title}</legend>
           <Field label="Track status">
-            <select
+            <FormSelect
               className={inputClass}
               value={track.status}
               onChange={(event) =>
@@ -440,7 +445,7 @@ function MilestoneControls({
               <option value="paused">Paused</option>
               <option value="on-break">On break</option>
               <option value="completed">Completed</option>
-            </select>
+            </FormSelect>
           </Field>
           {track.milestones.map((milestone, mi) => {
             const updateMilestone = (patch: Partial<typeof milestone>) =>
@@ -465,7 +470,7 @@ function MilestoneControls({
                   {mi + 1}. {milestone.title}
                 </p>
                 <Field label="Supporting activity">
-                  <select
+                  <FormSelect
                     className={inputClass}
                     value={milestone.activitySlug || ""}
                     onChange={(e) =>
@@ -480,10 +485,10 @@ function MilestoneControls({
                         {a.title} / {a.status}
                       </option>
                     ))}
-                  </select>
+                  </FormSelect>
                 </Field>
                 <Field label="Completed on (leave empty until done)">
-                  <input
+                  <FormInput
                     type="date"
                     className={inputClass}
                     value={milestone.completedAt?.slice(0, 10) || ""}
@@ -592,7 +597,7 @@ export function JourneyEditor() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
         <div className="grow">
           <Field label="Publishing token">
-            <input
+            <FormInput
               type="password"
               autoComplete="off"
               className={inputClass}
@@ -648,7 +653,7 @@ export function JourneyEditor() {
               <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
                 <div className="grow">
                   <Field label="Activity">
-                    <select
+                    <FormSelect
                       className={inputClass}
                       value={selected}
                       onChange={(e) => setSelected(Number(e.target.value))}
@@ -658,7 +663,7 @@ export function JourneyEditor() {
                           {a.title || "Untitled update"} / {a.status}
                         </option>
                       ))}
-                    </select>
+                    </FormSelect>
                   </Field>
                 </div>
                 <Button
@@ -728,7 +733,7 @@ export function JourneyEditor() {
               <Field
                 label={`${tab === "badgeRules" ? "Badge rules" : tab}  /  JSON array`}
               >
-                <textarea
+                <FormTextarea
                   spellCheck={false}
                   className={`${inputClass} min-h-96 font-mono`}
                   value={advanced}

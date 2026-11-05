@@ -23,6 +23,7 @@ import {
 } from "date-fns";
 
 import { cn } from "@/lib/utils";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 export type Activity = {
   date: string;
@@ -375,12 +376,10 @@ export function ContributionGraphCalendar({
 
   return (
     <div
-      className={cn(
-        "no-scrollbar scroll-fade-x max-w-full overflow-x-auto overflow-y-hidden",
-        className,
-      )}
+      className={cn("w-full max-w-full", className)}
       {...props}
     >
+    <ScrollArea className="scroll-fade-x w-full">
       <svg
         className="block overflow-visible"
         height={height}
@@ -418,6 +417,8 @@ export function ContributionGraphCalendar({
           }),
         )}
       </svg>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
     </div>
   );
 }

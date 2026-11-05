@@ -5,6 +5,7 @@ import { Textarea as FormTextarea } from "@/components/ui/textarea";
 import { useEffect, useRef, useState } from "react";
 import { Sparkles, Check, CircleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { ActivityMarkdown } from "@/components/journey/activity-markdown";
 import { articleHeadings, articleText } from "@/lib/article-content";
 import type { ManagedPost } from "@/lib/admin/content-types";
@@ -306,7 +307,7 @@ export function SeoAssistant({
         {result && (
           <div className="border-border space-y-3 border-t pt-4">
             <p className="text-xs font-medium">Review proposal</p>
-            <div className="border-border max-h-80 overflow-auto rounded-md border p-3 text-xs">
+            <ScrollArea className="border-border h-80 rounded-md border p-3 text-xs">
               {result.action === "seo" ? (
                 proposedSeo ? (
                   <dl className="space-y-3">
@@ -331,7 +332,7 @@ export function SeoAssistant({
               ) : (
                 <ActivityMarkdown content={result.text} />
               )}
-            </div>
+            </ScrollArea>
             {stale && !applied && (
               <p className="text-muted-foreground text-xs leading-5">
                 The article changed after this request. Generate a new

@@ -8,6 +8,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type ThemeToggleProps = {
   className?: string;
@@ -88,8 +89,10 @@ export function ThemeToggle({
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           onClick={() => setTheme(isDark ? "light" : "dark")}
           className={cn(
             "border-border text-foreground hover:bg-accent hover:text-foreground focus-visible:ring-ring inline-flex items-center justify-center rounded-full border bg-transparent transition-colors focus-visible:ring-2 focus-visible:outline-none",
@@ -98,7 +101,7 @@ export function ThemeToggle({
           aria-label="Toggle theme"
         >
           {hideIcon ? null : <ThemeGlyph />}
-        </button>
+        </Button>
       </TooltipTrigger>
       <TooltipContent
         side="bottom"

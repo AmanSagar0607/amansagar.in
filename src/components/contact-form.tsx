@@ -4,6 +4,8 @@ import React from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
+import { Input as FormInput } from "./ui/input";
+import { Textarea as FormTextarea } from "./ui/textarea";
 
 export const ContactForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -58,7 +60,7 @@ export const ContactForm = () => {
         >
           Name
         </label>
-        <input
+        <FormInput
           id="name"
           name="name"
           type="text"
@@ -73,7 +75,7 @@ export const ContactForm = () => {
         >
           Email
         </label>
-        <input
+        <FormInput
           id="email"
           name="email"
           type="email"
@@ -88,11 +90,11 @@ export const ContactForm = () => {
         >
           Message
         </label>
-        <textarea
+        <FormTextarea
           rows={5}
           id="message"
           name="message"
-          placeholder="You'r Crazy nigbbourhood freelacer"
+          placeholder="Tell me about your project or question."
           className="shadow-acceternity dark:bg-neutral-800  focus:ring-primary resize-none rounded-md p-2 text-sm focus:ring-2 focus:outline-none"
           value={formdata.message}
           onChange={handleChange}

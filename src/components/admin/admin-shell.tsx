@@ -36,6 +36,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const groups = [
   {
@@ -159,7 +160,9 @@ export function AdminShell({
             {!collapsed && <span>Aman Sagar <span className="block text-[10px] font-medium uppercase tracking-[0.17em] text-muted-foreground">Studio</span></span>}
           </Link>
         </div>
-        <Navigation collapsed={collapsed} />
+        <ScrollArea className="h-[calc(100dvh-4rem)]">
+          <Navigation collapsed={collapsed} />
+        </ScrollArea>
       </aside>
       <div className="min-w-0 flex-1">
         <header className="border-border sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-[#0b0b0c] px-4 md:px-6">
@@ -185,14 +188,16 @@ export function AdminShell({
                   <Menu />
                 </Button>
               </DialogTrigger>
-              <DialogContent className="fixed inset-y-0 top-0 left-0 h-dvh w-72 max-w-[85vw] translate-x-0 translate-y-0 overflow-y-auto rounded-none p-0">
+              <DialogContent className="fixed inset-y-0 top-0 left-0 flex h-dvh w-72 max-w-[85vw] translate-x-0 translate-y-0 flex-col overflow-hidden rounded-none p-0">
                 <DialogTitle className="px-6 pt-6">
                   Admin navigation
                 </DialogTitle>
                 <DialogDescription className="sr-only">
                   Navigate between content management pages.
                 </DialogDescription>
-                <Navigation onNavigate={() => setMobileOpen(false)} />
+                <ScrollArea className="min-h-0 flex-1">
+                  <Navigation onNavigate={() => setMobileOpen(false)} />
+                </ScrollArea>
               </DialogContent>
             </Dialog>
             <nav
@@ -236,13 +241,14 @@ export function AdminShell({
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <form action={signOut}>
-                  <button
+                  <Button
+                    variant="ghost"
                     className="flex w-full items-center gap-2 text-left"
                     type="submit"
                   >
                     <LogOut className="size-4" />
                     Sign out
-                  </button>
+                  </Button>
                 </form>
               </DropdownMenuItem>
             </DropdownMenuContent>

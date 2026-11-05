@@ -51,7 +51,8 @@
 }
 .article-editor .tiptap pre {
   max-width: 100%;
-  overflow-x: auto;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
 }
 .article-editor .tiptap p:empty::before {
   content: "\00a0";

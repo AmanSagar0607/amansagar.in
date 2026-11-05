@@ -27,6 +27,7 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
+import { Button } from "@/components/ui/button";
 
 type CommandMenuItem = {
   label: string;
@@ -126,8 +127,9 @@ export function CommandMenu({
 
   return (
     <>
-      <button
+      <Button
         type="button"
+        variant="ghost"
         className={`${triggerClassName ?? ""} whitespace-nowrap`}
         aria-label="Open command menu"
         onClick={() => setOpen(true)}
@@ -140,7 +142,7 @@ export function CommandMenu({
           <span className="site-kbd">K</span>
           </span>
         )}
-      </button>
+      </Button>
 
       <CommandDialog
         open={open}

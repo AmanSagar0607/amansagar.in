@@ -6,6 +6,7 @@ import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
 import { headingSlug, normalizeArticleMarkdown } from "@/lib/article-content";
 import type { Root, Element, RootContent } from "hast";
 import { CodeBlock } from "@/components/ui/code-block";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const markdownComponents: Components = {
   // The page title already supplies h1; journal body headings begin at h2.
@@ -18,14 +19,15 @@ const markdownComponents: Components = {
     return <CodeBlock>{content}</CodeBlock>;
   },
   table: ({ children }) => (
-    <div
-      className="max-w-full overflow-x-auto"
+    <ScrollArea
+      className="max-w-full"
       tabIndex={0}
       role="region"
       aria-label="Scrollable table"
     >
       <table>{children}</table>
-    </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   ),
 };
 

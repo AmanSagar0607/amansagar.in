@@ -1,5 +1,6 @@
 "use client";
 import { Input as FormInput } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea as FormTextarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import type { WorkExperienceRecord, WorkPosition } from "@/lib/admin/work-experience";
@@ -13,7 +14,7 @@ export function WorkExperienceSettings({ value, onChange }: { value: WorkExperie
       <label className="block text-sm font-medium">Company<FormInput required maxLength={200} className={inputClass} value={employer.companyName} onChange={(event) => updateEmployer(index, { companyName: event.target.value })} /></label>
       <label className="block text-sm font-medium">Company website (HTTPS)<FormInput type="url" maxLength={2048} className={inputClass} value={employer.companyWebsite ?? ""} onChange={(event) => updateEmployer(index, { companyWebsite: event.target.value })} /></label>
       <label className="block text-sm font-medium">Company logo URL (HTTPS)<FormInput type="url" maxLength={2048} className={inputClass} value={employer.companyLogo ?? ""} onChange={(event) => updateEmployer(index, { companyLogo: event.target.value })} /></label>
-      <label className="flex items-center gap-2 text-sm"><FormInput type="checkbox" checked={!!employer.isCurrentEmployer} onChange={(event) => updateEmployer(index, { isCurrentEmployer: event.target.checked })} />Current employer</label>
+      <label className="flex min-h-11 min-w-0 cursor-pointer items-center gap-2 text-sm"><Checkbox checked={!!employer.isCurrentEmployer} onCheckedChange={(checked) => updateEmployer(index, { isCurrentEmployer: checked === true })} />Current employer</label>
       {employer.positions.map((position, positionIndex) => <div key={position.id} className="space-y-3 rounded-md bg-muted/40 p-3">
         <label className="block text-sm font-medium">Position title<FormInput required maxLength={200} className={inputClass} value={position.title} onChange={(event) => updatePosition(index, positionIndex, { title: event.target.value })} /></label>
         <label className="block text-sm font-medium">Employment type<FormInput maxLength={100} className={inputClass} value={position.employmentType ?? ""} onChange={(event) => updatePosition(index, positionIndex, { employmentType: event.target.value })} /></label>

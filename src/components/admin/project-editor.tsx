@@ -5,6 +5,7 @@ import { Textarea as FormTextarea } from "@/components/ui/textarea";
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { MediaPicker } from "./media-picker";
 import type { ManagedProject } from "@/lib/admin/content-types";
@@ -350,19 +351,10 @@ export function ProjectEditor({
                 onChange={(event) => changeProject("date", event.target.value)}
               />
             </label>
-            <label className="flex items-center gap-2 text-sm">
-              <FormInput
-                type="checkbox"
+            <label className="flex min-h-11 min-w-0 cursor-pointer items-center gap-2 text-sm">
+              <Checkbox
                 checked={item.pinned === true}
-                onChange={(event) => changeItem("pinned", event.target.checked)}
-              />
-              Pin to homepage
-            </label>
-            <label className="flex items-center gap-2 text-sm">
-              <FormInput
-                type="checkbox"
-                checked={item.pinned === true}
-                onChange={(event) => changeItem("pinned", event.target.checked)}
+                onCheckedChange={(checked) => changeItem("pinned", checked === true)}
               />
               Pin to homepage
             </label>

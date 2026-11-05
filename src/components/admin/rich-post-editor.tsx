@@ -30,6 +30,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   ContextMenu,
   ContextMenuTrigger,
@@ -655,7 +656,7 @@ export default function RichPostEditor({
           )}
           <Dialog open={showImage} onOpenChange={setShowImage}>
             <DialogContent
-              className="max-h-[85dvh] overflow-y-auto sm:max-w-xl"
+              className="grid max-h-[85dvh] grid-rows-[auto_auto_minmax(0,1fr)] overflow-hidden sm:max-w-xl"
               onCloseAutoFocus={(event) => {
                 event.preventDefault();
                 editor.commands.focus(undefined, { scrollIntoView: false });
@@ -668,7 +669,8 @@ export default function RichPostEditor({
                 Choose or upload an image, then adjust its appearance. Your
                 place in the article is preserved.
               </DialogDescription>
-              <fieldset className="space-y-4">
+              <ScrollArea className="min-h-0">
+              <fieldset className="space-y-4 pr-4">
                 <legend className="sr-only">Image properties</legend>
                 <MediaPicker
                   onSelect={(url) =>
@@ -789,6 +791,7 @@ export default function RichPostEditor({
                   </Button>
                 </div>
               </fieldset>
+              </ScrollArea>
             </DialogContent>
           </Dialog>
           {editor.isActive("table") && (

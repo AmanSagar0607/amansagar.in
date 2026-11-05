@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type PortfolioProjectGridProps = {
   projects: Project[];
@@ -68,8 +69,10 @@ export function PortfolioProjectGrid({
         <div className="view-toggle-group" aria-label="Project view mode">
           <Tooltip>
             <TooltipTrigger asChild>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 aria-label="Grid view"
                 onClick={() => setView("grid")}
                 className={cn(
@@ -78,7 +81,7 @@ export function PortfolioProjectGrid({
                 )}
               >
                 <LayoutGrid className="h-3.5 w-3.5" />
-              </button>
+              </Button>
             </TooltipTrigger>
             <TooltipContent
               side="bottom"
@@ -95,8 +98,10 @@ export function PortfolioProjectGrid({
           </Tooltip>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 aria-label="List view"
                 onClick={() => setView("list")}
                 className={cn(
@@ -105,7 +110,7 @@ export function PortfolioProjectGrid({
                 )}
               >
                 <List className="h-3.5 w-3.5" />
-              </button>
+              </Button>
             </TooltipTrigger>
             <TooltipContent
               side="bottom"

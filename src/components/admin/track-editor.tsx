@@ -4,6 +4,8 @@ import { Select as FormSelect } from "@/components/ui/select";
 import { Textarea as FormTextarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent } from "@/components/ui/card";
 import { isPublicActivity } from "@/lib/journey/logic";
 import type { Activity, Track } from "@/lib/journey/types";
@@ -305,20 +307,20 @@ export function TrackEditor({
               <legend className="mb-2 text-sm font-medium">
                 Related projects
               </legend>
+              <ScrollArea className="max-h-56 min-w-0 pr-1">
               <div className="space-y-2">
                 {projects.length ? (
                   projects.map((project) => (
                     <label
                       key={project.slug}
-                      className="flex items-center gap-2 text-sm"
+                      className="flex min-h-11 min-w-0 cursor-pointer items-center gap-2 text-sm"
                     >
-                      <FormInput
-                        type="checkbox"
+                      <Checkbox
                         checked={track.projectSlugs.includes(project.slug)}
-                        onChange={(event) =>
+                        onCheckedChange={(checked) =>
                           set(
                             "projectSlugs",
-                            event.target.checked
+                            checked === true
                               ? [...track.projectSlugs, project.slug]
                               : track.projectSlugs.filter(
                                   (slug) => slug !== project.slug,
@@ -326,7 +328,7 @@ export function TrackEditor({
                           )
                         }
                       />
-                      {project.title}
+                      <span className="min-w-0 break-words">{project.title}</span>
                     </label>
                   ))
                 ) : (
@@ -335,6 +337,7 @@ export function TrackEditor({
                   </p>
                 )}
               </div>
+              </ScrollArea>
             </fieldset>
           </CardContent>
         </Card>

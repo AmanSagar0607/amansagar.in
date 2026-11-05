@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowDownUp, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type Column = { key: string; label: string; sortable?: boolean };
 export type AdminTableRow = {
@@ -112,8 +113,8 @@ export function ContentTable({
           ))}
         </div>
       )}
-      <div className="border-border overflow-x-auto rounded-lg border">
-        <table className="w-full text-left text-sm">
+      <ScrollArea className="border-border w-full rounded-lg border">
+        <table className="w-full min-w-[40rem] text-left text-sm">
           <thead className="bg-muted/50 text-muted-foreground">
             <tr>
               {columns.map((column) => (
@@ -130,8 +131,9 @@ export function ContentTable({
                   }
                 >
                   {column.sortable ? (
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
                       className="hover:text-foreground inline-flex min-h-8 items-center gap-2"
                       onClick={() => {
                         setSort((current) => ({
@@ -146,7 +148,7 @@ export function ContentTable({
                     >
                       {column.label}
                       <ArrowDownUp className="size-3" aria-hidden />
-                    </button>
+                    </Button>
                   ) : (
                     column.label
                   )}
@@ -182,7 +184,7 @@ export function ContentTable({
             {emptyMessage}
           </p>
         )}
-      </div>
+      </ScrollArea>
       <div
         className="text-muted-foreground flex flex-wrap items-center justify-between gap-3 text-sm"
         aria-live="polite"

@@ -3,6 +3,8 @@
 import { useState, useRef } from "react";
 import { Copy, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface CodeBlockProps extends React.HTMLAttributes<HTMLPreElement> {
   children?: React.ReactNode;
@@ -50,26 +52,29 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
 
   return (
     <div className="relative">
-      <pre
-        ref={preRef}
-        className={cn(
-          "border-border bg-muted/40 text-foreground rounded-lg border p-4 overflow-x-auto text-sm",
-          "pr-12",
-          className
-        )}
-        {...props}
-      >
-        <code className="font-mono block">
-          {children}
-        </code>
-      </pre>
-      <button
+      <ScrollArea className="w-full rounded-lg">
+        <pre
+          ref={preRef}
+          className={cn(
+            "border-border bg-muted/40 text-foreground w-max min-w-full rounded-lg border p-4 text-sm",
+            "pr-12",
+            className
+          )}
+          {...props}
+        >
+          <code className="font-mono block">
+            {children}
+          </code>
+        </pre>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+      <Button
+        type="button"
+        variant="outline"
+        size="icon"
         onClick={handleCopy}
         className={cn(
-          "absolute top-4 right-4 z-10 p-1.5 rounded-md",
-          "border-border bg-background/90 text-muted-foreground hover:text-foreground border backdrop-blur-sm",
-          "transition-all duration-200",
-          "flex items-center justify-center"
+          "absolute top-4 right-4 z-10 bg-background/90 text-muted-foreground hover:text-foreground backdrop-blur-sm",
         )}
         aria-label="Copy code"
       >
@@ -78,7 +83,7 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
         ) : (
           <Copy className="h-3.5 w-3.5" />
         )}
-      </button>
+      </Button>
     </div>
   );
 }

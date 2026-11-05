@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { listMedia, uploadMedia } from "@/lib/admin/client";
 import type { MediaPage } from "@/lib/admin/media-service";
 import { MediaLibrary } from "./media-library";
@@ -51,40 +52,42 @@ export function MediaPicker({ onSelect }: { onSelect: (url: string) => void }) {
           Choose image
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[85dvh] overflow-y-auto sm:max-w-5xl">
+      <DialogContent className="flex max-h-[85dvh] flex-col overflow-hidden sm:max-w-5xl">
         <DialogTitle>Choose an image</DialogTitle>
         <DialogDescription>
           Select an existing image or upload a new one.
         </DialogDescription>
-        {loading && (
-          <p role="status" className="text-muted-foreground py-8 text-sm">
-            Loading media…
-          </p>
-        )}
-        {error && (
-          <div className="space-y-3">
-            <p role="alert" className="text-sm text-red-500">
-              {error}
+        <ScrollArea className="min-h-0 flex-1">
+          {loading && (
+            <p role="status" className="text-muted-foreground py-8 text-sm">
+              Loading media…
             </p>
-            <Button type="button" variant="outline" onClick={() => void load()}>
-              Try again
-            </Button>
-          </div>
-        )}
-        {page && !loading && !error && (
-          <MediaLibrary
-            compact
-            initial={page}
-            actions={{
-              list: (cursor) => listMedia(cursor),
-              upload: uploadMedia,
-            }}
-            onSelect={(asset) => {
-              onSelect(asset.url);
-              toggle(false);
-            }}
-          />
-        )}
+          )}
+          {error && (
+            <div className="space-y-3 py-2">
+              <p role="alert" className="text-sm text-red-500">
+                {error}
+              </p>
+              <Button type="button" variant="outline" onClick={() => void load()}>
+                Try again
+              </Button>
+            </div>
+          )}
+          {page && !loading && !error && (
+            <MediaLibrary
+              compact
+              initial={page}
+              actions={{
+                list: (cursor) => listMedia(cursor),
+                upload: uploadMedia,
+              }}
+              onSelect={(asset) => {
+                onSelect(asset.url);
+                toggle(false);
+              }}
+            />
+          )}
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

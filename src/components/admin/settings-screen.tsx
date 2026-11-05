@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { saveContent } from "@/lib/admin/client";
 import type { SiteSettings } from "@/lib/admin/site-settings";
 import { defaultSiteSettings } from "@/lib/admin/site-settings";
@@ -93,11 +94,12 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
         </p>
       )}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="max-w-3xl">
-        <div className="overflow-x-auto pb-1">
-          <TabsList aria-label="Settings sections">
+        <ScrollArea className="w-full pb-2">
+          <TabsList aria-label="Settings sections" className="w-max">
             {settingsTabs.map((tab) => <TabsTrigger key={tab} value={tab}>{tab}</TabsTrigger>)}
           </TabsList>
-        </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
         <Card className="gap-0"><CardContent>
         <TabsContent forceMount value="General" hidden={activeTab !== "General"} data-settings-tab="General" className="space-y-4">
           <label className="block text-sm font-medium">

@@ -8,6 +8,7 @@ import { Home, Menu, X } from "lucide-react"
 import { CommandMenu } from "@/components/command-menu"
 import { ThemeToggle } from "@/components/theme/theme-toggle"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 
 const navItems = [
   { title: "Home", href: "/" },
@@ -80,8 +81,10 @@ export function MobileDock() {
 
         <ThemeToggle className="text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full border-0 bg-transparent transition-colors focus-visible:ring-0" />
 
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           onClick={() => setOpen(!open)}
           className={cn(
             "text-muted-foreground hover:text-foreground flex h-9 w-9 items-center justify-center rounded-full transition-colors",
@@ -90,7 +93,7 @@ export function MobileDock() {
           aria-label={open ? "Close menu" : "Open menu"}
         >
           {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-        </button>
+        </Button>
       </div>
 
       {open && (
