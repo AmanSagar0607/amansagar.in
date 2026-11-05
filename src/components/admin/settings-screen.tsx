@@ -11,9 +11,10 @@ import { saveContent } from "@/lib/admin/client";
 import type { SiteSettings } from "@/lib/admin/site-settings";
 import { defaultSiteSettings } from "@/lib/admin/site-settings";
 import { WorkExperienceSettings } from "./work-experience-settings";
+import { NavigationManager } from "./navigation-manager";
 const inputClass =
   "border-input bg-background focus-visible:ring-ring mt-1 min-h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2";
-const settingsTabs = ["General", "Profile", "About", "Experience", "Stack", "Social", "Homepage"] as const;
+const settingsTabs = ["General", "Profile", "About", "Experience", "Stack", "Social", "Homepage", "Navigation"] as const;
 export function SettingsScreen({ initial }: { initial: SiteSettings }) {
   const [settings, setSettings] = useState(initial);
   const [saving, setSaving] = useState(false);
@@ -212,6 +213,9 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
             <label className="block text-sm font-medium">Release version<FormInput className={inputClass} pattern="[0-9]+\\.[0-9]+\\.[0-9]+" value={settings.releaseVersion ?? "1.0.0"} onChange={(event) => change("releaseVersion", event.target.value)} /></label>
             <div className="flex flex-wrap gap-2">{([ ["patch", 2], ["minor", 1], ["major", 0] ] as const).map(([label, index]) => <Button key={label} type="button" variant="outline" onClick={() => { const parts = (settings.releaseVersion ?? "1.0.0").split(".").map(Number); parts[index] += 1; for (let i = index + 1; i < 3; i++) parts[i] = 0; change("releaseVersion", parts.join(".")); }}>Bump {label}</Button>)}</div>
             <p className="text-muted-foreground text-xs">Release version is shown in admin only and is never included in public page metadata.</p>
+          </TabsContent>
+          <TabsContent forceMount value="Navigation" hidden={activeTab !== "Navigation"} data-settings-tab="Navigation" className="space-y-4">
+            <NavigationManager value={settings.navigationItems ?? defaultSiteSettings.navigationItems ?? []} onChange={(navigationItems) => change("navigationItems", navigationItems)} />
           </TabsContent>
         </CardContent></Card>
       </Tabs>

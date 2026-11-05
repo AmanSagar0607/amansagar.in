@@ -5,6 +5,8 @@ import { Heading } from "@/components/heading";
 import { TechStack } from "@/components/ui/tech-stack";
 import { getPublicActivities, getPublicTracks } from '@/lib/public-journey';
 import { activityHref } from '@/lib/journey/logic';
+import { notFound } from "next/navigation";
+import { isPublicPageVisible } from "@/lib/public-page-visibility";
 
 type Props = {
   params: Promise<{
@@ -48,9 +50,10 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function ProjectPage({ params }: Props) {
   const { slug } = await params;
+  if (!(await isPublicPageVisible("/projects"))) notFound();
   const project = await getPublicProject(slug);
 
-  if (!project) return null;
+  if (!project) notFound();
   const relatedActivities = (await getPublicActivities()).filter(a => a.projectSlugs.includes(slug));
   const relatedTracks = (await getPublicTracks()).filter(t => t.projectSlugs.includes(slug) || relatedActivities.some(a => a.trackSlugs.includes(t.slug)));
 

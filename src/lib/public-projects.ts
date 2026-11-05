@@ -2,9 +2,11 @@
 import { getAllProjects, getProjectBySlug } from "@/lib/projects";
 import { getCmsPublicContent } from "@/lib/cms-public-content";
 import type { Project } from "@/types/project";
+import { isPublicPageVisible } from "@/lib/public-page-visibility";
 
 /** Public project access boundary. The local source remains authoritative until migration. */
 export async function getPublicProjects(): Promise<Project[]> {
+  if (!(await isPublicPageVisible("/projects"))) return [];
   const cms = await getCmsPublicContent();
   if (cms) return cms.projects();
   return getAllProjects().sort(
@@ -16,6 +18,7 @@ export async function getPublicProjects(): Promise<Project[]> {
 export async function getPublicProject(
   slug: string,
 ): Promise<Project | undefined> {
+  if (!(await isPublicPageVisible("/projects"))) return undefined;
   const cms = await getCmsPublicContent();
   if (cms) return cms.project(slug);
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) return undefined;

@@ -3,6 +3,8 @@ import { PageHeader } from "@/components/page-header";
 import { AchievementGrid } from "@/components/journey/journey-ui";
 import { getAchievements } from "@/lib/public-journey";
 import { journeyMetadata } from "@/lib/journey/seo";
+import { notFound } from "next/navigation";
+import { isPublicPageVisible } from "@/lib/public-page-visibility";
 
 export const metadata = journeyMetadata(
   "Achievements",
@@ -11,6 +13,7 @@ export const metadata = journeyMetadata(
 );
 
 export default async function AchievementsPage() {
+  if (!(await isPublicPageVisible("/achievements"))) notFound();
   const achievements = await getAchievements();
   return (
     <main className="page-shell pb-12">

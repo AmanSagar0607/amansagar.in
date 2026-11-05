@@ -13,10 +13,13 @@ import { getPublicActivities, getPublicTracks } from "@/lib/public-journey";
 import { trackProgress } from "@/lib/journey/logic";
 import { journeyMetadata } from "@/lib/journey/seo";
 import { getPublicProjectsBySlug } from "@/lib/public-projects";
+import { isPublicPageVisible } from "@/lib/public-page-visibility";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props) {
+  if (!(await isPublicPageVisible("/journey")))
+    return { title: "Not found", robots: { index: false, follow: false } };
   const { slug } = await params;
   const track = (await getPublicTracks()).find((item) => item.slug === slug);
   if (!track)
@@ -38,6 +41,7 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function LearningTrackPage({ params }: Props) {
   const { slug } = await params;
+  if (!(await isPublicPageVisible("/journey"))) notFound();
   const [tracks, allActivities] = await Promise.all([
     getPublicTracks(),
     getPublicActivities(),

@@ -14,54 +14,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-
-const primaryNavItems = [
-  { title: "home", href: "/" },
-  { title: "projects", href: "/projects" },
-  { title: "blog", href: "/blog" },
-  { title: "journey", href: "/journey" },
-  { title: "contact", href: "/contact" },
-];
-
-const moreNavItems = [
-  { title: "about", href: "/about" },
-  { title: "achievements", href: "/achievements" },
-  { title: "stack", href: "/#stack" },
-  { title: "experience", href: "/#experience" },
-  { title: "socials", href: "/#socials" },
-  {
-    title: "resume",
-    href: "/resume",
-    external: true,
-  },
-];
+import type { NavigationItem } from "@/lib/admin/site-settings";
 
 export const Navbar = ({
-  customPages = [],
+  items,
 }: {
-  customPages?: { slug: string; title: string; navigationTitle?: string }[];
+  items: NavigationItem[];
 }) => {
   const pathname = usePathname();
-  const isHome = pathname === "/";
-  const navigationItems = [
-    ...moreNavItems.map((item) => ({
-      ...item,
-      external: "external" in item && item.external === true,
-    })),
-    ...customPages.map((page) => ({
-      title: page.navigationTitle?.trim() || page.title,
-      href: `/${page.slug}`,
-      external: false,
-    })),
-  ];
   const isActive = (href: string) => {
-    if (customPages.some((page) => `/${page.slug}` === href)) return pathname === href;
-    if (href === "/") return pathname === "/";
-    if (href === "/projects") return pathname.startsWith("/projects");
-    if (href === "/blog") return pathname.startsWith("/blog");
-    if (href === "/journey") return pathname.startsWith("/journey") || pathname === "/achievements";
-    if (href === "/contact") return pathname === "/contact";
-    return isHome && href !== "/";
+    if (href.includes("#")) return false;
+    const route = href.split(/[?#]/, 1)[0];
+    return route === "/" ? pathname === "/" : pathname === route || pathname.startsWith(`${route}/`);
   };
 
   const scrollToAnchor = (href: string) => {
@@ -76,27 +40,51 @@ export const Navbar = ({
     return true;
   };
 
+  const renderItem = (item: NavigationItem, className: string) => {
+    const active = isActive(item.href);
+    if (item.href.startsWith("/#")) {
+      return (
+        <a
+          key={item.id}
+          href={item.href}
+          className={className}
+          aria-current={active ? "page" : undefined}
+          onClick={(event) => {
+            event.preventDefault();
+            if (pathname === "/" && scrollToAnchor(item.href)) return;
+            window.location.href = item.href;
+          }}
+        >
+          {item.label}
+        </a>
+      );
+    }
+    const external = item.external === true || !item.href.startsWith("/");
+    return (
+      <Link
+        key={item.id}
+        href={item.href}
+        target={external ? "_blank" : undefined}
+        rel={external ? "noopener noreferrer" : undefined}
+        className={className}
+        aria-current={active ? "page" : undefined}
+      >
+        {item.label}
+        {external ? <IconArrowUpRight className="text-muted-foreground h-3.5 w-3.5" /> : null}
+      </Link>
+    );
+  };
+
+  const primaryItems = items.filter((item) => item.desktop && item.placement === "primary");
+  const moreItems = items.filter((item) => item.desktop && item.placement === "more");
+
   return (
     <header className="site-header animate-slide-in slide-in-from-top-10 sticky top-0 z-50 hidden xl:block">
       <div className="site-header-shell">
         <nav className="site-nav" aria-label="Primary navigation">
-          {primaryNavItems.map((item) => (
-            <Link
-              key={item.title}
-              href={item.href}
-              className={cn(
-                "site-nav-link",
-                isActive(item.href)
-                  ? "text-foreground"
-                  : "text-muted-foreground",
-              )}
-              aria-current={isActive(item.href) ? "page" : undefined}
-            >
-              {item.title}
-            </Link>
-          ))}
+          {primaryItems.map((item) => renderItem(item, cn("site-nav-link", isActive(item.href) ? "text-foreground" : "text-muted-foreground")))}
 
-          <DropdownMenu>
+          {moreItems.length > 0 && <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 type="button"
@@ -113,45 +101,17 @@ export const Navbar = ({
               sideOffset={10}
               className="border-border bg-card min-w-44 rounded-2xl border p-2 shadow-sm"
             >
-              {navigationItems.map((item) => (
+              {moreItems.map((item) => (
                 <DropdownMenuItem
-                  key={item.title}
+                  key={item.id}
                   asChild
                   className="rounded-xl px-3 py-2 text-sm"
                 >
-                  {item.href.startsWith("/#") ? (
-                    <a
-                      href={item.href}
-                      className="text-foreground flex w-full items-center justify-between gap-3"
-                      onClick={(event) => {
-                        event.preventDefault();
-
-                        if (pathname === "/" && scrollToAnchor(item.href)) {
-                          return;
-                        }
-
-                        window.location.href = item.href;
-                      }}
-                    >
-                      <span>{item.title}</span>
-                    </a>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      target={item.external ? "_blank" : undefined}
-                      rel={item.external ? "noopener noreferrer" : undefined}
-                      className="text-foreground flex w-full items-center justify-between gap-3"
-                    >
-                      <span>{item.title}</span>
-                      {item.external ? (
-                        <IconArrowUpRight className="text-muted-foreground h-3.5 w-3.5" />
-                      ) : null}
-                    </Link>
-                  )}
+                  {renderItem(item, "text-foreground flex w-full items-center justify-between gap-3")}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu>}
         </nav>
 
         <div className="site-header-actions" aria-label="Header actions">

@@ -3,6 +3,8 @@ import { getPublicProjects } from "@/lib/public-projects";
 import { getPublicPosts } from "@/lib/public-posts";
 import { getPublicActivities, getPublicTracks } from '@/lib/public-journey';
 import { getPublicPages } from "@/lib/public-pages";
+import { getPublicSiteSettings } from "@/lib/public-site-settings";
+import { isPagePathVisible } from "@/lib/public-page-visibility";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.amansagar.in";
 
@@ -14,7 +16,8 @@ type SitemapPost = {
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticRoutes = ["", "/about", "/projects", "/blog", "/contact", "/journey", "/achievements"].map(
+  const settings = await getPublicSiteSettings();
+  const staticRoutes = ["", "/about", "/projects", "/blog", "/contact", "/journey", "/achievements"].filter((route) => isPagePathVisible(route || "/", settings.hiddenPages)).map(
     (route) => ({
       url: `${siteUrl}${route}`,
       lastModified: new Date(),
@@ -41,9 +44,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const activities = await getPublicActivities();
-  const activityRoutes = activities.filter(a => !a.blogSlug && a.content.trim().split(/\s+/).length >= 80).map(a => ({ url: `${siteUrl}/journey/activity/${a.slug}`, lastModified: new Date(a.updatedAt), changeFrequency: 'monthly' as const, priority: 0.7 }));
-  const trackRoutes = (await getPublicTracks()).filter(t => activities.some(a => a.trackSlugs.includes(t.slug))).map(t => ({ url: `${siteUrl}/journey/${t.slug}`, changeFrequency: 'weekly' as const, priority: 0.7 }));
-  const customPageRoutes = (await getPublicPages()).map((page) => ({
+  const activityRoutes = isPagePathVisible("/journey", settings.hiddenPages) ? activities.filter(a => !a.blogSlug && a.content.trim().split(/\s+/).length >= 80).map(a => ({ url: `${siteUrl}/journey/activity/${a.slug}`, lastModified: new Date(a.updatedAt), changeFrequency: 'monthly' as const, priority: 0.7 })) : [];
+  const trackRoutes = isPagePathVisible("/journey", settings.hiddenPages) ? (await getPublicTracks()).filter(t => activities.some(a => a.trackSlugs.includes(t.slug))).map(t => ({ url: `${siteUrl}/journey/${t.slug}`, changeFrequency: 'weekly' as const, priority: 0.7 })) : [];
+  const customPageRoutes = (await getPublicPages()).filter((page) => isPagePathVisible(`/${page.slug}`, settings.hiddenPages)).map((page) => ({
     url: `${siteUrl}/${page.slug}`,
     lastModified: new Date(page.updatedAt),
     changeFrequency: "monthly" as const,

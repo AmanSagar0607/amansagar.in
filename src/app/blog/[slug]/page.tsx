@@ -13,6 +13,7 @@ import { ShareMenu } from "@/components/share-menu";
 import { TOCMinimap } from "@/components/toc-minimap";
 import { serializeJsonLd } from "@/lib/json-ld";
 import { articleHeadings, articleText } from "@/lib/article-content";
+import { isPublicPageVisible } from "@/lib/public-page-visibility";
 
 export interface BlogPostMetadata {
   title: string;
@@ -115,6 +116,7 @@ export default async function BlogPost({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  if (!(await isPublicPageVisible("/blog"))) notFound();
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) notFound();
 
   try {

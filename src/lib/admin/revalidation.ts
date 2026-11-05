@@ -26,7 +26,19 @@ export function affectedPublicPaths(
     { path: "/achievements" },
   ];
   if (kind === "settings")
-    targets.push({ path: "/", type: "layout" }, { path: "/contact" }, { path: "/about" });
+    targets.push(
+      { path: "/", type: "layout" },
+      { path: "/about" },
+      { path: "/projects" },
+      { path: "/projects/[slug]", type: "page" },
+      { path: "/blog" },
+      { path: "/blog/[slug]", type: "page" },
+      { path: "/journey" },
+      { path: "/journey/[slug]", type: "page" },
+      { path: "/journey/activity/[slug]", type: "page" },
+      { path: "/achievements" },
+      { path: "/contact" },
+    );
   if (kind === "page")
     targets.push({ path: `/${identifier}` }, { path: "/", type: "layout" });
   if (kind === "post")

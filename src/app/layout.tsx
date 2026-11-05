@@ -9,6 +9,8 @@ import { SiteChrome } from "@/components/site-chrome";
 import "./globals.css";
 import { getPublicSiteSettings } from "@/lib/public-site-settings";
 import { getPublicPages } from "@/lib/public-pages";
+import { defaultSiteSettings, type NavigationItem } from "@/lib/admin/site-settings";
+import { isPagePathVisible } from "@/lib/public-page-visibility";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -98,9 +100,22 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const customPages = (await getPublicPages())
-    .filter((page) => page.showInNavigation)
-    .map(({ slug, title, navigationTitle }) => ({ slug, title, navigationTitle }));
+  const settings = await getPublicSiteSettings();
+  const hiddenPages = settings.hiddenPages ?? [];
+  const navigationItems = [
+    ...(settings.navigationItems ?? defaultSiteSettings.navigationItems ?? []),
+    ...(await getPublicPages())
+      .filter((page) => page.showInNavigation && !(settings.navigationItems ?? []).some((item) => item.href === `/${page.slug}`))
+      .map((page): NavigationItem => ({
+        id: `page-${page.slug}`,
+        label: page.navigationTitle?.trim() || page.title,
+        href: `/${page.slug}`,
+        placement: "more",
+        desktop: true,
+        tablet: true,
+        mobile: true,
+      })),
+  ].filter((item) => isPagePathVisible(item.href, hiddenPages));
   return (
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <body
@@ -116,8 +131,8 @@ export default async function RootLayout({
           <div className="app-frame bg-background text-foreground min-h-screen">
             <Toaster position="top-center" richColors />
             <SiteChrome
-              header={<Navbar customPages={customPages} />}
-              dock={<MobileDock />}
+              header={<Navbar items={navigationItems} />}
+              dock={<MobileDock items={navigationItems} />}
               footer={<Footer />}
             >
               {children}

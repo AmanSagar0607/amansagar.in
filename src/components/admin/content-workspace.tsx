@@ -34,6 +34,8 @@ import { ProjectBoard } from "./project-board";
 import { ProjectOrderControl } from "./project-order-control";
 import { TrackEditor } from "./track-editor";
 import { PageEditor } from "./page-editor";
+import { PublicPageVisibility } from "./public-page-visibility";
+import { defaultSiteSettings } from "@/lib/admin/site-settings";
 
 export { isContentSection } from "@/lib/admin/content-sections";
 import {
@@ -306,6 +308,7 @@ export function ContentList({
         </Button>
       </div>
       {section === "pages" && (
+        <div className="space-y-4">
         <section className="space-y-3 rounded-xl border p-4" aria-labelledby="built-in-pages-heading">
           <div>
             <h2 id="built-in-pages-heading" className="font-semibold">Built-in pages</h2>
@@ -320,6 +323,8 @@ export function ContentList({
             ))}
           </div>
         </section>
+        <PublicPageVisibility initial={snapshot.settings ?? { ...defaultSiteSettings }} />
+        </div>
       )}
       {section === "projects" && <div role="group" aria-label="Project view" className="flex gap-2">
         <Button variant={projectView === "board" ? "default" : "outline"} aria-pressed={projectView === "board"} onClick={() => setProjectView("board")}>Board</Button>

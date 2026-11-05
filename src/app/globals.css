@@ -344,6 +344,13 @@ body {
   align-items: center;
   gap: 0.9rem;
   flex: 1 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.site-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .site-nav-link,
@@ -1364,7 +1371,12 @@ body {
   }
 }
 
+@media (min-width: 640px) and (max-width: 1279px) {
+  .nav-hide-tablet { display: none !important; }
+}
+
 @media (max-width: 639px) {
+  .nav-hide-mobile { display: none !important; }
   .page-shell {
     border-inline: none;
   }

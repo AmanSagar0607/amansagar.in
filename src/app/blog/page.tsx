@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { NotebookPen } from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { getPublicPosts } from "@/lib/public-posts";
+import { notFound } from "next/navigation";
+import { isPublicPageVisible } from "@/lib/public-page-visibility";
 
 interface BlogPost {
   slug: string;
@@ -19,6 +21,7 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
+  if (!(await isPublicPageVisible("/blog"))) notFound();
   const posts = (await getPublicPosts()) as unknown as BlogPost[];
 
   const grouped = posts.reduce<Record<string, BlogPost[]>>((acc, post) => {

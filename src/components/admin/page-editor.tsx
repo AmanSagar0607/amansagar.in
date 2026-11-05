@@ -118,9 +118,10 @@ export function PageEditor({
             </label>
             <label className="block text-sm font-medium">Visibility
               <FormSelect className={fieldClass} value={page.visibility} onChange={(event) => change("visibility", event.target.value as ManagedPage["visibility"])}>
-                <option value="private">Private</option><option value="public">Public</option>
+                <option value="private">Hidden from visitors</option><option value="public">Visible to visitors</option>
               </FormSelect>
             </label>
+            <p className="text-muted-foreground text-xs">Hidden pages are removed from public navigation and search listings, and their URL returns not found. Admin access remains available.</p>
             <label className="flex min-h-11 items-center gap-2 text-sm">
               <Checkbox checked={page.showInNavigation === true} onCheckedChange={(checked) => change("showInNavigation", checked === true)} />
               Show in More navigation

@@ -22,7 +22,28 @@
   homepageProjectsDescription?: string;
   homepageBlogTitle?: string;
   homepageBlogDescription?: string;
+  navigationItems?: NavigationItem[];
+  hiddenPages?: string[];
 }
+export interface NavigationItem {
+  id: string;
+  label: string;
+  href: string;
+  placement: "primary" | "more";
+  desktop: boolean;
+  tablet: boolean;
+  mobile: boolean;
+  external?: boolean;
+}
+export const manageablePages = [
+  { path: "/", label: "Home" },
+  { path: "/about", label: "About" },
+  { path: "/projects", label: "Projects (including project details)" },
+  { path: "/blog", label: "Blog (including articles)" },
+  { path: "/journey", label: "Journey (including entries and tracks)" },
+  { path: "/achievements", label: "Achievements" },
+  { path: "/contact", label: "Contact" },
+] as const;
 import { defaultWorkExperience, type WorkExperienceRecord, type WorkPosition } from "./work-experience";
 import { defaultTechnologyStack, type TechnologyGroup } from "./technology-stack";
 export const defaultSiteSettings: Readonly<SiteSettings> = {
@@ -35,6 +56,20 @@ export const defaultSiteSettings: Readonly<SiteSettings> = {
   homepageProjectsDescription: "Selected work with product screenshots and deployment proof.",
   homepageBlogTitle: "Blog",
   homepageBlogDescription: "Notes on AI agents, product engineering, and systems thinking.",
+  navigationItems: [
+    { id: "home", label: "home", href: "/", placement: "primary", desktop: true, tablet: true, mobile: true },
+    { id: "projects", label: "projects", href: "/projects", placement: "primary", desktop: true, tablet: true, mobile: true },
+    { id: "blog", label: "blog", href: "/blog", placement: "primary", desktop: true, tablet: true, mobile: true },
+    { id: "journey", label: "journey", href: "/journey", placement: "primary", desktop: true, tablet: true, mobile: true },
+    { id: "contact", label: "contact", href: "/contact", placement: "primary", desktop: true, tablet: true, mobile: true },
+    { id: "about", label: "about", href: "/about", placement: "more", desktop: true, tablet: true, mobile: true },
+    { id: "achievements", label: "achievements", href: "/achievements", placement: "more", desktop: true, tablet: true, mobile: true },
+    { id: "stack", label: "stack", href: "/#stack", placement: "more", desktop: true, tablet: true, mobile: true },
+    { id: "experience", label: "experience", href: "/#experience", placement: "more", desktop: true, tablet: true, mobile: true },
+    { id: "socials", label: "socials", href: "/#socials", placement: "more", desktop: true, tablet: true, mobile: true },
+    { id: "resume", label: "resume", href: "/resume", placement: "more", desktop: true, tablet: true, mobile: true, external: true },
+  ],
+  hiddenPages: [],
   profileTagline: "Building practical AI systems. Small details matter.",
   profileRole: "Software Engineer",
   profileBio: "I build full-stack software with a strong bias toward practical AI systems, retrieval workflows, and interfaces that feel clear and human.",
@@ -156,6 +191,51 @@ export function validateSiteSettings(input: unknown): SiteSettings {
       return { label: group.label.trim(), items: (group.items as string[]).map((item) => item.trim()) };
     });
   }
+  let navigationItems = defaultSiteSettings.navigationItems ?? [];
+  if (data.navigationItems !== undefined) {
+    if (!Array.isArray(data.navigationItems) || data.navigationItems.length > 50)
+      throw new Error("Navigation can contain at most 50 links.");
+    navigationItems = data.navigationItems.map((entry: unknown) => {
+      if (!entry || typeof entry !== "object" || Array.isArray(entry))
+        throw new Error("Invalid navigation link.");
+      const item = entry as Record<string, unknown>;
+      if (typeof item.id !== "string" || !/^[a-z0-9-]{1,80}$/.test(item.id) ||
+          typeof item.label !== "string" || !item.label.trim() || item.label.length > 60 ||
+          typeof item.href !== "string" || !item.href.trim() || item.href.length > 2048 ||
+          (item.placement !== "primary" && item.placement !== "more") ||
+          typeof item.desktop !== "boolean" || typeof item.tablet !== "boolean" || typeof item.mobile !== "boolean" || (item.external !== undefined && typeof item.external !== "boolean"))
+        throw new Error("Invalid navigation link settings.");
+      const href = item.href.trim();
+      if (href.startsWith("/")) {
+        if (href.startsWith("//") || href.includes("\\") || /[\u0000-\u001f]/.test(href))
+          throw new Error("Navigation links must use a safe site path.");
+      } else {
+        let url: URL;
+        try { url = new URL(href); } catch { throw new Error("Use a site path or valid HTTPS URL for navigation links."); }
+        if (url.protocol !== "https:" && url.protocol !== "mailto:")
+          throw new Error("External navigation links must use HTTPS or email.");
+      }
+      return {
+        id: item.id,
+        label: item.label.trim(),
+        href,
+        placement: item.placement,
+        desktop: item.desktop,
+        tablet: item.tablet,
+        mobile: item.mobile,
+        ...(item.external === true ? { external: true } : {}),
+      } as NavigationItem;
+    });
+    if (new Set(navigationItems.map((item) => item.id)).size !== navigationItems.length)
+      throw new Error("Navigation link identifiers must be unique.");
+  }
+  let hiddenPages: string[] = [];
+  if (data.hiddenPages !== undefined) {
+    if (!Array.isArray(data.hiddenPages) || data.hiddenPages.length > manageablePages.length ||
+        data.hiddenPages.some((path) => typeof path !== "string" || !manageablePages.some((page) => page.path === path)))
+      throw new Error("Invalid hidden page list.");
+    hiddenPages = [...new Set(data.hiddenPages as string[])];
+  }
   return {
     siteTitle: data.siteTitle.trim(),
     siteDescription: data.siteDescription.trim(),
@@ -180,5 +260,7 @@ export function validateSiteSettings(input: unknown): SiteSettings {
     technologyStack,
     aboutDescription: typeof data.aboutDescription === "string" ? data.aboutDescription.trim() : defaultSiteSettings.aboutDescription,
     aboutParagraphs: Array.isArray(data.aboutParagraphs) ? (data.aboutParagraphs as string[]).map((item) => item.trim()) : defaultSiteSettings.aboutParagraphs,
+    navigationItems,
+    hiddenPages,
   };
 }

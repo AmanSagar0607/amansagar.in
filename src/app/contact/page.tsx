@@ -3,6 +3,8 @@ import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { TallyForm } from "@/components/tally-form";
 import { getPublicSiteSettings } from "@/lib/public-site-settings";
+import { notFound } from "next/navigation";
+import { isPublicPageVisible } from "@/lib/public-page-visibility";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -29,6 +31,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
+  if (!(await isPublicPageVisible("/contact"))) notFound();
   const { contactEmail } = await getPublicSiteSettings();
   return (
     <main className="page-shell">

@@ -70,6 +70,8 @@ import { type MDXFile } from "@/lib/mdx-utils";
 import { getPublicPosts } from "@/lib/public-posts";
 import { getPublicProjects } from "@/lib/public-projects";
 import { getPublicSiteSettings } from "@/lib/public-site-settings";
+import { notFound } from "next/navigation";
+import { isPublicPageVisible } from "@/lib/public-page-visibility";
 import { defaultSiteSettings } from "@/lib/admin/site-settings";
 
 type BlogPostFrontmatter = {
@@ -301,6 +303,7 @@ function formatReadMeta(post: BlogPost) {
 }
 
 export default async function Home() {
+  if (!(await isPublicPageVisible("/"))) notFound();
   const posts = ((await getPublicPosts()) as unknown as BlogPost[])
     .sort(
       (a, b) =>

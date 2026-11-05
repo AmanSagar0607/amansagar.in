@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/page-header";
 import { getPublicSiteSettings } from "@/lib/public-site-settings";
 import { defaultSiteSettings } from "@/lib/admin/site-settings";
+import { notFound } from "next/navigation";
+import { isPublicPageVisible } from "@/lib/public-page-visibility";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getPublicSiteSettings();
@@ -9,6 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
+  if (!(await isPublicPageVisible("/about"))) notFound();
   const settings = await getPublicSiteSettings();
   return (
     <main className="page-shell">

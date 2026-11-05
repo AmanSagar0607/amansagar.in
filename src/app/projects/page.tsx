@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/page-header";
 import { PortfolioProjectGrid } from "@/components/portfolio-project-grid";
 import { getPublicProjects } from "@/lib/public-projects";
+import { notFound } from "next/navigation";
+import { isPublicPageVisible } from "@/lib/public-page-visibility";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -25,6 +27,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ProjectsPage() {
+  if (!(await isPublicPageVisible("/projects"))) notFound();
   const projects = await getPublicProjects();
 
   return (

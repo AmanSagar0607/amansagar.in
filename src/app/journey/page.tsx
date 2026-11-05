@@ -15,6 +15,8 @@ import {
 } from "@/lib/public-journey";
 import { activityHref, isChallengeComplete } from "@/lib/journey/logic";
 import { journeyMetadata } from "@/lib/journey/seo";
+import { notFound } from "next/navigation";
+import { isPublicPageVisible } from "@/lib/public-page-visibility";
 
 export const metadata = journeyMetadata(
   "Journey",
@@ -27,6 +29,7 @@ export default async function JourneyPage({
 }: {
   searchParams: Promise<{ type?: string }>;
 }) {
+  if (!(await isPublicPageVisible("/journey"))) notFound();
   const [activities, tracks, achievements, challenges, query] =
     await Promise.all([
       getPublicActivities(),

@@ -10,10 +10,13 @@ import {
 import { getPublicActivities, getPublicTracks } from "@/lib/public-journey";
 import { journeyMetadata } from "@/lib/journey/seo";
 import { getPublicProjectsBySlug } from "@/lib/public-projects";
+import { isPublicPageVisible } from "@/lib/public-page-visibility";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: Props) {
+  if (!(await isPublicPageVisible("/journey")))
+    return { title: "Not found", robots: { index: false, follow: false } };
   const { slug } = await params;
   const activity = (await getPublicActivities()).find(
     (item) => item.slug === slug,
@@ -36,6 +39,7 @@ export async function generateMetadata({ params }: Props) {
 
 export default async function ActivityPage({ params }: Props) {
   const { slug } = await params;
+  if (!(await isPublicPageVisible("/journey"))) notFound();
   const [activities, tracks] = await Promise.all([
     getPublicActivities(),
     getPublicTracks(),
