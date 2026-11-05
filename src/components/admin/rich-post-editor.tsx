@@ -5,6 +5,8 @@ import { Textarea as FormTextarea } from "@/components/ui/textarea";
 
 import { useEffect, useRef, useState } from "react";
 import { EditorContent, useEditor } from "@tiptap/react";
+import type { Editor } from "@tiptap/core";
+import type { SelectionBookmark } from "@tiptap/pm/state";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import TextAlign from "@tiptap/extension-text-align";
@@ -24,8 +26,24 @@ import {
   Minus,
   ImagePlus,
   Table2,
+  ImageIcon,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuSeparator,
+} from "@/components/ui/context-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { MediaPicker } from "./media-picker";
 import { isRichArticle, normalizeArticleMarkdown } from "@/lib/article-content";
 import "./rich-post-editor.css";
@@ -115,6 +133,32 @@ export default function RichPostEditor({
   const [message, setMessage] = useState("");
   const [link, setLink] = useState("");
   const [showLink, setShowLink] = useState(false);
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const imageSelection = useRef<SelectionBookmark | null>(null);
+  const imageInsertAt = useRef<number | null>(null);
+  const [editingImage, setEditingImage] = useState(false);
+  const [caretAction, setCaretAction] = useState<{
+    top: number;
+    image: boolean;
+  } | null>(null);
+  function positionImageAction(current: Editor) {
+    if (!canvasRef.current) return;
+    const imageSelected = current.isActive("image");
+    const node = imageSelected
+      ? current.view.nodeDOM(current.state.selection.from)
+      : null;
+    const bounds =
+      node instanceof HTMLElement
+        ? node.getBoundingClientRect()
+        : current.view.coordsAtPos(current.state.selection.from);
+    setCaretAction({
+      top: Math.max(
+        8,
+        bounds.top - canvasRef.current.getBoundingClientRect().top,
+      ),
+      image: imageSelected,
+    });
+  }
   const editor = useEditor({
     immediatelyRender: false,
     shouldRerenderOnTransaction: true,
@@ -133,7 +177,7 @@ export default function RichPostEditor({
     editorProps: {
       attributes: {
         class:
-          "prose prose-ncdai dark:prose-invert max-w-none min-h-[28rem] p-5 sm:p-8 outline-none",
+          "prose prose-ncdai dark:prose-invert max-w-none min-h-[28rem] py-5 pl-5 pr-14 sm:py-8 sm:pl-8 sm:pr-16 outline-none",
         "aria-label": "Article content",
         role: "textbox",
         "aria-multiline": "true",
@@ -154,6 +198,18 @@ export default function RichPostEditor({
         }
         return false;
       },
+      handleKeyDown(_view, event) {
+        if (
+          (event.ctrlKey || event.metaKey) &&
+          event.altKey &&
+          event.key.toLowerCase() === "i"
+        ) {
+          event.preventDefault();
+          if (editor) openImageSettings(editor);
+          return true;
+        }
+        return false;
+      },
     },
     onUpdate({ editor: current }) {
       const html = current.isEmpty ? "" : current.getHTML();
@@ -161,6 +217,7 @@ export default function RichPostEditor({
       onChangeRef.current(html);
     },
     onSelectionUpdate({ editor: current }) {
+      positionImageAction(current);
       if (current.isActive("image")) {
         const attrs = current.getAttributes("image");
         setImage({
@@ -171,8 +228,10 @@ export default function RichPostEditor({
           height: attrs.height?.toString() || "",
           align: attrs.align || "center",
         });
-        setShowImage(true);
       }
+    },
+    onFocus({ editor: current }) {
+      positionImageAction(current);
     },
   });
   useEffect(() => {
@@ -237,8 +296,23 @@ export default function RichPostEditor({
       height: image.height ? Number(image.height) : null,
       align: image.align,
     };
-    if (editor.isActive("image"))
+    if (imageSelection.current)
+      editor.view.dispatch(
+        editor.state.tr.setSelection(
+          imageSelection.current.resolve(editor.state.doc),
+        ),
+      );
+    if (editingImage && editor.isActive("image"))
       editor.chain().focus().updateAttributes("image", attrs).run();
+    else if (imageInsertAt.current !== null)
+      editor
+        .chain()
+        .focus()
+        .insertContentAt(imageInsertAt.current, [
+          { type: "image", attrs },
+          { type: "paragraph" },
+        ])
+        .run();
     else
       editor
         .chain()
@@ -249,12 +323,51 @@ export default function RichPostEditor({
     setShowImage(false);
     setImage(blankImage);
   }
+  function openImageSettings(current: Editor, insertAfterImage = false) {
+    imageSelection.current = current.state.selection.getBookmark();
+    imageInsertAt.current = insertAfterImage
+      ? current.state.selection.to
+      : null;
+    const selected = current.isActive("image") && !insertAfterImage;
+    setEditingImage(selected);
+    setMessage("");
+    if (selected) {
+      const attrs = current.getAttributes("image");
+      setImage({
+        src: attrs.src || "",
+        alt: attrs.alt || "",
+        caption: attrs.caption || "",
+        width: attrs.width?.toString() || "",
+        height: attrs.height?.toString() || "",
+        align: attrs.align || "center",
+      });
+    } else setImage(blankImage);
+    setShowImage(true);
+  }
+  function removeImage() {
+    if (!editor) return;
+    if (imageSelection.current)
+      editor.view.dispatch(
+        editor.state.tr.setSelection(
+          imageSelection.current.resolve(editor.state.doc),
+        ),
+      );
+    if (editor.isActive("image"))
+      editor.chain().focus().deleteSelection().run();
+    setShowImage(false);
+  }
   return (
     <div className="article-editor border-border min-w-0 rounded-lg border">
       <div className="bg-muted/40 border-border flex flex-wrap items-center justify-between gap-2 border-b px-3 py-2">
-        <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
-          Article canvas
-        </span>
+        <div className="min-w-0">
+          <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
+            Article canvas
+          </span>
+          <p className="text-muted-foreground mt-1 text-xs">
+            Place your cursor, then choose Image, right-click, or press
+            Ctrl/⌘+Alt+I.
+          </p>
+        </div>
         <div className="flex gap-1" aria-label="Editor mode">
           <Button
             type="button"
@@ -426,15 +539,18 @@ export default function RichPostEditor({
             {toolbar("Divider", <Minus size={16} />, () =>
               editor.chain().focus().setHorizontalRule().run(),
             )}
-            {toolbar(
-              "Insert image",
-              <ImagePlus size={16} />,
-              () => {
-                if (!editor.isActive("image")) setImage(blankImage);
-                setShowImage(!showImage);
-              },
-              showImage,
-            )}
+            <Button
+              type="button"
+              variant={showImage ? "secondary" : "ghost"}
+              className="min-h-11 gap-2 px-3"
+              aria-label="Insert image at cursor"
+              title="Insert image where your cursor is"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => openImageSettings(editor)}
+            >
+              <ImagePlus size={16} />
+              <span>Image</span>
+            </Button>
             {toolbar("Insert table", <Table2 size={16} />, () =>
               editor
                 .chain()
@@ -537,127 +653,144 @@ export default function RichPostEditor({
               </Button>
             </div>
           )}
-          {showImage && (
-            <fieldset className="bg-muted/20 border-border space-y-4 border-b p-4">
-              <legend className="px-1 text-sm font-medium">
-                {editor.isActive("image")
-                  ? "Edit selected image"
-                  : "Insert an image in your article"}
-              </legend>
-              <MediaPicker
-                onSelect={(url) =>
-                  setImage((current) => ({ ...current, src: url }))
-                }
-              />
-              <div className="grid gap-3 sm:grid-cols-2">
-                <label className="text-sm sm:col-span-2">
-                  Image URL
-                  <FormInput
-                    className={input}
-                    value={image.src}
-                    onChange={(e) =>
-                      setImage({ ...image, src: e.target.value })
-                    }
-                  />
-                </label>
-                <label className="text-sm">
-                  Alternative text
-                  <FormInput
-                    className={input}
-                    value={image.alt}
-                    onChange={(e) =>
-                      setImage({ ...image, alt: e.target.value })
-                    }
-                    placeholder="Describe what the image shows"
-                  />
-                </label>
-                <label className="text-sm">
-                  Caption / reference
-                  <FormInput
-                    className={input}
-                    value={image.caption}
-                    onChange={(e) =>
-                      setImage({ ...image, caption: e.target.value })
-                    }
-                    placeholder="Source or explanation"
-                  />
-                </label>
-                <label className="text-sm">
-                  Width (px)
-                  <FormInput
-                    type="number"
-                    min={1}
-                    max={10000}
-                    className={input}
-                    value={image.width}
-                    onChange={(e) =>
-                      setImage({ ...image, width: e.target.value })
-                    }
-                    placeholder="Automatic"
-                  />
-                </label>
-                <label className="text-sm">
-                  Height (px)
-                  <FormInput
-                    type="number"
-                    min={1}
-                    max={10000}
-                    className={input}
-                    value={image.height}
-                    onChange={(e) =>
-                      setImage({ ...image, height: e.target.value })
-                    }
-                    placeholder="Automatic"
-                  />
-                </label>
-                <label className="text-sm">
-                  Alignment
-                  <FormSelect
-                    className={input}
-                    value={image.align}
-                    onChange={(e) =>
-                      setImage({ ...image, align: e.target.value })
-                    }
-                  >
-                    <option value="left">Left</option>
-                    <option value="center">Center</option>
-                    <option value="right">Right</option>
-                  </FormSelect>
-                </label>
-              </div>
-              <p className="text-muted-foreground text-xs leading-5">
-                Images stay within the article width on mobile. Leave one
-                dimension empty to keep the natural aspect ratio. Select an
-                image in the canvas to edit it later.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <Button type="button" className="min-h-11" onClick={saveImage}>
-                  {editor.isActive("image") ? "Update image" : "Insert image"}
-                </Button>
-                {editor.isActive("image") && (
+          <Dialog open={showImage} onOpenChange={setShowImage}>
+            <DialogContent
+              className="max-h-[85dvh] overflow-y-auto sm:max-w-xl"
+              onCloseAutoFocus={(event) => {
+                event.preventDefault();
+                editor.commands.focus(undefined, { scrollIntoView: false });
+              }}
+            >
+              <DialogTitle>
+                {editingImage ? "Edit selected image" : "Insert image here"}
+              </DialogTitle>
+              <DialogDescription>
+                Choose or upload an image, then adjust its appearance. Your
+                place in the article is preserved.
+              </DialogDescription>
+              <fieldset className="space-y-4">
+                <legend className="sr-only">Image properties</legend>
+                <MediaPicker
+                  onSelect={(url) =>
+                    setImage((current) => ({ ...current, src: url }))
+                  }
+                />
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label className="text-sm sm:col-span-2">
+                    Image URL
+                    <FormInput
+                      className={input}
+                      value={image.src}
+                      onChange={(e) =>
+                        setImage({ ...image, src: e.target.value })
+                      }
+                    />
+                  </label>
+                  <label className="text-sm">
+                    Alternative text
+                    <FormInput
+                      className={input}
+                      value={image.alt}
+                      onChange={(e) =>
+                        setImage({ ...image, alt: e.target.value })
+                      }
+                      placeholder="Describe what the image shows"
+                    />
+                  </label>
+                  <label className="text-sm">
+                    Caption / reference
+                    <FormInput
+                      className={input}
+                      value={image.caption}
+                      onChange={(e) =>
+                        setImage({ ...image, caption: e.target.value })
+                      }
+                      placeholder="Source or explanation"
+                    />
+                  </label>
+                  <label className="text-sm">
+                    Width (px)
+                    <FormInput
+                      type="number"
+                      min={1}
+                      max={10000}
+                      className={input}
+                      value={image.width}
+                      onChange={(e) =>
+                        setImage({ ...image, width: e.target.value })
+                      }
+                      placeholder="Automatic"
+                    />
+                  </label>
+                  <label className="text-sm">
+                    Height (px)
+                    <FormInput
+                      type="number"
+                      min={1}
+                      max={10000}
+                      className={input}
+                      value={image.height}
+                      onChange={(e) =>
+                        setImage({ ...image, height: e.target.value })
+                      }
+                      placeholder="Automatic"
+                    />
+                  </label>
+                  <label className="text-sm">
+                    Alignment
+                    <FormSelect
+                      className={input}
+                      value={image.align}
+                      onChange={(e) =>
+                        setImage({ ...image, align: e.target.value })
+                      }
+                    >
+                      <option value="left">Left</option>
+                      <option value="center">Center</option>
+                      <option value="right">Right</option>
+                    </FormSelect>
+                  </label>
+                </div>
+                <p className="text-muted-foreground text-xs leading-5">
+                  Images stay within the article width on mobile. Leave one
+                  dimension empty to keep the natural aspect ratio. Select an
+                  image in the canvas to edit it later.
+                </p>
+                {message && (
+                  <p role="alert" className="text-destructive text-sm">
+                    {message}
+                  </p>
+                )}
+                <div className="flex flex-wrap gap-2">
                   <Button
                     type="button"
-                    variant="outline"
                     className="min-h-11"
-                    onClick={() => {
-                      editor.chain().focus().deleteSelection().run();
-                      setShowImage(false);
-                    }}
+                    onClick={saveImage}
                   >
-                    Remove image
+                    {editingImage ? "Update image" : "Insert image"}
                   </Button>
-                )}
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="min-h-11"
-                  onClick={() => setShowImage(false)}
-                >
-                  Close
-                </Button>
-              </div>
-            </fieldset>
-          )}
+                  {editingImage && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="min-h-11"
+                      onClick={removeImage}
+                    >
+                      Remove image
+                    </Button>
+                  )}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="min-h-11"
+                    onClick={() => setShowImage(false)}
+                  >
+                    Close
+                  </Button>
+                </div>
+              </fieldset>
+            </DialogContent>
+          </Dialog>
           {editor.isActive("table") && (
             <div className="border-border flex flex-wrap gap-2 border-b p-2">
               {[
@@ -688,15 +821,96 @@ export default function RichPostEditor({
               ))}
             </div>
           )}
-          {message && (
+          {message && !showImage && (
             <p role="alert" className="text-destructive px-4 py-3 text-sm">
               {message}
             </p>
           )}
-          <EditorContent editor={editor} />
+          <ContextMenu modal={false}>
+            <ContextMenuTrigger asChild>
+              <div
+                ref={canvasRef}
+                className="relative"
+                onContextMenuCapture={(event) => {
+                  const target =
+                    event.target instanceof Element
+                      ? event.target.closest("img")
+                      : null;
+                  if (target && editor.view.dom.contains(target)) {
+                    const pos = editor.view.posAtDOM(target, 0);
+                    if (editor.state.doc.nodeAt(pos)?.type.name === "image")
+                      editor.commands.setNodeSelection(pos);
+                  } else if (event.clientX || event.clientY) {
+                    const position = editor.view.posAtCoords({
+                      left: event.clientX,
+                      top: event.clientY,
+                    });
+                    if (position)
+                      editor.commands.setTextSelection(position.pos);
+                  }
+                  imageSelection.current = editor.state.selection.getBookmark();
+                }}
+              >
+                <EditorContent editor={editor} />
+                {caretAction && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="bg-background absolute right-1 z-10 min-h-11 min-w-11 shadow-sm sm:right-2"
+                    style={{ top: caretAction.top }}
+                    aria-label={
+                      caretAction.image
+                        ? "Edit selected image"
+                        : "Insert image at cursor"
+                    }
+                    title={
+                      caretAction.image
+                        ? "Edit image"
+                        : "Insert image here (Ctrl/⌘+Alt+I)"
+                    }
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => openImageSettings(editor)}
+                  >
+                    <ImagePlus className="size-4" />
+                  </Button>
+                )}
+              </div>
+            </ContextMenuTrigger>
+            <ContextMenuContent
+              onCloseAutoFocus={(event) => event.preventDefault()}
+            >
+              <ContextMenuLabel>Article image</ContextMenuLabel>
+              <ContextMenuItem
+                onSelect={() =>
+                  openImageSettings(editor, editor.isActive("image"))
+                }
+              >
+                <ImagePlus />
+                {editor.isActive("image")
+                  ? "Insert image after this one…"
+                  : "Insert image here…"}
+              </ContextMenuItem>
+              {editor.isActive("image") && (
+                <>
+                  <ContextMenuItem onSelect={() => openImageSettings(editor)}>
+                    <ImageIcon />
+                    Image size, alignment & caption…
+                  </ContextMenuItem>
+                  <ContextMenuSeparator />
+                  <ContextMenuItem variant="destructive" onSelect={removeImage}>
+                    <Trash2 />
+                    Remove image
+                  </ContextMenuItem>
+                </>
+              )}
+            </ContextMenuContent>
+          </ContextMenu>
           <p className="border-border text-muted-foreground border-t px-4 py-3 text-xs leading-5">
             Write directly, paste formatted text, or import Markdown. Use
-            headings for structure and descriptive links for references.
+            headings for structure and descriptive links for references.{" "}
+            Right-click where you are writing to insert an image, or use
+            Ctrl/⌘+Alt+I. Select an image to edit its size, alignment and
+            caption.
           </p>
         </>
       )}

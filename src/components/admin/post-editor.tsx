@@ -116,7 +116,6 @@ export function PostEditor({
             Write, preview and control when your article is visible.
           </p>
           {initial.updatedAt && <p className="text-muted-foreground mt-2 text-xs">Version {initial.version ?? 1} · Last edited {new Date(initial.updatedAt).toLocaleString()}</p>}
-          {initial.updatedAt && <p className="text-muted-foreground mt-2 text-xs">Version {initial.version ?? 1} · Last edited {new Date(initial.updatedAt).toLocaleString()}</p>}
         </div>
         <div className="flex gap-2">
           <Button
@@ -167,6 +166,9 @@ export function PostEditor({
                 value={post.title}
                 onChange={(event) => change("title", event.target.value)}
               />
+              <span className="text-muted-foreground mt-1 block text-xs">
+                {post.title.length}/200 characters
+              </span>
             </label>
             <label className="block text-sm font-medium">
               Slug
@@ -189,6 +191,9 @@ export function PostEditor({
                 value={post.description}
                 onChange={(event) => change("description", event.target.value)}
               />
+              <span className="text-muted-foreground mt-1 block text-xs">
+                {post.description.length}/1000 characters · Keep it concise for search previews.
+              </span>
             </label>
             <details className="border-border rounded-md border p-4">
               <summary className="cursor-pointer text-sm font-medium">
