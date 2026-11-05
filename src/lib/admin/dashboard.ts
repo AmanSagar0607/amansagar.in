@@ -10,6 +10,9 @@ export interface DashboardUpdate {
   date: string;
   href: string;
   status: string;
+  visibility?: string;
+  sample?: boolean;
+  scheduled?: boolean;
 }
 export interface DashboardMetrics {
   publishedPosts: number;
@@ -21,6 +24,16 @@ export interface DashboardMetrics {
   drafts: number;
   recentUpdates: DashboardUpdate[];
   monthlyActivity: { month: string; label: string; count: number }[];
+  monthlyPublications?: {
+    month: string;
+    label: string;
+    posts: number;
+    activities: number;
+  }[];
+  draftQueue?: DashboardUpdate[];
+  draftBreakdown?: { posts: number; projects: number; activities: number };
+  scheduledPosts?: number;
+  nextPublication?: { title: string; date: string; href: string };
 }
 
 /** Derive counts and recent activity from source records, without demonstration data. */
@@ -51,7 +64,7 @@ export function dashboardMetrics(
       ).length,
     };
   });
-  const recentUpdates: DashboardUpdate[] = [
+  const allUpdates: DashboardUpdate[] = [
     ...snapshot.posts.map((post) => ({
       id: `post:${post.slug}`,
       title: post.title,
@@ -59,6 +72,9 @@ export function dashboardMetrics(
       date: post.updatedAt,
       href: `/admin/posts/edit/${post.slug}`,
       status: post.status,
+      visibility: post.visibility,
+      sample: post.sample,
+      scheduled: Date.parse(post.publishedAt) > now.getTime(),
     })),
     ...snapshot.projects.map((item) => ({
       id: `project:${item.slug}`,
@@ -67,6 +83,7 @@ export function dashboardMetrics(
       date: item.updatedAt,
       href: `/admin/projects/edit/${item.slug}`,
       status: item.status,
+      visibility: item.visibility,
     })),
     ...snapshot.journey.activities.map((activity) => ({
       id: `activity:${activity.slug}`,
@@ -75,11 +92,23 @@ export function dashboardMetrics(
       date: activity.updatedAt,
       href: `/admin/activities/edit/${activity.slug}`,
       status: activity.status,
+      visibility: activity.visibility,
+      sample: activity.sample,
+      scheduled: Date.parse(activity.date) > now.getTime(),
     })),
   ]
     .filter((item) => Number.isFinite(Date.parse(item.date)))
-    .sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
-    .slice(0, 8);
+    .sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
+  const scheduledPosts = snapshot.posts
+    .filter(
+      (post) =>
+        post.status === "published" &&
+        post.visibility === "public" &&
+        !post.sample &&
+        Date.parse(post.publishedAt) > now.getTime(),
+    )
+    .sort((a, b) => Date.parse(a.publishedAt) - Date.parse(b.publishedAt));
+  const nextPost = scheduledPosts[0];
   return {
     publishedPosts: publishedPosts.length,
     projects: snapshot.projects.length,
@@ -97,7 +126,35 @@ export function dashboardMetrics(
       snapshot.journey.activities.filter(
         (activity) => activity.status === "draft",
       ).length,
-    recentUpdates,
+    recentUpdates: allUpdates.slice(0, 8),
     monthlyActivity,
+    monthlyPublications: monthlyActivity.map((month) => ({
+      month: month.month,
+      label: month.label,
+      activities: month.count,
+      posts: publishedPosts.filter((post) =>
+        new Date(post.publishedAt).toISOString().startsWith(month.month),
+      ).length,
+    })),
+    draftQueue: allUpdates
+      .filter((item) => item.status === "draft")
+      .slice(0, 4),
+    draftBreakdown: {
+      posts: snapshot.posts.filter((post) => post.status === "draft").length,
+      projects: snapshot.projects.filter(
+        (project) => project.status === "draft",
+      ).length,
+      activities: snapshot.journey.activities.filter(
+        (activity) => activity.status === "draft",
+      ).length,
+    },
+    scheduledPosts: scheduledPosts.length,
+    nextPublication: nextPost
+      ? {
+          title: nextPost.title,
+          date: nextPost.publishedAt,
+          href: `/admin/posts/edit/${nextPost.slug}`,
+        }
+      : undefined,
   };
 }
