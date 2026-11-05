@@ -26,13 +26,26 @@ function sameOrigin(request: NextRequest) {
   )
     throw new RequestError(403, "Same-origin request required.");
 }
-function error(error: unknown) {
+export function documentErrorResponse(error: unknown) {
   if (error instanceof RequestError)
     return respond({ error: error.message }, error.status);
   if (error instanceof AdminUnauthorizedError)
     return respond({ error: error.message }, 401);
   if (error instanceof AdminForbiddenError)
     return respond({ error: error.message }, 403);
+  if (
+    error instanceof Error &&
+    /R2 document storage is not configured|Invalid R2 bucket name/i.test(
+      error.message,
+    )
+  )
+    return respond(
+      {
+        error:
+          "Private PDF storage is not configured. Add the four R2 settings to the Vercel Production environment and redeploy.",
+      },
+      503,
+    );
   if (
     error instanceof Error &&
     /Invalid|Choose a PDF|file contents|not found/i.test(error.message)
@@ -81,7 +94,7 @@ export function createDocumentRouteHandlers(
       const service = await serviceFor(request);
       return respond({ documents: await service.list() });
     } catch (cause) {
-      return error(cause);
+      return documentErrorResponse(cause);
     }
   }
   async function POST(request: NextRequest) {
@@ -136,7 +149,7 @@ export function createDocumentRouteHandlers(
         throw new Error("Document upload metadata is unavailable.");
       return respond({ document }, 201);
     } catch (cause) {
-      return error(cause);
+      return documentErrorResponse(cause);
     }
   }
   async function PATCH(request: NextRequest) {
@@ -149,7 +162,7 @@ export function createDocumentRouteHandlers(
       await service.rename(body.id, body.name);
       return respond({ updated: true });
     } catch (cause) {
-      return error(cause);
+      return documentErrorResponse(cause);
     }
   }
   async function DELETE(request: NextRequest) {
@@ -162,7 +175,7 @@ export function createDocumentRouteHandlers(
       await service.delete(body.id);
       return respond({ deleted: true });
     } catch (cause) {
-      return error(cause);
+      return documentErrorResponse(cause);
     }
   }
   return { GET, POST, PATCH, DELETE };
