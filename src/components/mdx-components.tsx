@@ -153,7 +153,7 @@ const components: MDXComponents = {
   img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
     <img
       {...props}
-      className={`rounded-lg object-cover w-full h-96 my-6 ${props.className ?? ""}`}
+      className={cn("my-6 block h-auto max-w-full rounded-lg object-contain", props.className)}
       alt={props.alt || "Image"}
     />
   ),

@@ -24,6 +24,7 @@ export type LineNavProps = {
   activeHref?: string
   /** Scroll the active item into view on mount. */
   scrollActiveIntoView?: boolean
+  ariaLabel?: string
   /** Called when an item is clicked. */
   onItemClick?: (
     item: LineNavItem,
@@ -36,6 +37,7 @@ export function LineNav({
   items,
   activeHref,
   scrollActiveIntoView = true,
+  ariaLabel = "Article sections",
   onItemClick,
 }: LineNavProps) {
   const activeItemRef = useRef<HTMLAnchorElement | null>(null)
@@ -48,6 +50,7 @@ export function LineNav({
 
   return (
     <nav
+      aria-label={ariaLabel}
       className={cn("flex flex-col gap-2 py-5.25", className)}
       style={
         {
@@ -100,8 +103,8 @@ const LineNavItem = memo(function LineNavItem({
       */}
       <motion.a
         ref={ref}
-        aria-current={active ? "page" : undefined}
-        className="group relative flex h-px items-center gap-3 after:absolute after:top-1/2 after:left-0 after:size-full after:-translate-y-1/2 after:p-3.5"
+        aria-current={active ? "location" : undefined}
+        className="group relative flex min-h-6 items-center gap-3 py-1 after:absolute after:top-1/2 after:left-0 after:size-full after:-translate-y-1/2 after:p-3.5"
         href={href}
         initial={false}
         animate={active ? "active" : "normal"}
@@ -109,11 +112,11 @@ const LineNavItem = memo(function LineNavItem({
         onClick={onClick}
       >
         <motion.span
-          className="block h-px shrink-0 bg-foreground/20 transition-[background-color] ease-out group-hover:bg-foreground group-aria-[current=page]:bg-foreground"
+          className="block h-px shrink-0 bg-foreground/20 transition-[background-color] ease-out group-hover:bg-foreground group-aria-[current=location]:bg-foreground"
           variants={lineVariants}
           transition={{ type: "spring", stiffness: 200, damping: 20 }}
         />
-        <span className="text-sm whitespace-nowrap text-muted-foreground transition-[color] ease-out group-hover:text-foreground group-aria-[current=page]:text-foreground">
+        <span className="min-w-0 text-sm text-muted-foreground transition-[color] ease-out group-hover:text-foreground group-aria-[current=location]:text-foreground">
           {title}
         </span>
       </motion.a>

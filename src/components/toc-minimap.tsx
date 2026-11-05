@@ -11,6 +11,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { LineNav } from "@/components/line-nav"
 
 export type TOCItemType = {
   title: React.ReactNode
@@ -83,29 +84,16 @@ export function TOCMinimap({ items, className }: TOCMinimapProps) {
           sideOffset={-60}
         >
           <ScrollArea className="toc-scrollbar max-h-[50dvh] overscroll-contain">
-            <ul className="flex size-full flex-col gap-0.5 px-5 py-4 text-sm">
-              {items.map((item) => (
-                <li key={item.url} className="flex">
-                  <a
-                    href={item.url}
-                    data-depth={item.depth}
-                    data-active={item.url === `#${activeHeading}`}
-                    className={cn(
-                      "grid w-full grid-cols-[var(--toc-indent)_minmax(0,1fr)] py-1.5 transition-[color,background-color] duration-200 [--toc-indent:0rem]",
-                      "pl-2 text-muted-foreground hover:text-foreground data-active:text-foreground",
-                      "hover:bg-accent/30 data-active:bg-accent/10",
-                      "data-[depth=2]:[--toc-indent:0rem] data-[depth=3]:[--toc-indent:1rem] data-[depth=4]:[--toc-indent:2rem]"
-                    )}
-                    onClick={handleItemClick}
-                  >
-                    <span aria-hidden />
-                    <span className="min-w-0 text-pretty leading-5">
-                      {item.title}
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <LineNav
+              className="gap-2 px-4 py-4 [&>a]:h-auto [&>a]:min-h-8 [&>a]:items-start [&>a]:gap-2 [&>a]:py-1 [&>a]:after:p-2 [&>a>span:last-child]:whitespace-normal [&>a>span:last-child]:leading-5 [&>span]:ml-0"
+              ariaLabel="Article table of contents"
+              items={items.map((item) => ({
+                title: `${item.depth > 2 ? "　" : ""}${String(item.title)}`,
+                href: item.url,
+              }))}
+              activeHref={activeHeading ? `#${activeHeading}` : undefined}
+              onItemClick={handleLineNavClick}
+            />
           </ScrollArea>
         </HoverCardContent>
       </HoverCard>
@@ -148,10 +136,12 @@ export function useActiveHeading(itemIds: string[]) {
   return activeId
 }
 
-function handleItemClick(e: React.MouseEvent<HTMLAnchorElement>) {
+function handleLineNavClick(
+  item: { href: string; title: string },
+  e: React.MouseEvent<HTMLAnchorElement>
+) {
   e.preventDefault()
-  const url = e.currentTarget.getAttribute("href") ?? ""
-  scrollToHeading(url)
+  scrollToHeading(item.href)
 }
 
 function scrollToHeading(url: string) {

@@ -178,12 +178,12 @@ export default async function BlogPost({
               </div>
 
               {frontmatter.image ? (
-                <div className="relative mt-8 h-64 w-full overflow-hidden rounded-lg border border-[#e7e7e7] dark:border-[#1c1c1c] md:h-80">
+                <div className="relative mt-8 aspect-video w-full overflow-hidden rounded-lg border border-[#e7e7e7] bg-muted/30 dark:border-[#1c1c1c]">
                   <Image
                     src={frontmatter.image}
                     alt={frontmatter.title}
                     fill
-                    className="object-cover"
+                    className="object-contain"
                     priority
                   />
                 </div>
