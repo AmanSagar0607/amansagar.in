@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { Copy, Check } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { Copy, Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -11,43 +11,49 @@ interface CodeBlockProps extends React.HTMLAttributes<HTMLPreElement> {
 }
 
 export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
-  const [copied, setCopied] = useState(false);
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
   const preRef = useRef<HTMLPreElement>(null);
+  const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const copyToClipboard = async (text: string) => {
-    if (typeof navigator !== 'undefined' && navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+  useEffect(() => () => {
+    if (resetTimer.current) clearTimeout(resetTimer.current);
+  }, []);
+
+  const copyToClipboard = async (text: string): Promise<boolean> => {
+    if (typeof navigator !== "undefined" && navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
       try {
         await navigator.clipboard.writeText(text);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        return true;
       } catch {
-        console.error('Failed to copy text');
+        // Try the selection-based fallback for browsers that deny clipboard access.
       }
-    } else {
-      // Fallback for older browsers and mobile
-      try {
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.style.position = 'fixed'; // Prevent scrolling to bottom of page in MS Edge.
-        document.body.appendChild(textarea);
-        textarea.focus();
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      } catch {
-        alert('Copy to clipboard is not supported on this device/browser.');
-      }
+    }
+
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    try {
+      textarea.focus();
+      textarea.select();
+      return document.execCommand("copy");
+    } catch {
+      return false;
+    } finally {
+      textarea.remove();
     }
   };
 
-  const handleCopy = () => {
-    if (preRef.current) {
-      const codeElement = preRef.current.querySelector('code');
-      const codeToCopy = codeElement ? codeElement.textContent || '' : '';
-      copyToClipboard(codeToCopy);
-    }
+  const handleCopy = async () => {
+    if (!preRef.current) return;
+    const codeElement = preRef.current.querySelector("code");
+    const codeToCopy = codeElement?.textContent ?? "";
+    const copied = await copyToClipboard(codeToCopy);
+    setCopyState(copied ? "copied" : "error");
+    if (resetTimer.current) clearTimeout(resetTimer.current);
+    resetTimer.current = setTimeout(() => setCopyState("idle"), 2400);
   };
 
   return (
@@ -72,18 +78,23 @@ export function CodeBlock({ className, children, ...props }: CodeBlockProps) {
         type="button"
         variant="outline"
         size="icon"
-        onClick={handleCopy}
+        onClick={() => void handleCopy()}
         className={cn(
           "absolute top-4 right-4 z-10 bg-background/90 text-muted-foreground hover:text-foreground backdrop-blur-sm",
         )}
-        aria-label="Copy code"
+        aria-label={copyState === "copied" ? "Code copied" : copyState === "error" ? "Copy failed" : "Copy code"}
       >
-        {copied ? (
+        {copyState === "copied" ? (
           <Check className="h-3.5 w-3.5" />
+        ) : copyState === "error" ? (
+          <X className="h-3.5 w-3.5" />
         ) : (
           <Copy className="h-3.5 w-3.5" />
         )}
       </Button>
+      <span className="sr-only" role="status" aria-live="polite">
+        {copyState === "copied" ? "Code copied to clipboard." : copyState === "error" ? "Could not copy code to clipboard." : ""}
+      </span>
     </div>
   );
 }
