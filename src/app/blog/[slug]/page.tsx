@@ -140,6 +140,9 @@ export default async function BlogPost({
         <aside className="fixed right-8 top-1/2 z-40 hidden -translate-y-1/2 xl:block">
           <TOCMinimap items={headings} />
         </aside>
+        <aside className="fixed inset-x-0 bottom-4 z-40 flex justify-end px-4 xl:hidden">
+          <TOCMinimap items={headings} mobile />
+        </aside>
 
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(schema) }} />
         <article className="mx-auto w-full max-w-[680px]">
