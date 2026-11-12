@@ -59,12 +59,19 @@ export function MobileDock({
     >
       <div className="pointer-events-auto relative mx-auto w-[min(15.5rem,calc(100vw-2rem))]">
         {open && (
-          <ScrollArea
-            id="mobile-site-navigation"
-            className="bg-background/95 border-border absolute bottom-[calc(100%+0.5rem)] left-1/2 z-50 max-h-[65dvh] w-full -translate-x-1/2 rounded-2xl border p-1.5 shadow-lg backdrop-blur-md transition-[height] duration-300 ease-out"
-            style={{ height: `${Math.min((primaryItems.length + (moreItems.length ? 1 : 0) + (moreOpen ? moreItems.length : 0)) * 40 + 16, 520)}px` }}
+          <Collapsible
+            open={moreOpen}
+            onOpenChange={setMoreOpen}
+            className="bg-background/95 border-border absolute bottom-[calc(100%+0.5rem)] left-1/2 z-50 flex w-full -translate-x-1/2 flex-col overflow-hidden rounded-2xl border p-1.5 shadow-lg backdrop-blur-md transition-[height] duration-300 ease-out"
+            style={{
+              height: `min(${(primaryItems.length + (moreOpen ? moreItems.length : 0)) * 44 + (moreItems.length ? 60 : 12)}px, 72dvh, calc(100dvh - 6rem))`,
+            }}
           >
-            <nav aria-label="Site navigation" className="w-full space-y-1">
+            <ScrollArea
+              id="mobile-site-navigation"
+              className="min-h-0 w-full flex-1"
+            >
+              <nav aria-label="Site navigation" className="w-full space-y-1">
               {primaryItems.map((item) => {
                 const external = item.external === true || !item.href.startsWith("/")
                 const route = item.href.split(/[?#]/, 1)[0]
@@ -92,19 +99,7 @@ export function MobileDock({
                 }
                 return <Link key={item.id} href={item.href} onClick={() => setOpen(false)} className={className}>{content}</Link>
               })}
-              {moreItems.length > 0 && (
-                <Collapsible open={moreOpen} onOpenChange={setMoreOpen}>
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className="flex min-h-10 w-full justify-between rounded-lg px-3 text-[13px] font-medium text-muted-foreground hover:text-foreground"
-                      aria-label={moreOpen ? "View fewer navigation links" : "View more navigation links"}
-                    >
-                      <span>{moreOpen ? "View less" : "View more"}</span>
-                      <ChevronDown className={cn("size-4 transition-transform duration-200", moreOpen && "rotate-180")} aria-hidden="true" />
-                    </Button>
-                  </CollapsibleTrigger>
+                {moreItems.length > 0 && (
                   <CollapsibleContent className="overflow-hidden data-[state=open]:animate-[mobile-nav-down_220ms_ease-out] data-[state=closed]:animate-[mobile-nav-up_180ms_ease-in]">
                     <div className="space-y-1 pt-1">
                       {moreItems.map((item) => {
@@ -122,10 +117,23 @@ export function MobileDock({
                       })}
                     </div>
                   </CollapsibleContent>
-                </Collapsible>
-              )}
-            </nav>
-          </ScrollArea>
+                )}
+              </nav>
+            </ScrollArea>
+            {moreItems.length > 0 && (
+              <CollapsibleTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="mt-1 flex min-h-10 w-full shrink-0 justify-between rounded-lg border-t px-3 pt-2 text-[13px] font-medium text-muted-foreground hover:text-foreground"
+                  aria-label={moreOpen ? "View fewer navigation links" : "View more navigation links"}
+                >
+                  <span>{moreOpen ? "View less" : "View more"}</span>
+                  <ChevronDown className={cn("size-4 transition-transform duration-200", moreOpen && "rotate-180")} aria-hidden="true" />
+                </Button>
+              </CollapsibleTrigger>
+            )}
+          </Collapsible>
         )}
 
         <div className="bg-background/90 border-border flex w-full items-center justify-between gap-1 rounded-full border px-2 py-1.5 shadow-lg backdrop-blur-md">
