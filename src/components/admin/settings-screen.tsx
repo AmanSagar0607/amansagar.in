@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { saveContent } from "@/lib/admin/client";
+import { saveContent, uploadMedia } from "@/lib/admin/client";
 import type { SiteSettings } from "@/lib/admin/site-settings";
 import { defaultSiteSettings } from "@/lib/admin/site-settings";
 import { WorkExperienceSettings } from "./work-experience-settings";
@@ -22,8 +22,11 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
   const [validationError, setValidationError] = useState("");
+  const [uploadingProfileImage, setUploadingProfileImage] = useState(false);
+  const [profileImageUploadError, setProfileImageUploadError] = useState("");
   const [activeTab, setActiveTab] = useState<string>("General");
   const pendingInvalid = useRef(false);
+  const profileImageInput = useRef<HTMLInputElement | null>(null);
   function change<K extends keyof SiteSettings>(
     key: K,
     value: SiteSettings[K],
@@ -31,6 +34,21 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
     setSettings((current) => ({ ...current, [key]: value }));
     setSaved(false);
     setValidationError("");
+  }
+  async function uploadProfileImage(file: File) {
+    setUploadingProfileImage(true);
+    setProfileImageUploadError("");
+    try {
+      const asset = await uploadMedia(file);
+      change("profileImageUrl", asset.url);
+      toast.success("Image uploaded. Save settings to publish it.");
+    } catch (cause) {
+      setProfileImageUploadError(
+        cause instanceof Error ? cause.message : "Could not upload this image.",
+      );
+    } finally {
+      setUploadingProfileImage(false);
+    }
   }
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -73,7 +91,7 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
             Manage your public profile and site content.
           </p>
         </div>
-        <Button type="submit" disabled={saving}>
+        <Button type="submit" disabled={saving || uploadingProfileImage}>
           {saving ? "Saving…" : "Save settings"}
         </Button>
       </div>
@@ -146,6 +164,30 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
               onChange={(event) => change("profileImageUrl", event.target.value)}
             />
             <p className="text-muted-foreground text-xs">Use an image from your site or an HTTPS image URL. Leave blank to use the default avatar.</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <FormInput
+                ref={profileImageInput}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+                className="sr-only"
+                aria-label="Upload profile image"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  event.target.value = "";
+                  if (file) void uploadProfileImage(file);
+                }}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                disabled={uploadingProfileImage}
+                onClick={() => profileImageInput.current?.click()}
+              >
+                {uploadingProfileImage ? "Uploading image…" : "Upload image"}
+              </Button>
+              <span className="text-muted-foreground text-xs">JPEG, PNG, WebP, GIF or AVIF · up to 4 MB</span>
+            </div>
+            {profileImageUploadError && <p role="alert" className="text-destructive text-sm">{profileImageUploadError}</p>}
             <div className="flex items-center gap-3 rounded-md border p-3">
               <Image
                 key={settings.profileImageUrl || defaultSiteSettings.profileImageUrl}
