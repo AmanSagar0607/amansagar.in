@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { IconBrandGithub, IconBrandX } from "@tabler/icons-react"
-import { ArrowUpRight, Menu, X } from "lucide-react"
+import { ArrowUpRight, ChevronDown, Menu, X } from "lucide-react"
 import { CommandMenu } from "@/components/command-menu"
 import { ThemeToggle } from "@/components/theme/theme-toggle"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import type { NavigationItem } from "@/lib/admin/site-settings"
 
 type ExternalLinks = { github: string; x: string; resume: string }
@@ -22,9 +23,25 @@ export function MobileDock({
   externalLinks: ExternalLinks
 }) {
   const [open, setOpen] = useState(false)
+  const [moreOpen, setMoreOpen] = useState(false)
+  const [tablet, setTablet] = useState(false)
   const pathname = usePathname()
   const dockRef = useRef<HTMLDivElement | null>(null)
-  const visibleItems = items.filter((item) => item.mobile || item.tablet)
+  const visibleItems = items.filter((item) => tablet ? item.tablet : item.mobile)
+  const primaryItems = visibleItems.filter((item) => item.placement === "primary")
+  const moreItems = visibleItems.filter((item) => item.placement === "more")
+
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 640px) and (max-width: 1279px)")
+    const update = () => setTablet(media.matches)
+    update()
+    media.addEventListener("change", update)
+    return () => media.removeEventListener("change", update)
+  }, [])
+
+  useEffect(() => {
+    if (!open) setMoreOpen(false)
+  }, [open])
 
   useEffect(() => {
     if (!open) return
@@ -44,18 +61,16 @@ export function MobileDock({
         {open && (
           <ScrollArea
             id="mobile-site-navigation"
-            className="bg-background/95 border-border absolute bottom-[calc(100%+0.5rem)] left-1/2 z-50 max-h-[65dvh] w-full -translate-x-1/2 rounded-2xl border p-1.5 shadow-lg backdrop-blur-md"
-            style={{ height: `${Math.min(visibleItems.length * 40 + 16, 520)}px` }}
+            className="bg-background/95 border-border absolute bottom-[calc(100%+0.5rem)] left-1/2 z-50 max-h-[65dvh] w-full -translate-x-1/2 rounded-2xl border p-1.5 shadow-lg backdrop-blur-md transition-[height] duration-300 ease-out"
+            style={{ height: `${Math.min((primaryItems.length + (moreItems.length ? 1 : 0) + (moreOpen ? moreItems.length : 0)) * 40 + 16, 520)}px` }}
           >
             <nav aria-label="Site navigation" className="w-full space-y-1">
-              {visibleItems.map((item) => {
+              {primaryItems.map((item) => {
                 const external = item.external === true || !item.href.startsWith("/")
                 const route = item.href.split(/[?#]/, 1)[0]
                 const active = !external && (pathname === route || (route !== "/" && pathname.startsWith(`${route}/`)))
-                const deviceClass = cn(!item.mobile && "nav-hide-mobile", !item.tablet && "nav-hide-tablet")
                 const className = cn(
                   "flex min-h-10 w-full items-center justify-between gap-3 overflow-hidden rounded-lg px-3 py-2 text-[13px] font-medium transition-colors",
-                  deviceClass,
                   active ? "text-foreground bg-accent" : "text-muted-foreground hover:text-foreground hover:bg-accent/50",
                 )
                 const content = (
@@ -77,6 +92,38 @@ export function MobileDock({
                 }
                 return <Link key={item.id} href={item.href} onClick={() => setOpen(false)} className={className}>{content}</Link>
               })}
+              {moreItems.length > 0 && (
+                <Collapsible open={moreOpen} onOpenChange={setMoreOpen}>
+                  <CollapsibleTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="flex min-h-10 w-full justify-between rounded-lg px-3 text-[13px] font-medium text-muted-foreground hover:text-foreground"
+                      aria-label={moreOpen ? "View fewer navigation links" : "View more navigation links"}
+                    >
+                      <span>{moreOpen ? "View less" : "View more"}</span>
+                      <ChevronDown className={cn("size-4 transition-transform duration-200", moreOpen && "rotate-180")} aria-hidden="true" />
+                    </Button>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="overflow-hidden data-[state=open]:animate-[mobile-nav-down_220ms_ease-out] data-[state=closed]:animate-[mobile-nav-up_180ms_ease-in]">
+                    <div className="space-y-1 pt-1">
+                      {moreItems.map((item) => {
+                        const external = item.external === true || !item.href.startsWith("/")
+                        const route = item.href.split(/[?#]/, 1)[0]
+                        const active = !external && (pathname === route || (route !== "/" && pathname.startsWith(`${route}/`)))
+                        const className = cn(
+                          "flex min-h-10 w-full items-center justify-between gap-3 overflow-hidden rounded-lg px-3 py-2 text-[13px] font-medium transition-colors",
+                          active ? "text-foreground bg-accent" : "text-muted-foreground hover:text-foreground hover:bg-accent/50",
+                        )
+                        const content = <><span className="min-w-0 truncate">{item.label}</span>{external && <ArrowUpRight className="size-3.5 shrink-0" aria-hidden="true" />}</>
+                        if (external) return <a key={item.id} href={item.href} target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)} className={className}>{content}</a>
+                        if (item.href.startsWith("/#")) return <a key={item.id} href={item.href} onClick={() => setOpen(false)} className={className}>{content}</a>
+                        return <Link key={item.id} href={item.href} onClick={() => setOpen(false)} className={className}>{content}</Link>
+                      })}
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              )}
             </nav>
           </ScrollArea>
         )}
