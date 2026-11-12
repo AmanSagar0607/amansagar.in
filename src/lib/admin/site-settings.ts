@@ -3,6 +3,7 @@
   siteDescription: string;
   contactEmail: string;
   profileTagline?: string;
+  profileImageUrl?: string;
   profileRole?: string;
   profileBio?: string;
   profileFocus?: string;
@@ -71,6 +72,7 @@ export const defaultSiteSettings: Readonly<SiteSettings> = {
   ],
   hiddenPages: [],
   profileTagline: "Building practical AI systems. Small details matter.",
+  profileImageUrl: "/aman-avatar.webp",
   profileRole: "Software Engineer",
   profileBio: "I build full-stack software with a strong bias toward practical AI systems, retrieval workflows, and interfaces that feel clear and human.",
   profileFocus: "AI systems",
@@ -125,6 +127,23 @@ export function validateSiteSettings(input: unknown): SiteSettings {
   for (const key of ["profileTagline", "profileRole", "profileBio", "profileFocus", "profileLocation", "profileAvailability", "featuredProjectName", "featuredProjectDescription", "aboutDescription", "homepageProjectsTitle", "homepageProjectsDescription", "homepageBlogTitle", "homepageBlogDescription"] as const) {
     if (data[key] !== undefined && (typeof data[key] !== "string" || !(data[key] as string).trim() || (data[key] as string).length > 500))
       throw new Error(`Invalid ${key}.`);
+  }
+  let profileImageUrl = defaultSiteSettings.profileImageUrl;
+  if (data.profileImageUrl !== undefined) {
+    if (typeof data.profileImageUrl !== "string" || data.profileImageUrl.length > 2048)
+      throw new Error("Invalid profile image URL.");
+    const imageUrl = data.profileImageUrl.trim();
+    if (imageUrl) {
+      if (imageUrl.startsWith("/") && !imageUrl.startsWith("//") && !imageUrl.includes("\\")) {
+        profileImageUrl = imageUrl;
+      } else {
+        let parsed: URL;
+        try { parsed = new URL(imageUrl); } catch { throw new Error("Enter a root-relative path or HTTPS image URL."); }
+        if (parsed.protocol !== "https:" || parsed.username || parsed.password)
+          throw new Error("Profile image URL must use HTTPS.");
+        profileImageUrl = imageUrl;
+      }
+    }
   }
   if (data.aboutParagraphs !== undefined && (!Array.isArray(data.aboutParagraphs) || data.aboutParagraphs.length > 20 || data.aboutParagraphs.some((item: unknown) => typeof item !== "string" || !item.trim() || item.length > 5000))) throw new Error("Invalid About paragraphs.");
   if (data.resumeUrl !== undefined) {
@@ -246,6 +265,7 @@ export function validateSiteSettings(input: unknown): SiteSettings {
     homepageBlogTitle: typeof data.homepageBlogTitle === "string" ? data.homepageBlogTitle.trim() : defaultSiteSettings.homepageBlogTitle,
     homepageBlogDescription: typeof data.homepageBlogDescription === "string" ? data.homepageBlogDescription.trim() : defaultSiteSettings.homepageBlogDescription,
     profileTagline: typeof data.profileTagline === "string" ? data.profileTagline.trim() : defaultSiteSettings.profileTagline,
+    profileImageUrl,
     profileRole: typeof data.profileRole === "string" ? data.profileRole.trim() : defaultSiteSettings.profileRole,
     profileBio: typeof data.profileBio === "string" ? data.profileBio.trim() : defaultSiteSettings.profileBio,
     profileFocus: typeof data.profileFocus === "string" ? data.profileFocus.trim() : defaultSiteSettings.profileFocus,

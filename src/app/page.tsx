@@ -393,10 +393,11 @@ export default async function Home() {
             <div className="hero-stage-avatar">
               <div className="hero-stage-avatar-inner">
                 <Image
-                  src="/aman-avatar.webp"
+                  src={settings.profileImageUrl ?? defaultSiteSettings.profileImageUrl ?? "/aman-avatar.webp"}
                   alt={settings.siteTitle}
                   fill
                   priority
+                  unoptimized
                   className="object-cover"
                 />
               </div>

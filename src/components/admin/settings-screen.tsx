@@ -2,6 +2,7 @@
 import { Input as FormInput } from "@/components/ui/input";
 import { Textarea as FormTextarea } from "@/components/ui/textarea";
 import { useRef, useState } from "react";
+import Image from "next/image";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -132,6 +133,32 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
             Profile tagline
             <FormInput required maxLength={500} className={inputClass} value={settings.profileTagline ?? defaultSiteSettings.profileTagline} onChange={(event) => change("profileTagline", event.target.value)} />
           </label>
+          <div className="space-y-2">
+            <label htmlFor="profile-image-url" className="block text-sm font-medium">Profile image URL</label>
+            <FormInput
+              id="profile-image-url"
+              type="text"
+              inputMode="url"
+              maxLength={2048}
+              placeholder="/aman-avatar.webp or https://example.com/photo.webp"
+              className={inputClass}
+              value={settings.profileImageUrl ?? defaultSiteSettings.profileImageUrl}
+              onChange={(event) => change("profileImageUrl", event.target.value)}
+            />
+            <p className="text-muted-foreground text-xs">Use an image from your site or an HTTPS image URL. Leave blank to use the default avatar.</p>
+            <div className="flex items-center gap-3 rounded-md border p-3">
+              <Image
+                key={settings.profileImageUrl || defaultSiteSettings.profileImageUrl}
+                src={settings.profileImageUrl || defaultSiteSettings.profileImageUrl || "/aman-avatar.webp"}
+                alt="Profile image preview"
+                width={64}
+                height={64}
+                unoptimized
+                className="size-16 rounded-full border object-cover"
+              />
+              <span className="text-muted-foreground text-sm">Homepage profile preview</span>
+            </div>
+          </div>
           <label className="block text-sm font-medium">
             Profile role
             <FormInput required maxLength={500} className={inputClass} value={settings.profileRole ?? defaultSiteSettings.profileRole} onChange={(event) => change("profileRole", event.target.value)} />
