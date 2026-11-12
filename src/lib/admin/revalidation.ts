@@ -2,6 +2,7 @@
   | "post"
   | "page"
   | "project"
+  | "app"
   | "activity"
   | "track"
   | "challenge"
@@ -31,6 +32,9 @@ export function affectedPublicPaths(
       { path: "/about" },
       { path: "/projects" },
       { path: "/projects/[slug]", type: "page" },
+      { path: "/apps" },
+      { path: "/apps/[appSlug]", type: "page" },
+      { path: "/apps/[appSlug]/[...pageSlug]", type: "page" },
       { path: "/blog" },
       { path: "/blog/[slug]", type: "page" },
       { path: "/journey" },
@@ -56,6 +60,12 @@ export function affectedPublicPaths(
       { path: "/journey/[slug]", type: "page" },
       { path: "/journey/activity/[slug]", type: "page" },
       { path: "/blog/[slug]", type: "page" },
+    );
+  if (kind === "app")
+    targets.push(
+      { path: "/apps" },
+      { path: `/apps/${identifier}` },
+      { path: "/apps/[appSlug]/[...pageSlug]", type: "page" },
     );
   if (kind === "activity" || kind === "track")
     targets.push(

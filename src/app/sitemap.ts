@@ -4,6 +4,7 @@ import { getPublicPosts } from "@/lib/public-posts";
 import { getPublicActivities, getPublicTracks } from '@/lib/public-journey';
 import { getPublicPages } from "@/lib/public-pages";
 import { getPublicSiteSettings } from "@/lib/public-site-settings";
+import { getPublicApps } from "@/lib/public-apps";
 import { isPagePathVisible } from "@/lib/public-page-visibility";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.amansagar.in";
@@ -17,7 +18,7 @@ type SitemapPost = {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const settings = await getPublicSiteSettings();
-  const staticRoutes = ["", "/about", "/projects", "/blog", "/contact", "/journey", "/achievements"].filter((route) => isPagePathVisible(route || "/", settings.hiddenPages)).map(
+  const staticRoutes = ["", "/about", "/projects", "/apps", "/blog", "/contact", "/journey", "/achievements"].filter((route) => isPagePathVisible(route || "/", settings.hiddenPages)).map(
     (route) => ({
       url: `${siteUrl}${route}`,
       lastModified: new Date(),
@@ -52,5 +53,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: "monthly" as const,
     priority: 0.6,
   }));
-  return [...staticRoutes, ...projectRoutes, ...postRoutes, ...activityRoutes, ...trackRoutes, ...customPageRoutes];
+  const apps = isPagePathVisible("/apps", settings.hiddenPages) ? await getPublicApps() : [];
+  const appRoutes = apps.flatMap((app) => [
+    { url: `${siteUrl}/apps/${app.slug}`, lastModified: new Date(app.updatedAt), changeFrequency: "monthly" as const, priority: app.featured ? 0.8 : 0.7 },
+    ...app.pages.map((page) => ({ url: `${siteUrl}/apps/${app.slug}/${page.slug}`, lastModified: new Date(page.updatedAt), changeFrequency: "monthly" as const, priority: 0.6 })),
+  ]);
+  return [...staticRoutes, ...projectRoutes, ...postRoutes, ...activityRoutes, ...trackRoutes, ...customPageRoutes, ...appRoutes];
 }

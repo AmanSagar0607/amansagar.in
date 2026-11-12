@@ -5,7 +5,7 @@ import {
   type ContentTransactionRepository,
   type RequireAdmin,
 } from "./content-service";
-import { validateManagedPage, validateManagedPost, validateManagedProject } from "./validation";
+import { validateManagedApp, validateManagedPage, validateManagedPost, validateManagedProject } from "./validation";
 import { validateSiteSettings } from "./site-settings";
 
 export interface VersionedSnapshot {
@@ -46,8 +46,11 @@ export function validateInitialSnapshot(
   input.posts.forEach(validateManagedPost);
   input.projects.forEach(validateManagedProject);
   const pages = input.pages ?? [];
+  const apps = input.apps ?? [];
   if (!Array.isArray(pages)) throw new Error("Invalid custom pages.");
+  if (!Array.isArray(apps)) throw new Error("Invalid apps.");
   pages.forEach(validateManagedPage);
+  apps.forEach(validateManagedApp);
   unique(
     input.posts.map((item) => item.slug),
     "post",
@@ -57,8 +60,9 @@ export function validateInitialSnapshot(
     "project",
   );
   unique(pages.map((item) => item.slug), "page");
+  unique(apps.map((item) => item.slug), "app");
   validateReferences(input);
-  return { ...input, pages };
+  return { ...input, pages, apps };
 }
 /** Uses optimistic concurrency to make a full content mutation atomic without lost updates. */
 export class VersionedContentRepository

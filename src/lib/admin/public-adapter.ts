@@ -2,7 +2,7 @@
 import { badgeDates } from "@/lib/journey/logic";
 import type { MDXFile } from "@/lib/mdx-utils";
 import type { Project } from "@/types/project";
-import type { InitialContentSnapshot, ManagedPage, ManagedPost } from "./content-types";
+import type { InitialContentSnapshot, ManagedApp, ManagedPage, ManagedPost } from "./content-types";
 import { projectPublicSnapshot } from "./public-snapshot";
 
 export type PublicManagedPost = MDXFile & { format: "markdown" };
@@ -40,6 +40,13 @@ export function createPublicContentAdapter(
     async page(slug: string): Promise<ManagedPage | undefined> {
       if (!validSlug(slug)) return undefined;
       return (await read()).pages.find((page) => page.slug === slug);
+    },
+    async apps(): Promise<ManagedApp[]> {
+      return (await read()).apps;
+    },
+    async app(slug: string): Promise<ManagedApp | undefined> {
+      if (!validSlug(slug)) return undefined;
+      return (await read()).apps.find((app) => app.slug === slug);
     },
     async posts(): Promise<PublicManagedPost[]> {
       return (await read()).posts

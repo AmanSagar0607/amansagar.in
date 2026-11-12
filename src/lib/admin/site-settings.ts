@@ -40,6 +40,7 @@ export const manageablePages = [
   { path: "/", label: "Home" },
   { path: "/about", label: "About" },
   { path: "/projects", label: "Projects (including project details)" },
+  { path: "/apps", label: "Apps (including app pages)" },
   { path: "/blog", label: "Blog (including articles)" },
   { path: "/journey", label: "Journey (including entries and tracks)" },
   { path: "/achievements", label: "Achievements" },
@@ -60,6 +61,7 @@ export const defaultSiteSettings: Readonly<SiteSettings> = {
   navigationItems: [
     { id: "home", label: "home", href: "/", placement: "primary", desktop: true, tablet: true, mobile: true },
     { id: "projects", label: "projects", href: "/projects", placement: "primary", desktop: true, tablet: true, mobile: true },
+    { id: "apps", label: "apps", href: "/apps", placement: "more", desktop: true, tablet: true, mobile: true },
     { id: "blog", label: "blog", href: "/blog", placement: "primary", desktop: true, tablet: true, mobile: true },
     { id: "journey", label: "journey", href: "/journey", placement: "primary", desktop: true, tablet: true, mobile: true },
     { id: "contact", label: "contact", href: "/contact", placement: "primary", desktop: true, tablet: true, mobile: true },

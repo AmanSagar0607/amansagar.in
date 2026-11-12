@@ -22,6 +22,7 @@ const kinds = [
   "post",
   "page",
   "project",
+  "app",
   "activity",
   "track",
   "challenge",
@@ -29,7 +30,7 @@ const kinds = [
   "settings",
 ] as const;
 const collections: Record<
-  Exclude<ContentKind, "post" | "page" | "project" | "settings">,
+  Exclude<ContentKind, "post" | "page" | "project" | "app" | "settings">,
   JourneyCollection
 > = {
   activity: "activities",
@@ -159,6 +160,7 @@ async function save(
   if (type === "post") return service.savePost(record, previous);
   if (type === "page") return service.savePage(record, previous);
   if (type === "project") return service.saveProject(record, previous);
+  if (type === "app") return service.saveApp(record, previous);
   return service.saveJourneyRecord(collections[type], record, previous);
 }
 async function remove(service: ContentService, type: ContentKind, id: string) {
@@ -167,6 +169,7 @@ async function remove(service: ContentService, type: ContentKind, id: string) {
   if (type === "post") return service.deletePost(id);
   if (type === "page") return service.deletePage(id);
   if (type === "project") return service.deleteProject(id);
+  if (type === "app") return service.deleteApp(id);
   return service.deleteJourneyRecord(collections[type], id);
 }
 export function createContentRouteHandlers(

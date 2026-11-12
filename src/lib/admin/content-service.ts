@@ -10,6 +10,7 @@ import { isPublicActivity, reconcileAwards } from "@/lib/journey/logic";
 import { validateJourney } from "@/lib/journey/validation";
 import type {
   InitialContentSnapshot,
+  ManagedApp,
   ManagedPage,
   ManagedPost,
   ManagedProject,
@@ -17,6 +18,7 @@ import type {
 import {
   isPublicContent,
   validateManagedPost,
+  validateManagedApp,
   validateManagedPage,
   validateManagedProject,
 } from "./validation";
@@ -233,6 +235,54 @@ export class ContentService {
       };
       next.pages = replaceRecord(rows, saved, (row) => row.slug, previousSlug);
       return { snapshot: next, result: saved };
+    });
+  }
+  async saveApp(input: unknown, previousSlug?: string): Promise<ManagedApp> {
+    await this.requireAdmin();
+    const app = validate(() => validateManagedApp(input));
+    return this.repository.transact((snapshot) => {
+      const next = clone(snapshot);
+      const rows = next.apps ?? [];
+      const previous = rows.find((row) => row.slug === app.slug);
+      const timestamp = new Date().toISOString();
+      const pages = app.pages.map((page) => {
+        const previousPage = previous?.pages.find((row) => row.slug === page.slug);
+        const version = (previousPage?.version ?? 0) + 1;
+        return {
+          ...clone(page),
+          version,
+          updatedAt: timestamp,
+          history: [...(previousPage?.history ?? []), {
+            version,
+            updatedAt: timestamp,
+            summary: previousPage ? "Updated app page" : "Created app page",
+          }].slice(-20),
+        };
+      });
+      const version = (previous?.version ?? 0) + 1;
+      const saved: ManagedApp = {
+        ...clone(app),
+        pages,
+        version,
+        updatedAt: timestamp,
+        history: [...(previous?.history ?? []), {
+          version,
+          updatedAt: timestamp,
+          summary: previous ? "Updated app" : "Created app",
+        }].slice(-20),
+      };
+      next.apps = replaceRecord(rows, saved, (row) => row.slug, previousSlug);
+      return { snapshot: next, result: saved };
+    });
+  }
+  async deleteApp(slug: string): Promise<void> {
+    await this.requireAdmin();
+    return this.repository.transact((snapshot) => {
+      const rows = snapshot.apps ?? [];
+      assertPresent(rows, (item) => item.slug, slug);
+      const next = clone(snapshot);
+      next.apps = rows.filter((app) => app.slug !== slug);
+      return { snapshot: next, result: undefined };
     });
   }
   async deletePage(slug: string): Promise<void> {

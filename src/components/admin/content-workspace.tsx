@@ -15,6 +15,7 @@ import type { ContentKind } from "@/lib/admin/revalidation";
 import type {
   InitialContentSnapshot,
   ManagedPage,
+  ManagedApp,
   ManagedPost,
   ManagedProject,
 } from "@/lib/admin/content-types";
@@ -34,6 +35,7 @@ import { ProjectBoard } from "./project-board";
 import { ProjectOrderControl } from "./project-order-control";
 import { TrackEditor } from "./track-editor";
 import { PageEditor } from "./page-editor";
+import { AppEditor } from "./app-editor";
 import { PublicPageVisibility } from "./public-page-visibility";
 import { defaultSiteSettings } from "@/lib/admin/site-settings";
 
@@ -69,6 +71,25 @@ function emptyPage(): ManagedPage {
     visibility: "private",
     updatedAt: now(),
     showInNavigation: false,
+  };
+}
+function emptyApp(): ManagedApp {
+  return {
+    slug: "",
+    title: "",
+    tagline: "",
+    description: "",
+    content: "",
+    category: "",
+    platform: "web",
+    technologies: [],
+    screenshots: [],
+    status: "draft",
+    visibility: "private",
+    featured: false,
+    sortOrder: 0,
+    updatedAt: now(),
+    pages: [],
   };
 }
 function emptyProject(): ManagedProject {
@@ -176,6 +197,18 @@ export function contentRows(
         date: item.updatedAt.slice(0, 10),
       },
     }));
+  if (section === "apps")
+    return (snapshot.apps ?? []).map((item) => ({
+      id: item.slug,
+      href: `${root}/edit/${item.slug}`,
+      values: {
+        title: item.title,
+        status: status(item),
+        visibility: item.visibility,
+        promotion: item.featured ? "Featured" : "Standard",
+        date: item.updatedAt.slice(0, 10),
+      },
+    }));
   if (section === "posts")
     return snapshot.posts.map((item) => ({
       id: item.slug,
@@ -266,7 +299,9 @@ export function ContentList({
     { key: "status", label: "Status", sortable: true },
     ...(section === "activities"
       ? [{ key: "type", label: "Type", sortable: true }]
-      : section === "pages" || section === "tracks"
+      : section === "apps"
+        ? [{ key: "visibility", label: "Visibility", sortable: true }, { key: "promotion", label: "Promotion", sortable: true }]
+        : section === "pages" || section === "tracks"
         ? [{ key: "visibility", label: "Visibility", sortable: true }]
         : section === "challenges"
           ? [{ key: "category", label: "Category", sortable: true }]
@@ -297,7 +332,9 @@ export function ContentList({
         <div>
           <h1 className="text-2xl font-semibold">{definition.label}</h1>
           <p className="text-muted-foreground mt-1 text-sm">
-            Manage your {definition.label.toLocaleLowerCase()}.
+            {section === "apps"
+              ? "Publish product listings, feature apps at the top, and add pages owned by each app."
+              : `Manage your ${definition.label.toLocaleLowerCase()}.`}
           </p>
         </div>
         <Button asChild>
@@ -450,6 +487,8 @@ export function ContentEdit({
       return creating
         ? emptyPage()
         : (snapshot.pages ?? []).find((row) => row.slug === id);
+    if (section === "apps")
+      return creating ? emptyApp() : (snapshot.apps ?? []).find((row) => row.slug === id);
     if (section === "projects")
       return creating
         ? emptyProject()
@@ -537,7 +576,7 @@ export function ContentEdit({
           {definition.label}
         </Link>
         {!creating && (
-          <DeleteContentDialog title={definition.singular} onDelete={remove} />
+          <DeleteContentDialog title={section === "apps" ? "app and all its pages" : definition.singular} onDelete={remove} />
         )}
       </div>
       {section === "posts" && (
@@ -554,6 +593,14 @@ export function ContentEdit({
         <PageEditor
           key={`${section}:${id}`}
           initial={item as ManagedPage}
+          identifierLocked={!creating || Boolean(createdId)}
+          onSave={save}
+        />
+      )}
+      {section === "apps" && (
+        <AppEditor
+          key={`${section}:${id}`}
+          initial={item as ManagedApp}
           identifierLocked={!creating || Boolean(createdId)}
           onSave={save}
         />

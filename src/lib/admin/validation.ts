@@ -1,4 +1,4 @@
-import type { ManagedPage, ManagedPost, ManagedProject } from "./content-types";
+import type { ManagedApp, ManagedAppPage, ManagedPage, ManagedPost, ManagedProject } from "./content-types";
 
 function record(value: unknown, name: string): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value))
@@ -169,6 +169,61 @@ export function validateManagedPage(input: unknown): ManagedPage {
     throw new Error("Navigation visibility must be a boolean");
   if (page.image !== undefined) optionalUrl(page.image, "Cover image", true);
   return input as ManagedPage;
+}
+const reservedAppSlugs = new Set(["new", "api", "admin", "apps"]);
+function validateManagedAppPage(input: unknown): ManagedAppPage {
+  const page = record(input, "App page");
+  const pagePath = text(page.slug, "App page path", 300);
+  if (!pagePath.split("/").every((part) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(part)))
+    throw new Error("App page paths must use lowercase words, numbers and hyphens separated by slashes.");
+  text(page.title, "App page title", 200);
+  text(page.description, "App page description", 1000, true);
+  text(page.content, "App page content", 100000, true);
+  publishing(page);
+  date(page.updatedAt, "App page updated date");
+  if (page.version !== undefined && (!Number.isInteger(page.version) || Number(page.version) < 1)) throw new Error("Invalid app page version");
+  for (const field of ["seoTitle", "seoDescription"])
+    if (page[field] !== undefined) text(page[field], field, 200, true);
+  if (page.image !== undefined) optionalUrl(page.image, "App page image", true);
+  if (page.status === "published" && page.visibility === "public" && !String(page.content).trim())
+    throw new Error("Add content before publishing an app page.");
+  return input as ManagedAppPage;
+}
+export function validateManagedApp(input: unknown): ManagedApp {
+  const app = record(input, "App");
+  const id = slug(app.slug);
+  if (reservedAppSlugs.has(id)) throw new Error("That slug is reserved. Choose a different app slug.");
+  text(app.title, "App title", 200);
+  text(app.tagline, "App tagline", 240, true);
+  text(app.description, "App description", 1000);
+  text(app.content, "App content", 100000, true);
+  text(app.category, "App category", 80);
+  if (!["web", "mobile", "desktop", "api", "other"].includes(String(app.platform)))
+    throw new Error("Choose a valid app platform.");
+  stringList(app.technologies, "Technologies");
+  if (app.icon !== undefined) optionalUrl(app.icon, "App icon", true);
+  if (app.coverImage !== undefined) optionalUrl(app.coverImage, "App cover", true);
+  for (const field of ["launchUrl", "sourceUrl"] as const) {
+    if (app[field] === undefined || app[field] === "") continue;
+    const value = text(app[field], field, 2048);
+    let url: URL;
+    try { url = new URL(value); } catch { throw new Error(`${field} must be a valid HTTPS URL.`); }
+    if (url.protocol !== "https:" || url.username || url.password) throw new Error(`${field} must use HTTPS.`);
+  }
+  if (!Array.isArray(app.screenshots) || app.screenshots.length > 12)
+    throw new Error("Add up to 12 app screenshots.");
+  app.screenshots.forEach((url: unknown) => optionalUrl(url, "Screenshot", true));
+  publishing(app);
+  if (typeof app.featured !== "boolean") throw new Error("App featured state must be boolean.");
+  if (!Number.isInteger(app.sortOrder) || Number(app.sortOrder) < 0) throw new Error("Invalid app order.");
+  date(app.updatedAt, "App updated date");
+  if (app.version !== undefined && (!Number.isInteger(app.version) || Number(app.version) < 1)) throw new Error("Invalid app version");
+  for (const field of ["seoTitle", "seoDescription"])
+    if (app[field] !== undefined) text(app[field], field, 200, true);
+  if (!Array.isArray(app.pages) || app.pages.length > 50) throw new Error("An app can have up to 50 content pages.");
+  const childSlugs = app.pages.map((page: unknown) => validateManagedAppPage(page).slug);
+  if (new Set(childSlugs).size !== childSlugs.length) throw new Error("App page slugs must be unique within an app.");
+  return input as ManagedApp;
 }
 export function isPublicContent(
   item: {

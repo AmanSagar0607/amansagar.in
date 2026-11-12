@@ -67,6 +67,7 @@ export async function createInitialContentSnapshot(): Promise<InitialContentSnap
     posts,
     projects,
     pages: [],
+    apps: [],
     journey: await getJourney(),
     settings: { ...defaultSiteSettings },
   };

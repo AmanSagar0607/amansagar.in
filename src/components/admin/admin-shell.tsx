@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Award,
+  AppWindow,
   BookOpen,
   CalendarCheck,
   ChevronRight,
@@ -49,6 +50,7 @@ const groups = [
       { label: "Blog posts", href: "/admin/posts", icon: FileText },
       { label: "Pages", href: "/admin/pages", icon: FileText },
       { label: "Projects", href: "/admin/projects", icon: FolderKanban },
+      { label: "Apps", href: "/admin/apps", icon: AppWindow },
       { label: "Journey", href: "/admin/activities", icon: BookOpen },
       { label: "Learning tracks", href: "/admin/tracks", icon: BookOpen },
       {

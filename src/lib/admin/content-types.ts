@@ -46,11 +46,52 @@ export interface ManagedPage {
   seoDescription?: string;
   image?: string;
 }
+export interface ManagedAppPage {
+  slug: string;
+  title: string;
+  description: string;
+  content: string;
+  status: ContentStatus;
+  visibility: Visibility;
+  updatedAt: string;
+  version?: number;
+  history?: { version: number; updatedAt: string; summary: string }[];
+  seoTitle?: string;
+  seoDescription?: string;
+  image?: string;
+}
+export interface ManagedApp {
+  slug: string;
+  title: string;
+  tagline: string;
+  description: string;
+  content: string;
+  category: string;
+  platform: "web" | "mobile" | "desktop" | "api" | "other";
+  technologies: string[];
+  icon?: string;
+  coverImage?: string;
+  screenshots: string[];
+  launchUrl?: string;
+  sourceUrl?: string;
+  status: ContentStatus;
+  visibility: Visibility;
+  featured: boolean;
+  sortOrder: number;
+  updatedAt: string;
+  version?: number;
+  history?: { version: number; updatedAt: string; summary: string }[];
+  seoTitle?: string;
+  seoDescription?: string;
+  pages: ManagedAppPage[];
+}
 export interface InitialContentSnapshot {
   posts: ManagedPost[];
   projects: ManagedProject[];
   /** Optional for compatibility with snapshots created before custom pages existed. */
   pages?: ManagedPage[];
+  /** Optional for backwards-compatible CMS snapshot upgrades. */
+  apps?: ManagedApp[];
   journey: JourneyData;
   settings?: SiteSettings;
 }

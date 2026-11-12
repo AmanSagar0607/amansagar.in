@@ -3,6 +3,7 @@ import { reconcileAwards } from "@/lib/journey/logic";
 import type {
   InitialContentSnapshot,
   ManagedPage,
+  ManagedApp,
   ManagedPost,
   ManagedProject,
 } from "./content-types";
@@ -16,6 +17,7 @@ import {
 
 export interface PublicContentSnapshot {
   pages: ManagedPage[];
+  apps: ManagedApp[];
   posts: ManagedPost[];
   projects: ManagedProject[];
   journey: JourneyData;
@@ -103,6 +105,44 @@ export function projectPublicSnapshot(
       seoTitle: page.seoTitle,
       seoDescription: page.seoDescription,
       image: page.image,
+    }));
+  const apps = (snapshot.apps ?? [])
+    .filter((app) => isPublicContent(app, now))
+    .map((app) => ({
+      slug: app.slug,
+      title: app.title,
+      tagline: app.tagline,
+      description: app.description,
+      content: app.content,
+      category: app.category,
+      platform: app.platform,
+      technologies: app.technologies,
+      icon: app.icon,
+      coverImage: app.coverImage,
+      screenshots: app.screenshots,
+      launchUrl: app.launchUrl,
+      sourceUrl: app.sourceUrl,
+      status: app.status,
+      visibility: app.visibility,
+      featured: app.featured,
+      sortOrder: app.sortOrder,
+      updatedAt: app.updatedAt,
+      seoTitle: app.seoTitle,
+      seoDescription: app.seoDescription,
+      pages: app.pages
+        .filter((page) => isPublicContent(page, now))
+        .map((page) => ({
+          slug: page.slug,
+          title: page.title,
+          description: page.description,
+          content: page.content,
+          status: page.status,
+          visibility: page.visibility,
+          updatedAt: page.updatedAt,
+          seoTitle: page.seoTitle,
+          seoDescription: page.seoDescription,
+          image: page.image,
+        })),
     }));
   const projects = snapshot.projects
     .map((project, index) => ({ project, index }))
@@ -216,5 +256,5 @@ export function projectPublicSnapshot(
     ? validateSiteSettings(snapshot.settings)
     : { ...defaultSiteSettings };
   delete settings.releaseVersion;
-  return structuredClone({ pages, posts, projects, journey, settings });
+  return structuredClone({ pages, apps, posts, projects, journey, settings });
 }
