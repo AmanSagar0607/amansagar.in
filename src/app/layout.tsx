@@ -146,7 +146,9 @@ export default async function RootLayout({
             </SiteChrome>
           </div>
         </ThemeProvider>
-      </body>
+      
+<script data-crease-install dangerouslySetInnerHTML={{ __html: "window.addEventListener('crease:consent', function () { var s = document.createElement('script'); s.src = \"https://crease-bice.vercel.app/crease.js\"; s.onload = function () { if (window.crease) window.crease.init({ projectId: \"752c8641-2616-4a38-88f3-2dade631f6d3\", endpoint: \"https://crease-bice.vercel.app/api/events\" }); }; document.head.appendChild(s); }, { once: true });" }} />
+</body>
     </html>
   );
 }
