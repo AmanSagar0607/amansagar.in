@@ -142,7 +142,6 @@
 }
 
 /* Personal drive uses its own light workspace palette while Studio stays dark. */
-.dark .drive-workspace,
 .dark .light {
   --background: #f7f8fb;
   --foreground: #13122a;

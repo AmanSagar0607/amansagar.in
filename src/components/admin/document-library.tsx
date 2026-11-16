@@ -189,7 +189,7 @@ export function DocumentLibrary() {
       {loaded && !error && (
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="bg-card flex items-center gap-3 rounded-xl border px-4 py-3">
-            <span className="rounded-lg bg-blue-500/10 p-2 text-blue-600 dark:text-blue-400">
+            <span className="rounded-lg bg-orange-500/10 p-2 text-orange-600 dark:text-orange-400">
               <FileText className="size-5" aria-hidden />
             </span>
             <div>
@@ -200,7 +200,7 @@ export function DocumentLibrary() {
             </div>
           </div>
           <div className="bg-card flex items-center gap-3 rounded-xl border px-4 py-3">
-            <span className="rounded-lg bg-emerald-500/10 p-2 text-emerald-600 dark:text-emerald-400">
+            <span className="rounded-lg bg-orange-500/10 p-2 text-orange-600 dark:text-orange-400">
               <HardDrive className="size-5" aria-hidden />
             </span>
             <div>

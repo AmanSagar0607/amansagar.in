@@ -81,7 +81,7 @@ export function MediaScreen({
   const [refreshError, setRefreshError] = useState("");
   const [reloadKey, setReloadKey] = useState(0);
   const [query, setQuery] = useState("");
-  const [display, setDisplay] = useState<"list" | "grid">("list");
+  const [display, setDisplay] = useState<"list" | "grid">("grid");
   const [sort, setSort] = useState<"recent" | "name" | "size">("recent");
   const [preview, setPreview] = useState<RecentFile | null>(null);
 
@@ -164,10 +164,10 @@ export function MediaScreen({
           setRefreshError("");
         }}
         className={cn(
-          "flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:outline-none active:scale-[0.98] motion-reduce:transition-none",
+          "flex min-h-11 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:outline-none active:scale-[0.98] motion-reduce:transition-none",
           view === item.id
-            ? "bg-[#efedff] text-[#4b43e3]"
-            : "text-[#666875] hover:bg-[#f2f1fc] hover:text-[#2a2562]",
+            ? "bg-orange-500/15 text-orange-400"
+            : "text-zinc-400 hover:bg-white/5 hover:text-zinc-100",
           collapsed && "justify-center px-2",
         )}
       >
@@ -179,16 +179,16 @@ export function MediaScreen({
   };
 
   return (
-    <div className="drive-workspace min-h-dvh bg-[#f7f8fb] text-[#13122a] lg:flex">
+    <div className="drive-workspace min-h-dvh bg-[#0d0d10] text-zinc-100 lg:flex">
       <aside
         className={cn(
-          "border-[#e8e8f0] bg-white transition-[width] motion-reduce:transition-none lg:sticky lg:top-0 lg:flex lg:h-dvh lg:shrink-0 lg:flex-col lg:border-r",
+          "border-white/10 bg-[#18181c] transition-[width] motion-reduce:transition-none lg:sticky lg:top-0 lg:flex lg:h-dvh lg:shrink-0 lg:flex-col lg:border-r",
           collapsed ? "lg:w-[76px]" : "lg:w-[232px]",
         )}
       >
-        <div className="flex h-[76px] items-center justify-between gap-2 border-b border-[#e8e8f0] px-4">
+        <div className="flex h-[76px] items-center justify-between gap-2 border-b border-white/10 px-4">
           <div className="flex min-w-0 items-center gap-3">
-            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[#4b43e3] text-white shadow-[0_4px_16px_rgba(75,67,227,0.22)]">
+            <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-orange-500 text-zinc-950 shadow-[0_4px_16px_rgba(249,115,22,0.18)]">
               <FolderOpen className="size-[18px]" />
             </span>
             {!collapsed && (
@@ -201,7 +201,7 @@ export function MediaScreen({
             type="button"
             aria-label={collapsed ? "Expand navigation" : "Collapse navigation"}
             onClick={() => setCollapsed(!collapsed)}
-            className="hidden rounded-lg p-2 text-[#666875] hover:bg-[#f2f1fc] hover:text-[#2a2562] lg:block"
+            className="hidden rounded-lg p-2 text-zinc-400 hover:bg-white/5 hover:text-zinc-100 lg:block"
           >
             {collapsed ? (
               <ChevronRight className="size-4" />
@@ -215,19 +215,19 @@ export function MediaScreen({
           className="flex gap-1 overflow-x-auto p-3 lg:block lg:space-y-1"
         >
           {!collapsed && (
-            <p className="hidden px-3 pt-3 pb-2 text-[10px] font-semibold tracking-[0.16em] text-[#717381] uppercase lg:block">
+            <p className="hidden px-3 pt-3 pb-2 text-[10px] font-semibold tracking-[0.16em] text-zinc-400 uppercase lg:block">
               Workspace
             </p>
           )}
           {navigation.map(navButton)}
         </nav>
         <div className="hidden flex-1 lg:block" />
-        <div className="border-t border-[#e8e8f0] p-3">
+        <div className="border-t border-white/10 p-3">
           <Link
             href="/admin"
             title="Back to Studio"
             className={cn(
-              "flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm text-[#666875] hover:bg-[#f2f1fc] hover:text-[#2a2562]",
+              "flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm text-zinc-400 hover:bg-white/5 hover:text-zinc-100",
               collapsed && "justify-center px-2",
             )}
           >
@@ -240,19 +240,19 @@ export function MediaScreen({
 
       <main className="min-w-0 flex-1 px-4 py-7 sm:px-8 lg:px-10 lg:py-9 xl:px-12">
         <div className="mx-auto max-w-[1440px]">
-          <header className="mb-8 flex flex-wrap items-end justify-between gap-5 rounded-2xl border border-[#e8e8f0] bg-white px-5 py-6 sm:px-8 sm:py-8">
+          <header className="mb-8 flex flex-wrap items-end justify-between gap-5 rounded-2xl border border-white/10 bg-[#18181c] px-5 py-6 sm:px-8 sm:py-8">
             <div>
-              <p className="mb-2 text-xs font-medium tracking-[0.14em] text-[#5b50dc] uppercase">
+              <p className="mb-2 text-xs font-medium tracking-[0.14em] text-orange-400 uppercase">
                 Your personal workspace
               </p>
-              <h1 className="text-3xl leading-tight font-semibold tracking-tight text-[#13122a] sm:text-[34px]">
+              <h1 className="text-3xl leading-tight font-semibold tracking-tight text-zinc-100 sm:text-[34px]">
                 {view === "overview"
                   ? "Your files, in one place."
                   : view === "images"
                     ? "Public images"
                     : "Private documents"}
               </h1>
-              <p className="mt-2 text-sm leading-6 text-[#666875]">
+              <p className="mt-2 text-sm leading-6 text-zinc-400">
                 {view === "overview"
                   ? "A clear view of the assets you use and the documents you keep private."
                   : view === "images"
@@ -261,25 +261,25 @@ export function MediaScreen({
               </p>
               {view === "overview" && (
                 <div className="mt-5 flex flex-wrap gap-2">
-                  <button type="button" onClick={() => setView("documents")} className="rounded-lg bg-[#4b43e3] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#3832b5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8177e9] focus-visible:ring-offset-2">Browse documents</button>
-                  <button type="button" onClick={() => setView("images")} className="rounded-lg border border-[#e3e1f0] bg-white px-4 py-2.5 text-sm font-medium text-[#2a2562] transition-colors hover:bg-[#f4f2ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8177e9] focus-visible:ring-offset-2">Browse images</button>
+                  <button type="button" onClick={() => setView("documents")} className="rounded-lg bg-orange-500 px-4 py-2.5 text-sm font-medium text-zinc-950 transition-colors hover:bg-orange-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2">Browse documents</button>
+                  <button type="button" onClick={() => setView("images")} className="rounded-lg border border-white/10 bg-[#18181c] px-4 py-2.5 text-sm font-medium text-zinc-100 transition-colors hover:bg-orange-500/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2">Browse images</button>
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-2 rounded-full border border-[#e9e6fb] bg-[#f4f2ff] px-3 py-2 text-xs text-[#383281]">
-              <LockKeyhole className="size-3.5 text-[#5b50dc]" /> Admin
+            <div className="flex items-center gap-2 rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-2 text-xs text-orange-300">
+              <LockKeyhole className="size-3.5 text-orange-400" /> Admin
               workspace
             </div>
           </header>
 
           {view === "overview" && (
             <div className="space-y-8">
-              <div className="rounded-xl border border-[#e7e3f8] bg-[#f5f3ff] px-4 py-3 text-sm text-[#52555f]">
+              <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-4 py-3 text-sm text-zinc-300">
                 R2 Standard includes 10 GB-month free. Loaded file sizes below
                 are not account-wide usage; Cloudflare may charge beyond its
                 free allowance.{" "}
                 <a
-                  className="font-medium text-[#4b43e3] underline underline-offset-2"
+                  className="font-medium text-orange-400 underline underline-offset-2"
                   href="https://dash.cloudflare.com/?to=/:account/r2/overview"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -291,7 +291,7 @@ export function MediaScreen({
               {(refreshError || documentsStatus === "error") && (
                 <div
                   role="alert"
-                  className="flex flex-wrap items-center gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-700"
+                  className="flex flex-wrap items-center gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300"
                 >
                   <span>
                     {refreshError}{" "}
@@ -314,7 +314,7 @@ export function MediaScreen({
               <section aria-labelledby="workspace-heading">
                 <div className="mb-4 flex items-end justify-between gap-3">
                   <div>
-                    <p className="text-xs font-medium text-[#717381]">
+                    <p className="text-xs font-medium text-zinc-400">
                       Your library
                     </p>
                     <h2
@@ -324,7 +324,7 @@ export function MediaScreen({
                       Workspace overview
                     </h2>
                   </div>
-                  <span className="text-xs text-[#717381]">
+                  <span className="text-xs text-zinc-400">
                     Loaded files only
                   </span>
                 </div>
@@ -332,31 +332,31 @@ export function MediaScreen({
                   <button
                     type="button"
                     onClick={() => setView("images")}
-                    className="group rounded-2xl border border-[#e8e8f0] bg-white p-5 text-left transition-colors hover:border-[#b1a4e1] hover:bg-[#fcfbff] focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:outline-none active:scale-[0.99] motion-reduce:transition-none"
+                    className="group rounded-2xl border border-white/10 bg-[#18181c] p-5 text-left transition-colors hover:border-orange-500/40 hover:bg-[#202024] focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:outline-none active:scale-[0.99] motion-reduce:transition-none"
                   >
-                    <span className="mb-5 grid size-11 place-items-center rounded-xl bg-[#eeedff] text-[#5149cf]">
+                    <span className="mb-5 grid size-11 place-items-center rounded-xl bg-orange-500/15 text-orange-400">
                       <ImageIcon className="size-5" />
                     </span>
-                    <span className="block text-xs font-medium text-[#666875]">
+                    <span className="block text-xs font-medium text-zinc-400">
                       Public images
                     </span>
                     <span className="mt-2 block text-2xl font-semibold tracking-tight tabular-nums">
                       {images.assets.length}
                       {images.nextCursor ? "+" : ""}
                     </span>
-                    <span className="mt-1 block text-xs text-[#666875]">
+                    <span className="mt-1 block text-xs text-zinc-400">
                       Loaded · Cloudinary
                     </span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setView("documents")}
-                    className="group rounded-2xl border border-[#e8e8f0] bg-white p-5 text-left transition-colors hover:border-[#b1a4e1] hover:bg-[#fcfbff] focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:outline-none active:scale-[0.99] motion-reduce:transition-none"
+                    className="group rounded-2xl border border-white/10 bg-[#18181c] p-5 text-left transition-colors hover:border-orange-500/40 hover:bg-[#202024] focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:outline-none active:scale-[0.99] motion-reduce:transition-none"
                   >
-                    <span className="mb-5 grid size-11 place-items-center rounded-xl bg-violet-400/15 text-[#5b50dc]">
+                    <span className="mb-5 grid size-11 place-items-center rounded-xl bg-orange-500/15 text-orange-400">
                       <FileText className="size-5" />
                     </span>
-                    <span className="block text-xs font-medium text-[#666875]">
+                    <span className="block text-xs font-medium text-zinc-400">
                       Private PDFs
                     </span>
                     <span className="mt-2 block text-2xl font-semibold tracking-tight tabular-nums">
@@ -366,21 +366,21 @@ export function MediaScreen({
                           ? "Loading…"
                           : "Unavailable"}
                     </span>
-                    <span className="mt-1 block text-xs text-[#666875]">
+                    <span className="mt-1 block text-xs text-zinc-400">
                       Loaded · Cloudflare R2
                     </span>
                   </button>
-                  <div className="rounded-2xl border border-[#e8e8f0] bg-white p-5">
-                    <span className="mb-5 grid size-11 place-items-center rounded-xl bg-[#eaf5ff] text-[#2875ad]">
+                  <div className="rounded-2xl border border-white/10 bg-[#18181c] p-5">
+                    <span className="mb-5 grid size-11 place-items-center rounded-xl bg-orange-500/15 text-orange-400">
                       <HardDrive className="size-5" />
                     </span>
-                    <span className="block text-xs font-medium text-[#666875]">
+                    <span className="block text-xs font-medium text-zinc-400">
                       Loaded file size
                     </span>
                     <span className="mt-2 block text-2xl font-semibold tracking-tight tabular-nums">
                       {formatSize(loadedBytes)}
                     </span>
-                    <span className="mt-1 block text-xs text-[#666875]">
+                    <span className="mt-1 block text-xs text-zinc-400">
                       not total storage usage
                     </span>
                   </div>
@@ -388,20 +388,20 @@ export function MediaScreen({
               </section>
               <section
                 aria-labelledby="recent-heading"
-                className="rounded-2xl border border-[#e8e8f0] bg-white p-4 sm:p-6"
+                className="rounded-2xl border border-white/10 bg-[#18181c] p-4 sm:p-6"
               >
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
                   <div>
                     <h2 id="recent-heading" className="text-lg font-semibold">
                       Loaded files
                     </h2>
-                    <p className="mt-1 text-xs text-[#666875]">
+                    <p className="mt-1 text-xs text-zinc-400">
                       Images and PDFs loaded from your libraries.
                     </p>
                   </div>
                   <label className="relative w-full sm:w-64">
                     <Search
-                      className="absolute top-3 left-3 size-4 text-[#717381]"
+                      className="absolute top-3 left-3 size-4 text-zinc-400"
                       aria-hidden
                     />
                     <span className="sr-only">Search loaded files</span>
@@ -410,19 +410,19 @@ export function MediaScreen({
                       value={query}
                       onChange={(event) => setQuery(event.target.value)}
                       placeholder="Search loaded files"
-                      className="h-10 border-[#e1e2ea] bg-[#f8f9fc] pl-9 text-sm"
+                      className="h-10 border-white/10 bg-[#202024] pl-9 text-sm"
                     />
                   </label>
                 </div>
                 <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                  <label className="flex items-center gap-2 text-xs text-[#666875]">
+                  <label className="flex items-center gap-2 text-xs text-zinc-400">
                     Sort by
                     <select
                       value={sort}
                       onChange={(event) =>
                         setSort(event.target.value as typeof sort)
                       }
-                      className="h-9 rounded-lg border border-[#e1e2ea] bg-[#f8f9fc] px-3 text-sm text-[#13122a]"
+                      className="h-9 rounded-lg border border-white/10 bg-[#202024] px-3 text-sm text-zinc-100"
                     >
                       <option value="recent">Newest first</option>
                       <option value="name">Name</option>
@@ -432,7 +432,7 @@ export function MediaScreen({
                   <div
                     role="group"
                     aria-label="Display layout"
-                    className="flex rounded-lg border border-[#e1e2ea] p-1"
+                    className="flex rounded-lg border border-white/10 p-1"
                   >
                     <button
                       type="button"
@@ -442,8 +442,8 @@ export function MediaScreen({
                       className={cn(
                         "rounded-md p-2",
                         display === "list"
-                          ? "bg-[#ece9ff] text-[#4b43e3]"
-                          : "text-[#666875]",
+                          ? "bg-orange-500/15 text-orange-400"
+                          : "text-zinc-400",
                       )}
                     >
                       <List className="size-4" />
@@ -456,8 +456,8 @@ export function MediaScreen({
                       className={cn(
                         "rounded-md p-2",
                         display === "grid"
-                          ? "bg-[#ece9ff] text-[#4b43e3]"
-                          : "text-[#666875]",
+                          ? "bg-orange-500/15 text-orange-400"
+                          : "text-zinc-400",
                       )}
                     >
                       <Grid2X2 className="size-4" />
@@ -469,7 +469,7 @@ export function MediaScreen({
                     className={
                       display === "grid"
                         ? "grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                        : "divide-y divide-[#efeff4]"
+                        : "divide-y divide-white/10"
                     }
                   >
                     {filtered.map((file) => (
@@ -478,18 +478,27 @@ export function MediaScreen({
                           type="button"
                           onClick={() => setPreview(file)}
                           className={cn(
-                            "w-full rounded-lg text-left hover:bg-[#f7f6ff] focus-visible:ring-2 focus-visible:ring-indigo-400 focus-visible:outline-none",
+                            "w-full rounded-lg text-left hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:outline-none",
                             display === "grid"
-                              ? "flex h-full min-h-36 flex-col items-start gap-3 border border-[#ecebf2] p-4"
+                              ? "flex h-full min-h-36 flex-col items-start gap-3 border border-white/10 p-4"
                               : "flex items-center gap-3 py-3",
                           )}
                         >
+                          {display === "grid" && (
+                            <span className="bg-muted relative block h-36 w-full shrink-0 overflow-hidden rounded-md border border-white/10">
+                              {file.kind === "image" ? (
+                                <Image src={file.url} alt="" fill sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 260px" className="object-cover" />
+                              ) : (
+                                <iframe title={`Thumbnail: ${file.name}`} src={`${file.url}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`} loading="lazy" tabIndex={-1} aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full border-0" />
+                              )}
+                            </span>
+                          )}
                           <span
                             className={cn(
                               "grid size-10 shrink-0 place-items-center rounded-lg",
                               file.kind === "pdf"
-                                ? "bg-violet-400/15 text-[#5b50dc]"
-                                : "bg-[#eeedff] text-[#5149cf]",
+                                ? "bg-orange-500/15 text-orange-400"
+                                : "bg-orange-500/15 text-orange-400",
                             )}
                           >
                             {file.kind === "pdf" ? (
@@ -502,18 +511,18 @@ export function MediaScreen({
                             <span className="block truncate text-sm font-medium">
                               {file.name}
                             </span>
-                            <span className="mt-0.5 block text-xs text-[#666875]">
+                            <span className="mt-0.5 block text-xs text-zinc-400">
                               {file.kind === "pdf"
                                 ? "Private PDF"
                                 : "Public image"}{" "}
                               · {new Date(file.createdAt).toLocaleDateString()}
                             </span>
                           </span>
-                          <span className="shrink-0 text-xs text-[#666875] tabular-nums">
+                          <span className="shrink-0 text-xs text-zinc-400 tabular-nums">
                             {formatSize(file.bytes)}
                           </span>
                           {display === "list" && (
-                            <ChevronRight className="size-4 shrink-0 text-[#717381]" />
+                            <ChevronRight className="size-4 shrink-0 text-zinc-400" />
                           )}
                         </button>
                       </li>
@@ -522,7 +531,7 @@ export function MediaScreen({
                 ) : (
                   <p
                     role={documentsStatus === "loading" ? "status" : undefined}
-                    className="py-10 text-center text-sm text-[#666875]"
+                    className="py-10 text-center text-sm text-zinc-400"
                   >
                     {documentsStatus === "loading"
                       ? "Loading private PDFs…"

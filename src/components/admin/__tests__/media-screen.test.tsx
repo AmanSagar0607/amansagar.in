@@ -12,6 +12,7 @@ jest.mock("../document-library", () => ({ DocumentLibrary: () => <div>PDF librar
 test("navigates the separate workspace and labels loaded storage accurately", async () => {
   const user = userEvent.setup();
   render(<MediaScreen initial={{ assets: [] }} />);
+  expect(screen.getByRole("button", { name: "Grid view" })).toHaveAttribute("aria-pressed", "true");
   expect(screen.getByRole("link", { name: "Back to Studio" })).toHaveAttribute("href", "/admin");
   expect(screen.getByText(/not total storage usage/)).toBeInTheDocument();
   await user.click(screen.getByRole("button", { name: "Private PDFs" }));
@@ -28,6 +29,7 @@ test("sorts and switches layouts for loaded files", async () => {
   ]);
   render(<MediaScreen initial={{ assets: [] }} />);
   await screen.findByText("A.pdf");
+  expect(screen.getByTitle("Thumbnail: A.pdf")).toHaveAttribute("src", expect.stringContaining("/api/admin/documents/2/preview"));
   await user.selectOptions(screen.getByLabelText("Sort by"), "name");
   await user.click(screen.getByRole("button", { name: "Grid view" }));
   expect(screen.getByRole("button", { name: "Grid view" })).toHaveAttribute("aria-pressed", "true");
