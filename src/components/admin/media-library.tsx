@@ -145,11 +145,9 @@ export function MediaLibrary({
     <section className="space-y-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          {compact ? (
-            <h2 className="text-lg font-semibold">Media library</h2>
-          ) : (
-            <h1 className="text-2xl font-semibold">Media library</h1>
-          )}
+          <h2 className="text-lg font-semibold">
+            {compact ? "Media library" : "Public images"}
+          </h2>
           <p className="text-muted-foreground mt-1 text-sm">
             Images from the portfolio media folder.
           </p>

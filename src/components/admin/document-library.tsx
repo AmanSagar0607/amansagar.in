@@ -1,7 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FileText, LoaderCircle, Pencil, Search, Trash2, Upload } from "lucide-react";
+import {
+  Clipboard,
+  ExternalLink,
+  FileText,
+  HardDrive,
+  LoaderCircle,
+  Pencil,
+  Search,
+  Trash2,
+  Upload,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,7 +26,6 @@ import {
 import {
   deleteDocument,
   listDocuments,
-  previewDocument,
   renameDocument,
   uploadDocument,
   type AdminDocument,
@@ -34,6 +43,10 @@ export function DocumentLibrary() {
   const [renameTarget, setRenameTarget] = useState<AdminDocument | null>(null);
   const [renameName, setRenameName] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<AdminDocument | null>(null);
+  const [previewTarget, setPreviewTarget] = useState<AdminDocument | null>(
+    null,
+  );
+  const [copyStatus, setCopyStatus] = useState("");
   useEffect(() => {
     void listDocuments()
       .then(setDocuments)
@@ -71,21 +84,23 @@ export function DocumentLibrary() {
       setUploadingName(null);
     }
   }
-  async function preview(document: AdminDocument) {
-    const target = window.open("about:blank", "_blank");
-    if (target) target.opener = null;
-    setError("");
+  function preview(document: AdminDocument) {
+    setCopyStatus("");
+    setPreviewTarget(document);
+  }
+  async function copyPreviewUrl(document: AdminDocument) {
     try {
-      const url = await previewDocument(document.id);
-      if (target) target.location.href = url;
-      else setError("Allow pop-ups to preview this private PDF.");
-    } catch (cause) {
-      target?.close();
-      setError(
-        cause instanceof Error
-          ? cause.message
-          : "Could not create a preview link.",
+      await navigator.clipboard.writeText(
+        new URL(
+          `/api/admin/documents/${encodeURIComponent(document.id)}/preview`,
+          window.location.origin,
+        ).href,
       );
+      setCopyStatus(
+        "Private URL copied. An admin session is required to open it.",
+      );
+    } catch {
+      setCopyStatus("Could not copy the URL. Open in a new tab to copy it.");
     }
   }
   async function rename() {
@@ -136,11 +151,19 @@ export function DocumentLibrary() {
         <div>
           <h2 className="text-lg font-semibold">Private documents</h2>
           <p className="text-muted-foreground mt-1 text-sm">
-            PDFs live in private storage. Viewing them requires an admin session.
+            PDFs live in private storage. Viewing them requires an admin
+            session.
           </p>
         </div>
         <label className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-md px-4 text-sm font-medium focus-within:ring-2 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-60">
-          {uploadingName ? <LoaderCircle className="size-4 animate-spin motion-reduce:animate-none" aria-hidden /> : <Upload className="size-4" aria-hidden />}
+          {uploadingName ? (
+            <LoaderCircle
+              className="size-4 animate-spin motion-reduce:animate-none"
+              aria-hidden
+            />
+          ) : (
+            <Upload className="size-4" aria-hidden />
+          )}
           {uploadingName ? "Uploading…" : "Upload PDF"}
           <Input
             className="sr-only"
@@ -163,6 +186,38 @@ export function DocumentLibrary() {
         PDFs are validated by content signature and are never publicly listed.
         Maximum 4 MB.
       </p>
+      {loaded && !error && (
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="bg-card flex items-center gap-3 rounded-xl border px-4 py-3">
+            <span className="rounded-lg bg-blue-500/10 p-2 text-blue-600 dark:text-blue-400">
+              <FileText className="size-5" aria-hidden />
+            </span>
+            <div>
+              <p className="text-muted-foreground text-xs">
+                PDFs loaded · up to 100
+              </p>
+              <p className="font-semibold tabular-nums">{documents.length}</p>
+            </div>
+          </div>
+          <div className="bg-card flex items-center gap-3 rounded-xl border px-4 py-3">
+            <span className="rounded-lg bg-emerald-500/10 p-2 text-emerald-600 dark:text-emerald-400">
+              <HardDrive className="size-5" aria-hidden />
+            </span>
+            <div>
+              <p className="text-muted-foreground text-xs">
+                Size of loaded PDFs
+              </p>
+              <p className="font-semibold tabular-nums">
+                {(
+                  documents.reduce((sum, item) => sum + item.byteSize, 0) /
+                  (1024 * 1024)
+                ).toFixed(2)}{" "}
+                MB
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
       {error && (
         <p
           role="alert"
@@ -177,11 +232,20 @@ export function DocumentLibrary() {
         </p>
       )}
       {uploadingName && (
-        <div role="status" aria-live="polite" className="bg-muted/40 flex items-center gap-3 rounded-lg border px-4 py-3">
-          <LoaderCircle className="text-muted-foreground size-5 shrink-0 animate-spin motion-reduce:animate-none" aria-hidden />
+        <div
+          role="status"
+          aria-live="polite"
+          className="bg-muted/40 flex items-center gap-3 rounded-lg border px-4 py-3"
+        >
+          <LoaderCircle
+            className="text-muted-foreground size-5 shrink-0 animate-spin motion-reduce:animate-none"
+            aria-hidden
+          />
           <div className="min-w-0">
             <p className="text-sm font-medium">Uploading document</p>
-            <p className="text-muted-foreground truncate text-xs">{uploadingName}</p>
+            <p className="text-muted-foreground truncate text-xs">
+              {uploadingName}
+            </p>
           </div>
         </div>
       )}
@@ -207,12 +271,20 @@ export function DocumentLibrary() {
           Loading documents…
         </p>
       ) : filtered.length ? (
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filtered.map((document) => (
             <li key={document.id}>
               <Card className="gap-0 overflow-hidden py-0">
-                <div className="bg-muted relative h-48 overflow-hidden border-b">
-                  <div className="text-muted-foreground absolute inset-0 flex flex-col items-center justify-center gap-2" aria-hidden>
+                <button
+                  type="button"
+                  onClick={() => preview(document)}
+                  aria-label={`Preview ${document.originalFilename}`}
+                  className="bg-muted focus-visible:ring-ring relative block h-44 w-full overflow-hidden border-b text-left focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset"
+                >
+                  <div
+                    className="text-muted-foreground absolute inset-0 flex flex-col items-center justify-center gap-2"
+                    aria-hidden
+                  >
                     <FileText className="size-9" />
                     <span className="text-xs">PDF preview</span>
                   </div>
@@ -224,7 +296,7 @@ export function DocumentLibrary() {
                     aria-hidden="true"
                     className="pointer-events-none absolute inset-0 h-full w-full border-0"
                   />
-                </div>
+                </button>
                 <CardContent className="flex items-start gap-3 p-4">
                   <FileText
                     className="text-muted-foreground mt-1 size-5 shrink-0"
@@ -245,7 +317,7 @@ export function DocumentLibrary() {
                       <Button
                         type="button"
                         size="sm"
-                        onClick={() => void preview(document)}
+                        onClick={() => preview(document)}
                       >
                         Preview
                       </Button>
@@ -284,6 +356,61 @@ export function DocumentLibrary() {
             : "No private PDFs uploaded yet."}
         </p>
       )}
+      <Dialog
+        open={!!previewTarget}
+        onOpenChange={(open) => {
+          if (!open) {
+            setPreviewTarget(null);
+            setCopyStatus("");
+          }
+        }}
+      >
+        <DialogContent className="flex max-h-[92dvh] w-[calc(100%-2rem)] flex-col gap-4 overflow-hidden rounded-2xl p-4 sm:max-w-5xl sm:p-6">
+          <DialogHeader className="pr-8">
+            <DialogTitle className="truncate">
+              {previewTarget?.originalFilename}
+            </DialogTitle>
+            <DialogDescription>
+              Private PDF · Only signed-in admins can open this link. If the preview does not appear, open it in a new tab.
+            </DialogDescription>
+          </DialogHeader>
+          {previewTarget && (
+            <iframe
+              title={`Document preview: ${previewTarget.originalFilename}`}
+              src={`/api/admin/documents/${encodeURIComponent(previewTarget.id)}/preview`}
+              className="bg-muted h-[60dvh] min-h-64 w-full rounded-md border"
+            />
+          )}
+          <div className="flex flex-wrap items-center gap-2">
+            {previewTarget && (
+              <Button asChild variant="outline" size="sm">
+                <a
+                  href={`/api/admin/documents/${encodeURIComponent(previewTarget.id)}/preview`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <ExternalLink /> Open in new tab
+                </a>
+              </Button>
+            )}
+            {previewTarget && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => void copyPreviewUrl(previewTarget)}
+              >
+                <Clipboard /> Copy private URL
+              </Button>
+            )}
+            {copyStatus && (
+              <p role="status" className="text-muted-foreground text-xs">
+                {copyStatus}
+              </p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
       <Dialog
         open={!!renameTarget}
         onOpenChange={(open) => {
