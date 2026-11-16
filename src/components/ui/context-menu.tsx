@@ -3,6 +3,7 @@
 import * as React from "react";
 import { ContextMenu as ContextMenuPrimitive } from "radix-ui";
 import { cn } from "@/lib/utils";
+import { useForcedDarkPortal, useForcedLightPortal } from "@/components/ui/portal-theme";
 
 function ContextMenu(
   props: React.ComponentProps<typeof ContextMenuPrimitive.Root>,
@@ -22,12 +23,16 @@ function ContextMenuContent({
   className,
   ...props
 }: React.ComponentProps<typeof ContextMenuPrimitive.Content>) {
+  const forcedDark = useForcedDarkPortal();
+  const forcedLight = useForcedLightPortal();
   return (
     <ContextMenuPrimitive.Portal>
       <ContextMenuPrimitive.Content
         data-slot="context-menu-content"
         className={cn(
           "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 z-50 max-w-[calc(100vw-2rem)] min-w-56 overflow-hidden rounded-md border p-1 shadow-md outline-none",
+          forcedDark && "dark",
+          forcedLight && "light",
           className,
         )}
         {...props}

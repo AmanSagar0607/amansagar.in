@@ -3,7 +3,7 @@
 
 @plugin "@tailwindcss/typography";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *):not(:where(.light, .light *)));
 
 @theme inline {
   --font-sans: var(--font-sans);
@@ -31,6 +31,7 @@
   --color-line: var(--line);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
   --color-link: var(--link);
   --color-surface: var(--surface);
   --color-surface-foreground: var(--surface-foreground);
@@ -64,6 +65,7 @@
   --line: color-mix(in oklab, var(--border) 78%, var(--background));
   --input: oklch(0.92 0.004 286.32);
   --ring: oklch(0.705 0.015 286.067);
+  --destructive: oklch(0.54 0.22 27);
   --link: oklch(0.488 0.243 264.376);
   --surface: oklch(0.985 0 0);
   --surface-foreground: oklch(0.141 0.005 285.823);
@@ -101,6 +103,7 @@
   --line: color-mix(in oklab, var(--border) 64%, var(--background));
   --input: lab(100% 0 0 / 0.15);
   --ring: oklch(0.552 0.016 285.938);
+  --destructive: oklch(0.56 0.22 27);
   --link: oklch(0.623 0.214 259.815);
   --surface: oklch(0.21 0.006 285.885);
   --surface-foreground: oklch(0.985 0 0);
@@ -136,6 +139,29 @@
     var(--foreground) 74%,
     transparent
   );
+}
+
+/* Personal drive uses its own light workspace palette while Studio stays dark. */
+.dark .drive-workspace,
+.dark .light {
+  --background: #f7f8fb;
+  --foreground: #13122a;
+  --primary: #4b43e3;
+  --primary-foreground: #ffffff;
+  --secondary: #f1f1f7;
+  --secondary-foreground: #2a2562;
+  --muted: #f1f1f7;
+  --muted-foreground: #666875;
+  --card: #ffffff;
+  --card-foreground: #13122a;
+  --popover: #ffffff;
+  --popover-foreground: #13122a;
+  --accent: #efedff;
+  --accent-foreground: #2a2562;
+  --border: #e4e4ed;
+  --input: #e4e4ed;
+  --ring: #8177e9;
+  --destructive: oklch(0.54 0.22 27);
 }
 
 @utility link {

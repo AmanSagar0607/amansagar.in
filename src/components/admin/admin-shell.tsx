@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useState } from "react";
+import { ForcedDarkPortalContext, ForcedLightPortalContext } from "@/components/ui/portal-theme";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -139,12 +140,20 @@ export function AdminShell({
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+  if (pathname === "/admin/media") {
+    return (
+      <ForcedLightPortalContext.Provider value={true}>
+        <main className="light min-h-screen bg-background text-foreground">{children}</main>
+      </ForcedLightPortalContext.Provider>
+    );
+  }
   const current =
     allItems.find((item) => item.href === pathname) ||
     allItems.find(
       (item) => item.href !== "/admin" && pathname.startsWith(item.href + "/"),
     );
   return (
+    <ForcedDarkPortalContext.Provider value={true}>
     <div className="dark bg-[#080809] text-foreground min-h-screen md:flex">
       <aside
         className={cn(
@@ -265,5 +274,6 @@ export function AdminShell({
         </main>
       </div>
     </div>
+    </ForcedDarkPortalContext.Provider>
   );
 }
