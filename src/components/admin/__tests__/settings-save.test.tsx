@@ -6,8 +6,9 @@ import { SettingsScreen } from "../settings-screen";
 import { defaultSiteSettings } from "@/lib/admin/site-settings";
 import { saveContent } from "@/lib/admin/client";
 
-jest.mock("@/lib/admin/client", () => ({ saveContent: jest.fn() }));
+jest.mock("@/lib/admin/client", () => ({ saveContent: jest.fn(), listDocuments: jest.fn(async () => []) }));
 jest.mock("sonner", () => ({ toast: { warning: jest.fn() } }));
+global.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
 
 beforeEach(() => jest.clearAllMocks());
 

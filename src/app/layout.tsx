@@ -105,7 +105,7 @@ export default async function RootLayout({
   const externalLinks = {
     github: settings.socialLinks?.find((link) => link.label.toLowerCase() === "github")?.href ?? "https://github.com/AmanSagar0607",
     x: settings.socialLinks?.find((link) => link.label.toLowerCase() === "x")?.href ?? "https://x.com/amansagar0607",
-    resume: settings.resumeUrl ?? defaultSiteSettings.resumeUrl ?? "/resume",
+    resume: "/resume",
   };
   const navigationItems = [
     ...(settings.navigationItems ?? defaultSiteSettings.navigationItems ?? []),

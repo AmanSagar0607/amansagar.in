@@ -13,6 +13,8 @@
   featuredProjectUrl?: string;
   featuredProjectDescription?: string;
   resumeUrl?: string;
+  resumeVersions?: string[];
+  activeResumeId?: string;
   socialLinks?: { label: string; handle: string; href: string }[];
   workExperience?: WorkExperienceRecord[];
   technologyStack?: TechnologyGroup[];
@@ -154,6 +156,9 @@ export function validateSiteSettings(input: unknown): SiteSettings {
     try { resume = new URL(data.resumeUrl); } catch { throw new Error("Enter a valid resume URL."); }
     if (resume.protocol !== "https:" || resume.username || resume.password) throw new Error("Resume URL must use HTTPS.");
   }
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (data.resumeVersions !== undefined && (!Array.isArray(data.resumeVersions) || data.resumeVersions.length > 100 || data.resumeVersions.some((id: unknown) => typeof id !== "string" || !uuid.test(id)) || new Set(data.resumeVersions).size !== data.resumeVersions.length)) throw new Error("Invalid resume versions.");
+  if (data.activeResumeId !== undefined && (typeof data.activeResumeId !== "string" || (data.activeResumeId !== "" && (!uuid.test(data.activeResumeId) || !Array.isArray(data.resumeVersions) || !data.resumeVersions.includes(data.activeResumeId))))) throw new Error("Invalid active resume version.");
   if (data.featuredProjectUrl !== undefined) {
     if (typeof data.featuredProjectUrl !== "string" || data.featuredProjectUrl.length > 2048) throw new Error("Invalid featured project URL.");
     let url: URL;
@@ -277,6 +282,8 @@ export function validateSiteSettings(input: unknown): SiteSettings {
     featuredProjectUrl: typeof data.featuredProjectUrl === "string" ? data.featuredProjectUrl.trim() : defaultSiteSettings.featuredProjectUrl,
     featuredProjectDescription: typeof data.featuredProjectDescription === "string" ? data.featuredProjectDescription.trim() : defaultSiteSettings.featuredProjectDescription,
     resumeUrl: typeof data.resumeUrl === "string" ? data.resumeUrl.trim() : defaultSiteSettings.resumeUrl,
+    resumeVersions: Array.isArray(data.resumeVersions) ? data.resumeVersions as string[] : [],
+    activeResumeId: typeof data.activeResumeId === "string" ? data.activeResumeId : "",
     socialLinks,
     workExperience,
     technologyStack,

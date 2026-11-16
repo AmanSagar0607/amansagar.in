@@ -1,14 +1,14 @@
 "use client";
 import { Input as FormInput } from "@/components/ui/input";
 import { Textarea as FormTextarea } from "@/components/ui/textarea";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { saveContent, uploadMedia } from "@/lib/admin/client";
+import { listDocuments, saveContent, uploadMedia, type AdminDocument } from "@/lib/admin/client";
 import type { SiteSettings } from "@/lib/admin/site-settings";
 import { defaultSiteSettings } from "@/lib/admin/site-settings";
 import { WorkExperienceSettings } from "./work-experience-settings";
@@ -18,6 +18,10 @@ const inputClass =
 const settingsTabs = ["General", "Profile", "About", "Experience", "Stack", "Social", "Homepage", "Navigation"] as const;
 export function SettingsScreen({ initial }: { initial: SiteSettings }) {
   const [settings, setSettings] = useState(initial);
+  const [resumeDocuments, setResumeDocuments] = useState<AdminDocument[]>([]);
+  const [resumeLoadError, setResumeLoadError] = useState("");
+  const [resumeChoice, setResumeChoice] = useState("");
+  useEffect(() => { void listDocuments().then(setResumeDocuments).catch(() => setResumeLoadError("Could not load private PDFs. Check your document storage configuration.")); }, []);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
@@ -229,9 +233,28 @@ export function SettingsScreen({ initial }: { initial: SiteSettings }) {
             />
           </label>
           <label className="block text-sm font-medium">
-            Résumé URL
+            Backup résumé URL
             <FormInput required type="url" maxLength={2048} className={inputClass} value={settings.resumeUrl ?? defaultSiteSettings.resumeUrl} onChange={(event) => change("resumeUrl", event.target.value)} />
           </label>
+          <div className="space-y-3 rounded-lg border p-4">
+            <div><h3 className="font-semibold">Résumé versions</h3><p className="text-muted-foreground text-sm">Upload PDFs in Media → Private PDFs, then add them here. Saving makes the selected version public at /resume; all other documents stay private.</p></div>
+            {resumeLoadError && <p role="alert" className="text-sm text-red-500">{resumeLoadError}</p>}
+            <label className="block text-sm font-medium">Add a PDF version
+              <select className={inputClass} value={resumeChoice} onChange={(event) => setResumeChoice(event.target.value)}>
+                <option value="">Choose a private PDF</option>
+                {resumeDocuments.filter((doc) => !(settings.resumeVersions ?? []).includes(doc.id)).map((doc) => <option key={doc.id} value={doc.id}>{doc.originalFilename} · {new Date(doc.createdAt).toLocaleDateString()}</option>)}
+              </select>
+            </label>
+            <Button type="button" variant="outline" disabled={!resumeChoice} onClick={() => { change("resumeVersions", [...(settings.resumeVersions ?? []), resumeChoice]); setResumeChoice(""); }}>Add version</Button>
+            <label className="block text-sm font-medium">Currently published version
+              <select className={inputClass} value={settings.activeResumeId ?? ""} onChange={(event) => change("activeResumeId", event.target.value)}>
+                <option value="">Use backup URL only</option>
+                {(settings.resumeVersions ?? []).map((id) => { const doc = resumeDocuments.find((item) => item.id === id); return <option key={id} value={id}>{doc ? `${doc.originalFilename} · ${new Date(doc.createdAt).toLocaleDateString()}` : `Unavailable PDF (${id})`}</option>; })}
+              </select>
+            </label>
+            <ul className="space-y-2">{(settings.resumeVersions ?? []).map((id) => { const doc = resumeDocuments.find((item) => item.id === id); return <li key={id} className="flex flex-wrap items-center justify-between gap-2 text-sm"><span>{doc?.originalFilename ?? "Unavailable PDF"}{id === settings.activeResumeId ? " · Selected" : ""}</span><div className="flex gap-2"><a className="underline" href={`/api/admin/documents/${encodeURIComponent(id)}/preview`} target="_blank" rel="noopener noreferrer">Preview</a><button type="button" className="underline" onClick={() => setSettings((current) => ({ ...current, resumeVersions: (current.resumeVersions ?? []).filter((item) => item !== id), activeResumeId: current.activeResumeId === id ? "" : current.activeResumeId }))}>Remove</button></div></li>; })}</ul>
+            <p className="text-muted-foreground text-xs">Select an earlier version to restore it, then save settings. Removing a version here does not delete its PDF.</p>
+          </div>
           </TabsContent>
           <TabsContent forceMount value="About" hidden={activeTab !== "About"} data-settings-tab="About" className="space-y-4">
           <label className="block text-sm font-medium">About page description<FormTextarea required maxLength={500} rows={3} className={inputClass} value={settings.aboutDescription ?? defaultSiteSettings.aboutDescription} onChange={(event) => change("aboutDescription", event.target.value)} /></label>

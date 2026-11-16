@@ -5,8 +5,9 @@ import "@testing-library/jest-dom";
 import { SettingsScreen } from "../settings-screen";
 import { defaultSiteSettings } from "@/lib/admin/site-settings";
 
-jest.mock("@/lib/admin/client", () => ({ saveContent: jest.fn() }));
+jest.mock("@/lib/admin/client", () => ({ saveContent: jest.fn(), listDocuments: jest.fn(async () => []) }));
 jest.mock("sonner", () => ({ toast: { warning: jest.fn() } }));
+global.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
 
 test("removing a technology group keeps the remaining group's items", async () => {
   const user = userEvent.setup();
