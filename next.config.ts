@@ -43,6 +43,10 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        source: "/api/admin/documents/:id/preview",
+        headers: [{ key: "X-Frame-Options", value: "SAMEORIGIN" }],
+      },
     ];
   },
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],

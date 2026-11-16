@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FileText, Pencil, Search, Trash2, Upload } from "lucide-react";
+import { FileText, LoaderCircle, Pencil, Search, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,7 @@ export function DocumentLibrary() {
   const [documents, setDocuments] = useState<AdminDocument[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [uploadingName, setUploadingName] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -51,6 +52,7 @@ export function DocumentLibrary() {
   async function upload(file?: File) {
     if (!file) return;
     setBusy(true);
+    setUploadingName(file.name);
     setError("");
     setMessage("");
     try {
@@ -66,6 +68,7 @@ export function DocumentLibrary() {
       );
     } finally {
       setBusy(false);
+      setUploadingName(null);
     }
   }
   async function preview(document: AdminDocument) {
@@ -136,9 +139,9 @@ export function DocumentLibrary() {
             PDFs live in private storage. Viewing them requires an admin session.
           </p>
         </div>
-        <label className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-md px-4 text-sm font-medium focus-within:ring-2">
-          <Upload className="size-4" aria-hidden />
-          Upload PDF
+        <label className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-md px-4 text-sm font-medium focus-within:ring-2 has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-60">
+          {uploadingName ? <LoaderCircle className="size-4 animate-spin motion-reduce:animate-none" aria-hidden /> : <Upload className="size-4" aria-hidden />}
+          {uploadingName ? "Uploading…" : "Upload PDF"}
           <Input
             className="sr-only"
             type="file"
@@ -173,6 +176,15 @@ export function DocumentLibrary() {
           {message}
         </p>
       )}
+      {uploadingName && (
+        <div role="status" aria-live="polite" className="bg-muted/40 flex items-center gap-3 rounded-lg border px-4 py-3">
+          <LoaderCircle className="text-muted-foreground size-5 shrink-0 animate-spin motion-reduce:animate-none" aria-hidden />
+          <div className="min-w-0">
+            <p className="text-sm font-medium">Uploading document</p>
+            <p className="text-muted-foreground truncate text-xs">{uploadingName}</p>
+          </div>
+        </div>
+      )}
       <label className="relative block max-w-sm">
         <span className="sr-only">Search PDF files</span>
         <Search
@@ -198,7 +210,21 @@ export function DocumentLibrary() {
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((document) => (
             <li key={document.id}>
-              <Card>
+              <Card className="gap-0 overflow-hidden py-0">
+                <div className="bg-muted relative h-48 overflow-hidden border-b">
+                  <div className="text-muted-foreground absolute inset-0 flex flex-col items-center justify-center gap-2" aria-hidden>
+                    <FileText className="size-9" />
+                    <span className="text-xs">PDF preview</span>
+                  </div>
+                  <iframe
+                    title={`Preview of ${document.originalFilename}`}
+                    src={`/api/admin/documents/${encodeURIComponent(document.id)}/preview#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
+                    loading="lazy"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 h-full w-full border-0"
+                  />
+                </div>
                 <CardContent className="flex items-start gap-3 p-4">
                   <FileText
                     className="text-muted-foreground mt-1 size-5 shrink-0"
