@@ -180,15 +180,7 @@ export async function deleteDocument(id: string): Promise<void> {
   });
 }
 export async function previewDocument(id: string): Promise<string> {
-  const data = await call(
-    `/api/admin/documents/${encodeURIComponent(id)}/preview`,
-  );
-  if (typeof data.url !== "string" || !data.url.startsWith("https://"))
-    throw new AdminClientError(
-      "The server returned an invalid preview link.",
-      502,
-    );
-  return data.url;
+  return `/api/admin/documents/${encodeURIComponent(id)}/preview`;
 }
 
 /** These endpoints must be mounted with a real identity provider before use. */

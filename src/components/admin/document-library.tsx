@@ -133,7 +133,7 @@ export function DocumentLibrary() {
         <div>
           <h2 className="text-lg font-semibold">Private documents</h2>
           <p className="text-muted-foreground mt-1 text-sm">
-            PDFs live in private storage. Preview links expire after 60 seconds.
+            PDFs live in private storage. Viewing them requires an admin session.
           </p>
         </div>
         <label className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-md px-4 text-sm font-medium focus-within:ring-2">
@@ -310,8 +310,8 @@ export function DocumentLibrary() {
             <DialogTitle>Delete this PDF?</DialogTitle>
             <DialogDescription>
               <strong>{deleteTarget?.originalFilename}</strong> will be
-              permanently removed from private storage. Existing signed preview
-              links will stop working.
+              permanently removed from private storage. Its preview link will
+              stop working.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

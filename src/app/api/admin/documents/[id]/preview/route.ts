@@ -9,7 +9,19 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
   try {
     const service = await documentServiceFor(request);
     const url = await service.preview((await context.params).id);
-    return url ? NextResponse.json({ url }, { headers }) : NextResponse.json({ error: "Document not found." }, { status: 404, headers });
+    if (!url) return NextResponse.json({ error: "Document not found." }, { status: 404, headers });
+    const upstream = await fetch(url, { cache: "no-store", redirect: "error" });
+    if (!upstream.ok || !upstream.body) throw new Error("Unable to retrieve document.");
+    return new NextResponse(upstream.body, {
+      headers: {
+        ...headers,
+        "Content-Type": "application/pdf",
+        "Content-Disposition": "inline",
+        "X-Content-Type-Options": "nosniff",
+        "Content-Security-Policy": "sandbox",
+        "Referrer-Policy": "no-referrer",
+      },
+    });
   } catch (cause) {
     return documentErrorResponse(cause);
   }
