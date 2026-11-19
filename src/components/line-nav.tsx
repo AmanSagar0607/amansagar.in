@@ -1,6 +1,6 @@
 "use client"
 
-import { memo, useEffect, useRef } from "react"
+import { memo, useEffect, useRef, useState } from "react"
 import { motion } from "motion/react"
 import { ChevronDown, ChevronUp } from "lucide-react"
 
@@ -110,6 +110,23 @@ const LineNavItem = memo(function LineNavItem({
   onToggleTitle?: () => void
   onClick?: React.MouseEventHandler<HTMLAnchorElement>
 }) {
+  const titleRef = useRef<HTMLSpanElement | null>(null)
+  const [overflow, setOverflow] = useState(0)
+  const [revealing, setRevealing] = useState(false)
+
+  useEffect(() => {
+    const element = titleRef.current
+    if (!element) return
+
+    const measure = () => {
+      setOverflow(Math.max(0, element.scrollWidth - element.clientWidth))
+    }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [title, expanded])
+
   return (
     <div className="flex w-full min-w-0 flex-wrap items-center gap-x-1 overflow-hidden">
       {/*
@@ -126,6 +143,8 @@ const LineNavItem = memo(function LineNavItem({
         initial={false}
         animate={active ? "active" : "normal"}
         whileHover="hover"
+        onHoverStart={() => setRevealing(true)}
+        onHoverEnd={() => setRevealing(false)}
         onClick={onClick}
       >
         <motion.span
@@ -133,8 +152,16 @@ const LineNavItem = memo(function LineNavItem({
           variants={lineVariants}
           transition={{ type: "spring", stiffness: 200, damping: 20 }}
         />
-        <span className={cn("block min-w-0 flex-1 overflow-hidden text-sm text-muted-foreground transition-[color] ease-out group-hover:text-foreground group-aria-[current=location]:text-foreground", !expanded && "text-ellipsis whitespace-nowrap", expanded && "whitespace-normal break-words")}>
-          {title}
+        <span ref={titleRef} className={cn("block min-w-0 flex-1 overflow-hidden text-sm text-muted-foreground transition-[color] ease-out group-hover:text-foreground group-aria-[current=location]:text-foreground", !expanded && "text-ellipsis whitespace-nowrap", expanded && "whitespace-normal break-words")}>
+          <motion.span
+            className={cn("block", !expanded && "w-max min-w-full whitespace-nowrap", expanded && "whitespace-normal break-words")}
+            animate={{ x: revealing && !expanded ? -overflow : 0 }}
+            transition={revealing
+              ? { duration: Math.max(1.2, overflow / 24), ease: "linear" }
+              : { duration: 0.2, ease: "easeOut" }}
+          >
+            {title}
+          </motion.span>
         </span>
       </motion.a>
 
