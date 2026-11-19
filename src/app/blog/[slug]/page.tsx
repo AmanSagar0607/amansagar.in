@@ -138,11 +138,11 @@ export default async function BlogPost({
     const headings = articleHeadings(content);
 
     return (
-      <main className="page-shell min-h-screen px-6 pb-16 pt-28 text-[14px] leading-[22px] text-[#0a0a0a] dark:text-[#d8d8d8] md:pt-32">
+      <main className="page-shell min-h-screen px-6 pb-32 pt-28 text-[14px] leading-[22px] text-[#0a0a0a] dark:text-[#d8d8d8] md:pb-16 md:pt-32">
         <aside className="fixed right-8 top-1/2 z-40 hidden -translate-y-1/2 xl:block">
           <TOCMinimap items={headings} />
         </aside>
-        <aside className="fixed inset-x-0 bottom-4 z-40 flex justify-end px-4 xl:hidden">
+        <aside className="fixed inset-x-0 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-40 flex justify-end px-4 xl:hidden">
           <TOCMinimap items={headings} mobile />
         </aside>
 
