@@ -11,6 +11,7 @@
     "test": "jest --runInBand"
   },
   "dependencies": {
+    "@aman-sagar06077/zappa-analytics": "^0.1.2",
     "@aws-sdk/client-s3": "3.1161.0",
     "@aws-sdk/s3-request-presigner": "3.1161.0",
     "@mdx-js/react": "^3.1.0",

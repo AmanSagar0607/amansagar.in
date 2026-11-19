@@ -11,6 +11,7 @@ import { getPublicSiteSettings } from "@/lib/public-site-settings";
 import { getPublicPages } from "@/lib/public-pages";
 import { defaultSiteSettings, type NavigationItem } from "@/lib/admin/site-settings";
 import { isPagePathVisible } from "@/lib/public-page-visibility";
+import { Analytics } from "@aman-sagar06077/zappa-analytics/next";
 
 const geist = Geist({
   subsets: ["latin"],
@@ -30,6 +31,9 @@ const instrumentSerif = Instrument_Serif({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.amansagar.in";
+const zappaProjectId = process.env.NEXT_PUBLIC_ZAPPA_PROJECT_ID;
+const zappaWriteKey = process.env.NEXT_PUBLIC_ZAPPA_WRITE_KEY;
+const zappaOrigin = process.env.NEXT_PUBLIC_ZAPPA_ORIGIN;
 
 export const viewport: Viewport = {
   themeColor: [
@@ -146,7 +150,13 @@ export default async function RootLayout({
             </SiteChrome>
           </div>
         </ThemeProvider>
-      
+        {zappaProjectId && zappaWriteKey && zappaOrigin ? (
+          <Analytics
+            projectId={zappaProjectId}
+            writeKey={zappaWriteKey}
+            endpoint={`${zappaOrigin.replace(/\/$/, "")}/api/events`}
+          />
+        ) : null}
 <script data-crease-install dangerouslySetInnerHTML={{ __html: "window.addEventListener('load', function () { var s = document.createElement('script'); s.src = \"https://crease-bice.vercel.app/crease.js\"; s.onload = function () { if (window.crease) window.crease.init({ projectId: \"752c8641-2616-4a38-88f3-2dade631f6d3\", endpoint: \"https://crease-bice.vercel.app/api/events\" }); }; document.head.appendChild(s); }, { once: true });" }} />
 </body>
     </html>
